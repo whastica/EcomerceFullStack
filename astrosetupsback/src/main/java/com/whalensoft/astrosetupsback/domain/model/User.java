@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,38 +17,86 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
+
+    @Column(name = "first_name", nullable = false)
     private String firstName;
+
+    @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String phone;
     private String address;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postal_code_id")
     private PostalCode postalCode;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+
+    @Column(name = "password_hash")
     private String passwordHash;
-    private String status;
-    private Boolean verified;
 
-    @OneToMany(mappedBy = "user")
-    private List<ShippingAddress> shippingAddresses;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status;
 
-    @OneToMany(mappedBy = "user")
-    private List<ShoppingCart> shoppingCarts;
+    @Column(nullable = false)
+    private Boolean verified = false;
 
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user")
-    private List<AppliedPromoCode> appliedPromoCodes;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<ShippingAddress> shippingAddresses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<Warranty> warranties;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<ShoppingCart> shoppingCarts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<AppliedPromoCode> appliedPromoCodes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Warranty> warranties = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (status == null) {
+            status = UserStatus.ACTIVE;
+        }
+        if (role == null) {
+            role = UserRole.CLIENT;
+        }
+    }
+
+    // Método para obtener nombre completo
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

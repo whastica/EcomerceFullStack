@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "warranties")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,21 +17,38 @@ import java.time.LocalDateTime;
 public class Warranty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "warranty_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    @Column(name = "request_date", nullable = false)
     private LocalDateTime requestDate;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WarrantyStatus status;
+
+    @Column(columnDefinition = "TEXT")
     private String observation;
+
+    @PrePersist
+    protected void onCreate() {
+        if (requestDate == null) {
+            requestDate = LocalDateTime.now();
+        }
+        if (status == null) {
+            status = WarrantyStatus.PENDING;
+        }
+    }
 }

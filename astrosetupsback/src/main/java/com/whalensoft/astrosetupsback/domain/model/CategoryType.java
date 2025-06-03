@@ -1,15 +1,13 @@
 package com.whalensoft.astrosetupsback.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "category_types")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +15,14 @@ import lombok.NoArgsConstructor;
 public class CategoryType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_type_id")
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "categoryType", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Category> categories = new ArrayList<>();
 }

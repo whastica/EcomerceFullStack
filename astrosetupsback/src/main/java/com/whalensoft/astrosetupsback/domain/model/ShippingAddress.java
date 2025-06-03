@@ -1,14 +1,13 @@
 package com.whalensoft.astrosetupsback.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "shipping_addresses")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,22 +15,26 @@ import java.util.List;
 public class ShippingAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "shipping_address_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String address;
 
-    @ManyToOne
-    @JoinColumn(name = "city_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postal_code_id")
     private PostalCode postalCode;
 
-    @OneToMany(mappedBy = "shippingAddress")
-    private List<Order> orders;
+    @OneToMany(mappedBy = "shippingAddress", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Order> orders = new ArrayList<>();
 }

@@ -1,68 +1,66 @@
 package com.whalensoft.astrosetupsback.infra.adapters;
 
 import com.whalensoft.astrosetupsback.domain.model.User;
-import com.whalensoft.astrosetupsback.domain.model.UserRole;
 import com.whalensoft.astrosetupsback.domain.model.UserStatus;
+import com.whalensoft.astrosetupsback.domain.model.UserRole;
 import com.whalensoft.astrosetupsback.domain.repository.UserRepository;
 import com.whalensoft.astrosetupsback.infra.repository.JpaUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class UserRepositoryAdapter implements UserRepository {
 
-    private final JpaUserRepository jpaRepository;
-
-    public UserRepositoryAdapter(JpaUserRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
-    }
+    private final JpaUserRepository jpaUserRepository;
 
     @Override
     public User save(User user) {
-        return jpaRepository.save(user);
+        return jpaUserRepository.save(user);
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        return jpaRepository.findById(id);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        jpaRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return false;
-    }
-
-    @Override
-    public List<User> findByRole(UserRole role) {
-        return List.of();
+        return jpaUserRepository.findById(id);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return jpaRepository.findByEmail(email);
+        return jpaUserRepository.findByEmail(email);
     }
 
     @Override
     public List<User> findByStatus(UserStatus status) {
-        return List.of();
+        return jpaUserRepository.findByStatus(status);
     }
 
     @Override
     public List<User> findByVerified(Boolean verified) {
-        return List.of();
+        return jpaUserRepository.findByVerified(verified);
     }
 
     @Override
     public Page<User> findAll(Pageable pageable) {
-        return null;
+        return jpaUserRepository.findAll(pageable);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaUserRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return jpaUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public List<User> findByRole(UserRole role) {
+        return jpaUserRepository.findByRole(role);
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,11 +98,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public PageResponseDTO<ProductSearchResultDTO> searchProducts(ProductSearchDTO searchDTO) {
-        // Configurar la paginación
+        // Crear el objeto Pageable para la paginación
         Pageable pageable = PageRequest.of(
-            searchDTO.getPage(),
-            searchDTO.getSize(),
-            Sort.by(Sort.Direction.fromString(searchDTO.getSortDirection()), searchDTO.getSortBy())
+                searchDTO.getPage(),
+                searchDTO.getSize(),
+                Sort.by(Sort.Direction.fromString(searchDTO.getSortDirection()), searchDTO.getSortBy())
         );
 
         // Realizar la búsqueda
@@ -117,32 +116,31 @@ public class CatalogServiceImpl implements CatalogService {
 
         // Convertir los productos a DTOs
         List<ProductSummaryDTO> productSummaries = productsPage.getContent().stream()
-            .map(this::convertToProductSummaryDTO)
-            .Stream.toList();
+                .map(this::convertToProductSummaryDTO)
+                .toList();
 
         // Crear el resultado de búsqueda
         ProductSearchResultDTO searchResult = ProductSearchResultDTO.builder()
-            .products(productSummaries)
-            .totalElements(productsPage.getTotalElements())
-            .totalPages(productsPage.getTotalPages())
-            .currentPage(productsPage.getNumber())
-            .pageSize(productsPage.getSize())
-            .hasNext(productsPage.hasNext())
-            .hasPrevious(productsPage.hasPrevious())
-            .build();
+                .products(productSummaries)
+                .totalElements(productsPage.getTotalElements())
+                .totalPages(productsPage.getTotalPages())
+                .currentPage(productsPage.getNumber())
+                .pageSize(productsPage.getSize())
+                .hasNext(productsPage.hasNext())
+                .hasPrevious(productsPage.hasPrevious())
+                .build();
 
-        // Devolver el resultado paginado
         return PageResponseDTO.<ProductSearchResultDTO>builder()
-            .content(List.of(searchResult))
-            .currentPage(productsPage.getNumber())
-            .totalPages(productsPage.getTotalPages())
-            .totalElements(productsPage.getTotalElements())
-            .size(productsPage.getSize())
-            .first(productsPage.isFirst())
-            .last(productsPage.isLast())
-            .empty(productsPage.isEmpty())
-            .numberOfElements(productsPage.getNumberOfElements())
-            .build();
+                .content(List.of(searchResult))
+                .currentPage(productsPage.getNumber())
+                .totalPages(productsPage.getTotalPages())
+                .totalElements(productsPage.getTotalElements())
+                .size(productsPage.getSize())
+                .first(productsPage.isFirst())
+                .last(productsPage.isLast())
+                .empty(productsPage.isEmpty())
+                .numberOfElements(productsPage.getNumberOfElements())
+                .build();
     }
 
     @Override
@@ -158,21 +156,21 @@ public class CatalogServiceImpl implements CatalogService {
     public List<ProductSummaryDTO> getFeaturedProducts() {
         return productRepository.findFeaturedProducts().stream()
                 .map(this::convertToProductSummaryDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<ProductSummaryDTO> getNewArrivals() {
         return productRepository.findNewArrivals().stream()
                 .map(this::convertToProductSummaryDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<ProductSummaryDTO> getBestSellers() {
         return productRepository.findBestSellers().stream()
                 .map(this::convertToProductSummaryDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -223,7 +221,7 @@ public class CatalogServiceImpl implements CatalogService {
                         .categoryTypeName(category.getCategoryType().getName())
                         .productCount(category.getProducts().size())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -255,14 +253,15 @@ public class CatalogServiceImpl implements CatalogService {
                         .id(categoryType.getId())
                         .name(categoryType.getName())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public void deleteCategoryType(Long id) {
-        CategoryType categoryType = categoryTypeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tipo de categoría no encontrado"));
-        categoryTypeRepository.delete(categoryType);
+        if (!categoryTypeRepository.existsById(id)) {
+            throw new EntityNotFoundException("Tipo de categoría no encontrado");
+        }
+        categoryTypeRepository.deleteById(id);
     }
 
     private ProductDTO convertToProductDTO(Product product) {
@@ -273,26 +272,22 @@ public class CatalogServiceImpl implements CatalogService {
                 .price(product.getPrice())
                 .discountPrice(product.getDiscountPrice())
                 .brand(product.getBrand())
-                .categoryId(product.getCategory().getId())
-                .categoryName(product.getCategory().getName())
+                .imageUrl(product.getImageUrl())
                 .hasVariations(product.getHasVariations())
                 .active(product.getActive())
-                .imageUrl(product.getImageUrl())
+                .category(CategorySummaryDTO.builder()
+                        .id(product.getCategory().getId())
+                        .name(product.getCategory().getName())
+                        .categoryTypeName(product.getCategory().getCategoryType().getName())
+                        .productCount(product.getCategory().getProducts().size())
+                        .build())
+                .hasDiscount(product.hasDiscount())
+                .effectivePrice(product.getEffectivePrice())
+                .discountPercentage(product.hasDiscount() ? 
+                    ((product.getPrice() - product.getDiscountPrice()) / product.getPrice()) * 100 : null)
                 .build();
     }
 
-    private ProductSearchResultDTO convertToProductSearchResultDTO(Product product) {
-        return ProductSearchResultDTO.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .discountPrice(product.getDiscountPrice())
-                .brand(product.getBrand())
-                .categoryId(product.getCategory().getId())
-                .categoryName(product.getCategory().getName())
-                .imageUrl(product.getImageUrl())
-                .build();
-    }
 
     private ProductSummaryDTO convertToProductSummaryDTO(Product product) {
         return ProductSummaryDTO.builder()
@@ -310,8 +305,11 @@ public class CatalogServiceImpl implements CatalogService {
         return CategoryDTO.builder()
                 .id(category.getId())
                 .name(category.getName())
-                .categoryTypeId(category.getCategoryType().getId())
-                .categoryTypeName(category.getCategoryType().getName())
+                .categoryType(CategoryTypeDTO.builder()
+                        .id(category.getCategoryType().getId())
+                        .name(category.getCategoryType().getName())
+                        .build())
+                .productCount(category.getProducts().size())
                 .build();
     }
 

@@ -61,7 +61,7 @@ public class Product {
     private List<OrderItem> orderItems = new ArrayList<>();
 
     // Método para verificar si tiene descuento
-    public Boolean hasDiscount() {
+    public boolean hasDiscount() {
         return discountPrice != null && discountPrice < price;
     }
 

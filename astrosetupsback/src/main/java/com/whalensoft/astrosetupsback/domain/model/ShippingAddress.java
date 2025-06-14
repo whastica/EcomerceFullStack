@@ -33,6 +33,9 @@ public class ShippingAddress {
     @JoinColumn(name = "postal_code_id")
     private PostalCode postalCode;
 
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault = false;
+
     @OneToMany(mappedBy = "shippingAddress", fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

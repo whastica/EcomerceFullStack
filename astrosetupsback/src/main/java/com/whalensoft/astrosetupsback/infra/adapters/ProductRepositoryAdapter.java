@@ -1,16 +1,18 @@
 package com.whalensoft.astrosetupsback.infra.adapters;
 
-import com.whalensoft.astrosetupsback.domain.model.Product;
-import com.whalensoft.astrosetupsback.domain.model.Category;
-import com.whalensoft.astrosetupsback.domain.repository.ProductRepository;
-import com.whalensoft.astrosetupsback.infra.repository.JpaProductRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-import java.util.Optional;
+import com.whalensoft.astrosetupsback.domain.model.Category;
+import com.whalensoft.astrosetupsback.domain.model.Product;
+import com.whalensoft.astrosetupsback.domain.repository.ProductRepository;
+import com.whalensoft.astrosetupsback.infra.repository.JpaProductRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -81,5 +83,25 @@ public class ProductRepositoryAdapter implements ProductRepository {
     @Override
     public List<String> findDistinctBrands() {
         return jpaProductRepository.findDistinctBrands();
+    }
+
+    @Override
+    public Page<Product> findByFilters(Long categoryId, Double minPrice, Double maxPrice, String brand, Pageable pageable) {
+        return jpaProductRepository.findByFilters(categoryId, minPrice, maxPrice, brand, pageable);
+    }
+
+    @Override
+    public List<Product> findFeaturedProducts() {
+        return jpaProductRepository.findFeaturedProducts();
+    }
+
+    @Override
+    public List<Product> findNewArrivals() {
+        return jpaProductRepository.findNewArrivals();
+    }
+
+    @Override
+    public List<Product> findBestSellers() {
+        return jpaProductRepository.findBestSellers();
     }
 }

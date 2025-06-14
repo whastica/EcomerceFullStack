@@ -99,31 +99,50 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public PageResponseDTO<ProductSearchResultDTO> searchProducts(ProductSearchDTO searchDTO) {
+        // Configurar la paginación
         Pageable pageable = PageRequest.of(
-                searchDTO.getPage(),
-                searchDTO.getSize(),
-                Sort.by(Sort.Direction.fromString(searchDTO.getSortDirection()), searchDTO.getSortBy())
+            searchDTO.getPage(),
+            searchDTO.getSize(),
+            Sort.by(Sort.Direction.fromString(searchDTO.getSortDirection()), searchDTO.getSortBy())
         );
 
+        // Realizar la búsqueda
         Page<Product> productsPage = productRepository.findByFilters(
-                searchDTO.getCategoryId(),
-                searchDTO.getMinPrice(),
-                searchDTO.getMaxPrice(),
-                searchDTO.getBrand(),
-                pageable
+            searchDTO.getCategoryId(),
+            searchDTO.getMinPrice(),
+            searchDTO.getMaxPrice(),
+            searchDTO.getBrand(),
+            pageable
         );
 
-        List<ProductSearchResultDTO> products = productsPage.getContent().stream()
-                .map(this::convertToProductSearchResultDTO)
-                .collect(Collectors.toList());
+        // Convertir los productos a DTOs
+        List<ProductSummaryDTO> productSummaries = productsPage.getContent().stream()
+            .map(this::convertToProductSummaryDTO)
+            .Stream.toList();
 
-        return new PageResponseDTO<>(
-                products,
-                productsPage.getNumber(),
-                productsPage.getSize(),
-                productsPage.getTotalElements(),
-                productsPage.getTotalPages()
-        );
+        // Crear el resultado de búsqueda
+        ProductSearchResultDTO searchResult = ProductSearchResultDTO.builder()
+            .products(productSummaries)
+            .totalElements(productsPage.getTotalElements())
+            .totalPages(productsPage.getTotalPages())
+            .currentPage(productsPage.getNumber())
+            .pageSize(productsPage.getSize())
+            .hasNext(productsPage.hasNext())
+            .hasPrevious(productsPage.hasPrevious())
+            .build();
+
+        // Devolver el resultado paginado
+        return PageResponseDTO.<ProductSearchResultDTO>builder()
+            .content(List.of(searchResult))
+            .currentPage(productsPage.getNumber())
+            .totalPages(productsPage.getTotalPages())
+            .totalElements(productsPage.getTotalElements())
+            .size(productsPage.getSize())
+            .first(productsPage.isFirst())
+            .last(productsPage.isLast())
+            .empty(productsPage.isEmpty())
+            .numberOfElements(productsPage.getNumberOfElements())
+            .build();
     }
 
     @Override
@@ -134,14 +153,6 @@ public class CatalogServiceImpl implements CatalogService {
         productRepository.save(product);
     }
 
-    @Override
-    public ProductStockStatusDTO getProductStockStatus(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
-        
-        // TODO: Implementar lógica de verificación de stock
-        return new ProductStockStatusDTO(id, true, 0);
-    }
 
     @Override
     public List<ProductSummaryDTO> getFeaturedProducts() {
@@ -204,17 +215,20 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<CategoryDTO> getAllCategories() {
+    public List<CategorySummaryDTO> getAllCategories() {
         return categoryRepository.findAll().stream()
-                .map(this::convertToCategoryDTO)
+                .map(category -> CategorySummaryDTO.builder()
+                        .id(category.getId())
+                        .name(category.getName())
+                        .categoryTypeName(category.getCategoryType().getName())
+                        .productCount(category.getProducts().size())
+                        .build())
                 .collect(Collectors.toList());
     }
 
     @Override
     public void deleteCategory(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Categoría no encontrada"));
-        categoryRepository.delete(category);
+        categoryRepository.deleteById(id);
     }
 
     @Override
@@ -228,19 +242,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public CategoryTypeDTO updateCategoryType(Long id, UpdateCategoryTypeDTO updateCategoryTypeDTO) {
-        CategoryType categoryType = categoryTypeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tipo de categoría no encontrado"));
-
-        if (updateCategoryTypeDTO.getName() != null) {
-            categoryType.setName(updateCategoryTypeDTO.getName());
-        }
-
-        CategoryType updatedCategoryType = categoryTypeRepository.save(categoryType);
-        return convertToCategoryTypeDTO(updatedCategoryType);
-    }
-
-    @Override
     public CategoryTypeDTO getCategoryTypeById(Long id) {
         CategoryType categoryType = categoryTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de categoría no encontrado"));
@@ -248,9 +249,12 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<CategoryTypeDTO> getAllCategoryTypes() {
+    public List<CategoryTypeBasicDTO> getAllCategoryTypes() {
         return categoryTypeRepository.findAll().stream()
-                .map(this::convertToCategoryTypeDTO)
+                .map(categoryType -> CategoryTypeBasicDTO.builder()
+                        .id(categoryType.getId())
+                        .name(categoryType.getName())
+                        .build())
                 .collect(Collectors.toList());
     }
 

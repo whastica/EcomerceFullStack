@@ -1,11 +1,13 @@
 package com.whalensoft.astrosetupsback.domain.repository;
 
-import com.whalensoft.astrosetupsback.domain.model.Product;
-import com.whalensoft.astrosetupsback.domain.model.Category;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.whalensoft.astrosetupsback.domain.model.Category;
+import com.whalensoft.astrosetupsback.domain.model.Product;
 
 public interface ProductRepository {
     Product save(Product product);
@@ -21,4 +23,12 @@ public interface ProductRepository {
     void deleteById(Long id);
     boolean existsById(Long id);
     List<String> findDistinctBrands();
+    
+    // Nuevo método para búsqueda con filtros
+    Page<Product> findByFilters(Long categoryId, Double minPrice, Double maxPrice, String brand, Pageable pageable);
+    
+    // Nuevos métodos para productos destacados
+    List<Product> findFeaturedProducts();
+    List<Product> findNewArrivals();
+    List<Product> findBestSellers();
 }

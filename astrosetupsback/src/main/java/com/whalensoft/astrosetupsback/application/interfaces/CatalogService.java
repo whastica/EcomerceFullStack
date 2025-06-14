@@ -12,7 +12,6 @@ public interface CatalogService {
     ProductDTO getProductById(Long id);
     PageResponseDTO<ProductSearchResultDTO> searchProducts(ProductSearchDTO searchDTO);
     void deleteProduct(Long id);
-    ProductStockStatusDTO getProductStockStatus(Long id);
     List<ProductSummaryDTO> getFeaturedProducts();
     List<ProductSummaryDTO> getNewArrivals();
     List<ProductSummaryDTO> getBestSellers();

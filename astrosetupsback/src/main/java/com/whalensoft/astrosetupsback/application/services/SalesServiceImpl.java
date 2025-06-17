@@ -29,7 +29,6 @@ public class SalesServiceImpl implements SalesService {
     private final PromoCodeRepository promoCodeRepository;
     private final ShippingAddressRepository shippingAddressRepository;
 
-    @Autowired
     public SalesServiceImpl(
             OrderRepository orderRepository,
             ShoppingCartRepository shoppingCartRepository,

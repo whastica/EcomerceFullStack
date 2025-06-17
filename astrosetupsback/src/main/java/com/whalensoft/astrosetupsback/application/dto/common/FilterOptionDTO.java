@@ -14,6 +14,7 @@ public class FilterOptionDTO {
     private String label;
     private Object value;
     private Long count;
+    @Builder.Default
     private Boolean selected = false;
     private String category;
 }

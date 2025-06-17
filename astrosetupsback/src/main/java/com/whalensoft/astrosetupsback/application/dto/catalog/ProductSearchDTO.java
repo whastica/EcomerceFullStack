@@ -19,6 +19,8 @@ public class ProductSearchDTO {
     private Boolean hasVariations;
     private String sortBy; // "price", "name", "newest", "discount"
     private String sortDirection; // "asc", "desc"
+    @Builder.Default
     private Integer page = 0;
+    @Builder.Default
     private Integer size = 20;
 }

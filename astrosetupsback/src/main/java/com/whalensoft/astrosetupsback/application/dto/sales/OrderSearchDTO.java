@@ -1,13 +1,14 @@
 package com.whalensoft.astrosetupsback.application.dto.sales;
 
+import java.time.LocalDateTime;
+
 import com.whalensoft.astrosetupsback.domain.model.OrderStatus;
 import com.whalensoft.astrosetupsback.domain.model.PaymentMethod;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +25,8 @@ public class OrderSearchDTO {
     private Double maxTotal;
     private String sortBy; // "date", "total", "status"
     private String sortDirection; // "asc", "desc"
+    @Builder.Default
     private Integer page = 0;
+    @Builder.Default
     private Integer size = 20;
 }

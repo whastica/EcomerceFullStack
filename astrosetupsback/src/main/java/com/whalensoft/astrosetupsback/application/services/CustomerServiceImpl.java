@@ -1,11 +1,9 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import com.whalensoft.astrosetupsback.application.dto.customer.*;
-import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
-import com.whalensoft.astrosetupsback.application.interfaces.CustomerService;
-import com.whalensoft.astrosetupsback.domain.model.*;
-import com.whalensoft.astrosetupsback.domain.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +11,34 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
+import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.ChangePasswordDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.CityDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.CreateCityDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.CreateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.CreateUserDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.CustomerStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.UpdateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.UpdateUserDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.UserDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.UserProfileDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.UserSearchDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.UserShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.UserSummaryDTO;
+import com.whalensoft.astrosetupsback.application.interfaces.CustomerService;
+import com.whalensoft.astrosetupsback.domain.model.City;
+import com.whalensoft.astrosetupsback.domain.model.Order;
+import com.whalensoft.astrosetupsback.domain.model.OrderStatus;
+import com.whalensoft.astrosetupsback.domain.model.ShippingAddress;
+import com.whalensoft.astrosetupsback.domain.model.User;
+import com.whalensoft.astrosetupsback.domain.model.UserRole;
+import com.whalensoft.astrosetupsback.domain.model.UserStatus;
+import com.whalensoft.astrosetupsback.domain.repository.CityRepository;
+import com.whalensoft.astrosetupsback.domain.repository.ShippingAddressRepository;
+import com.whalensoft.astrosetupsback.domain.repository.UserRepository;
 
 @Service
 @Transactional
@@ -27,7 +49,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public CustomerServiceImpl(
             UserRepository userRepository,
             ShippingAddressRepository shippingAddressRepository,
@@ -42,7 +63,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         if (userRepository.existsByEmail(createUserDTO.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new RuntimeException(ErrorMessages.USER_NOT_FOUND);
         }
 
         User user = User.builder()
@@ -70,7 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
 
         if (updateUserDTO.getFirstName() != null) {
             user.setFirstName(updateUserDTO.getFirstName());
@@ -96,14 +117,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
         return convertToUserDTO(user);
     }
 
     @Override
     public UserProfileDTO getUserProfile(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
         
         return UserProfileDTO.builder()
                 .id(user.getId())
@@ -139,17 +160,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public PageResponseDTO<UserSummaryDTO> searchUsers(UserSearchDTO searchDTO) {
+        int page = Optional.ofNullable(searchDTO.getPage()).orElse(0);
+        int size = Optional.ofNullable(searchDTO.getSize()).orElse(10);
+        String sortBy = Optional.ofNullable(searchDTO.getSortBy()).orElse("createdAt");
+        String direction = Optional.ofNullable(searchDTO.getSortDirection()).orElse("ASC");
+
         Pageable pageable = PageRequest.of(
-                searchDTO.getPage() != null ? searchDTO.getPage() : 0,
-                searchDTO.getSize() != null ? searchDTO.getSize() : 10,
-                Sort.by(Sort.Direction.fromString(
-                        searchDTO.getSortDirection() != null ? searchDTO.getSortDirection() : "ASC"),
-                        searchDTO.getSortBy() != null ? searchDTO.getSortBy() : "createdAt"
-                )
+                page,
+                size,
+                Sort.by(Sort.Direction.fromString(direction), sortBy)
         );
 
         Page<User> userPage = userRepository.findAll(pageable);
-        
+
         List<UserSummaryDTO> userSummaries = userPage.getContent().stream()
                 .map(this::convertToUserSummaryDTO)
                 .toList();
@@ -170,7 +193,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
         user.setStatus(UserStatus.DELETED);
         userRepository.save(user);
     }
@@ -178,14 +201,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void changePassword(Long id, ChangePasswordDTO changePasswordDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("La contraseña actual es incorrecta");
+            throw new RuntimeException(ErrorMessages.INCORRECT_CURRENT_PASSWORD);
         }
 
         if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
-            throw new RuntimeException("Las contraseñas no coinciden");
+            throw new RuntimeException(ErrorMessages.PASSWORDS_DO_NOT_MATCH);
         }
 
         user.setPasswordHash(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
@@ -195,7 +218,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public UserShippingAddressDTO createShippingAddress(Long userId, CreateShippingAddressDTO createAddressDTO) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
 
         ShippingAddress shippingAddress = ShippingAddress.builder()
                 .user(user)
@@ -215,10 +238,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public UserShippingAddressDTO updateShippingAddress(Long userId, Long addressId, UpdateShippingAddressDTO updateAddressDTO) {
         ShippingAddress shippingAddress = shippingAddressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.SHIPPING_ADDRESS_NOT_FOUND));
 
         if (!shippingAddress.getUser().getId().equals(userId)) {
-            throw new RuntimeException("La dirección no pertenece al usuario");
+            throw new RuntimeException(ErrorMessages.ADDRESS_DOES_NOT_BELONG_TO_USER);
         }
 
         if (updateAddressDTO.getAddress() != null) {
@@ -236,10 +259,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteShippingAddress(Long userId, Long addressId) {
         ShippingAddress shippingAddress = shippingAddressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.SHIPPING_ADDRESS_NOT_FOUND));
 
         if (!shippingAddress.getUser().getId().equals(userId)) {
-            throw new RuntimeException("La dirección no pertenece al usuario");
+            throw new RuntimeException(ErrorMessages.ADDRESS_DOES_NOT_BELONG_TO_USER);
         }
 
         shippingAddressRepository.deleteById(addressId);
@@ -248,7 +271,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<UserShippingAddressDTO> getUserShippingAddresses(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
 
         return user.getShippingAddresses().stream()
                 .map(this::convertToUserShippingAddressDTO)
@@ -279,10 +302,10 @@ public class CustomerServiceImpl implements CustomerService {
         
         return CustomerStatsDTO.builder()
                 .totalCustomers((long) users.size())
-                .activeCustomers((long) users.stream()
+                .activeCustomers(users.stream()
                         .filter(user -> user.getStatus() == UserStatus.ACTIVE)
                         .count())
-                .verifiedCustomers((long) users.stream()
+                .verifiedCustomers(users.stream()
                         .filter(User::getVerified)
                         .count())
                 .customersByStatus(users.stream()

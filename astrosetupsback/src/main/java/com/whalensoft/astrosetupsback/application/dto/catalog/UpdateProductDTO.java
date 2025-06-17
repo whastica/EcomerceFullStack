@@ -1,10 +1,14 @@
 package com.whalensoft.astrosetupsback.application.dto.catalog;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.*;
 
 @Data
 @NoArgsConstructor
@@ -33,7 +37,8 @@ public class UpdateProductDTO {
 
     @Pattern(regexp = "^(http|https)://.*", message = "La URL de la imagen debe ser válida")
     private String imageUrl;
-
+    
+    @Builder.Default
     private Boolean hasVariations = false;
 
     @NotNull(message = "El estado activo es obligatorio")

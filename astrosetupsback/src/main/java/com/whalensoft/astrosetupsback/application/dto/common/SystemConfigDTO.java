@@ -1,10 +1,11 @@
 package com.whalensoft.astrosetupsback.application.dto.common;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 
 @Data
@@ -16,6 +17,7 @@ public class SystemConfigDTO {
     private String configValue;
     private String description;
     private String category;
+    @Builder.Default
     private Boolean editable = true;
     private LocalDateTime lastModified;
     private String modifiedBy;

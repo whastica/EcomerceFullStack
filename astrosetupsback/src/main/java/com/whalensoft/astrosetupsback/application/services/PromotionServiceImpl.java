@@ -1,11 +1,12 @@
 package com.whalensoft.astrosetupsback.application.services;
 
+import com.whalensoft.astrosetupsback.application.common.InfoMessages;
+import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
 import com.whalensoft.astrosetupsback.application.dto.Promotion.*;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.PromotionService;
 import com.whalensoft.astrosetupsback.domain.model.PromoCode;
 import com.whalensoft.astrosetupsback.domain.repository.PromoCodeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,7 +23,6 @@ public class PromotionServiceImpl implements PromotionService {
 
     private final PromoCodeRepository promoCodeRepository;
 
-    @Autowired
     public PromotionServiceImpl(PromoCodeRepository promoCodeRepository) {
         this.promoCodeRepository = promoCodeRepository;
     }
@@ -49,7 +49,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public PromoCodeDTO updatePromoCode(Long id, UpdatePromoCodeDTO updatePromoCodeDTO) {
         PromoCode promoCode = promoCodeRepository.findByCode(id.toString())
-                .orElseThrow(() -> new IllegalArgumentException("Código promocional no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.PROMO_CODE_NOT_FOUND));
 
         if (updatePromoCodeDTO.getDiscountPercentage() != null) {
             promoCode.setDiscountPercentage(updatePromoCodeDTO.getDiscountPercentage());
@@ -74,7 +74,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public PromoCodeDTO getPromoCodeById(Long id) {
         PromoCode promoCode = promoCodeRepository.findByCode(id.toString())
-                .orElseThrow(() -> new IllegalArgumentException("Código promocional no encontrado"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.PROMO_CODE_NOT_FOUND));
         return convertToDTO(promoCode);
     }
 
@@ -252,7 +252,7 @@ public class PromotionServiceImpl implements PromotionService {
                 .failedActions(failedCodes.size())
                 .successfulCodes(successfulCodes)
                 .failedCodes(failedCodes)
-                .message("Operación en lote completada")
+                .message(InfoMessages.BULK_OPERATION_COMPLETED)
                 .build();
     }
 
@@ -280,7 +280,7 @@ public class PromotionServiceImpl implements PromotionService {
                 .failedActions(failedCodes.size())
                 .successfulCodes(successfulCodes)
                 .failedCodes(failedCodes)
-                .message("Operación en lote completada")
+                .message(InfoMessages.BULK_OPERATION_COMPLETED)
                 .build();
     }
 
@@ -305,7 +305,7 @@ public class PromotionServiceImpl implements PromotionService {
                 .failedActions(failedCodes.size())
                 .successfulCodes(successfulCodes)
                 .failedCodes(failedCodes)
-                .message("Operación en lote completada")
+                .message(InfoMessages.BULK_OPERATION_COMPLETED)
                 .build();
     }
 

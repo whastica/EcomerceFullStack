@@ -25,5 +25,6 @@ public class CreateShippingAddressDTO {
 
     private Long postalCodeId;
 
+    @Builder.Default
     private Boolean isDefault = false;
 }

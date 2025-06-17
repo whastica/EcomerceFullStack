@@ -48,6 +48,11 @@ public class CartItemRepositoryAdapter implements CartItemRepository {
     }
 
     @Override
+    public boolean existsById(Long id) {
+        return jpaCartItemRepository.existsById(id);
+    }
+
+    @Override
     public boolean existsByShoppingCartAndProduct(ShoppingCart cart, Product product) {
         return jpaCartItemRepository.existsByShoppingCartAndProduct(cart, product);
     }

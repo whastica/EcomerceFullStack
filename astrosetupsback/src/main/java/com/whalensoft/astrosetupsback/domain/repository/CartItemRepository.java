@@ -13,5 +13,6 @@ public interface CartItemRepository {
     Optional<CartItem> findByShoppingCartAndProduct(ShoppingCart cart, Product product);
     void deleteById(Long id);
     void deleteByShoppingCart(ShoppingCart cart);
+    boolean existsById(Long id);
     boolean existsByShoppingCartAndProduct(ShoppingCart cart, Product product);
 }

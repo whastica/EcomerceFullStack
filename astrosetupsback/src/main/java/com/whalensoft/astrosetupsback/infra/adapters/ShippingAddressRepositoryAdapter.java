@@ -27,6 +27,11 @@ public class ShippingAddressRepositoryAdapter implements ShippingAddressReposito
     }
 
     @Override
+    public List<ShippingAddress> findAll() {
+        return jpaShippingAddressRepository.findAll();
+    }
+
+    @Override
     public List<ShippingAddress> findByUser(User user) {
         return jpaShippingAddressRepository.findByUser(user);
     }

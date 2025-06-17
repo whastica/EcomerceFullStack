@@ -12,6 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AddToCartDTO {
+    @NotNull(message = "El ID del usuario es obligatorio")
+    private Long userId;
+
     @NotNull(message = "El ID del producto es obligatorio")
     private Long productId;
 

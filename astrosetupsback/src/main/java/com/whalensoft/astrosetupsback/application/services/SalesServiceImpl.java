@@ -1,7 +1,7 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import com.whalensoft.astrosetupsback.application.DTO.sales.*;
-import com.whalensoft.astrosetupsback.application.DTO.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.*;
+import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
 import com.whalensoft.astrosetupsback.domain.model.*;
 import com.whalensoft.astrosetupsback.domain.repository.*;

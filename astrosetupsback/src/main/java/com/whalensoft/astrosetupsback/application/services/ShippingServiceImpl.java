@@ -1,6 +1,6 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import com.whalensoft.astrosetupsback.application.DTO.shipping.*;
+import com.whalensoft.astrosetupsback.application.dto.shipping.*;
 import com.whalensoft.astrosetupsback.application.interfaces.ShippingService;
 import com.whalensoft.astrosetupsback.domain.model.*;
 import com.whalensoft.astrosetupsback.domain.repository.*;

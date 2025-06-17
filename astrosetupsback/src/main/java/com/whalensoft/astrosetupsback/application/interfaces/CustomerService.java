@@ -1,7 +1,7 @@
 package com.whalensoft.astrosetupsback.application.interfaces;
 
-import com.whalensoft.astrosetupsback.application.DTO.customer.*;
-import com.whalensoft.astrosetupsback.application.DTO.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.*;
+import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 
 import java.util.List;
 

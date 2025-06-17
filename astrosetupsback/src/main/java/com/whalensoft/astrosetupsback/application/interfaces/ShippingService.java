@@ -1,6 +1,6 @@
 package com.whalensoft.astrosetupsback.application.interfaces;
 
-import com.whalensoft.astrosetupsback.application.DTO.shipping.*;
+import com.whalensoft.astrosetupsback.application.dto.shipping.*;
 import java.util.List;
 
 public interface ShippingService {

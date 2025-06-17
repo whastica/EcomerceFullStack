@@ -2,6 +2,7 @@ package com.whalensoft.astrosetupsback.infra.adapters;
 
 import com.whalensoft.astrosetupsback.domain.model.ShippingAddress;
 import com.whalensoft.astrosetupsback.domain.model.User;
+import com.whalensoft.astrosetupsback.domain.model.City;
 import com.whalensoft.astrosetupsback.domain.repository.ShippingAddressRepository;
 import com.whalensoft.astrosetupsback.infra.repository.JpaShippingAddressRepository;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,11 @@ public class ShippingAddressRepositoryAdapter implements ShippingAddressReposito
     @Override
     public List<ShippingAddress> findByUser(User user) {
         return jpaShippingAddressRepository.findByUser(user);
+    }
+
+    @Override
+    public List<ShippingAddress> findByCity(City city) {
+        return jpaShippingAddressRepository.findByCity(city);
     }
 
     @Override

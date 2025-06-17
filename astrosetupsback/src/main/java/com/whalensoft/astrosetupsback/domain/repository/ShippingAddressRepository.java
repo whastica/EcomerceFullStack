@@ -2,6 +2,7 @@ package com.whalensoft.astrosetupsback.domain.repository;
 
 import com.whalensoft.astrosetupsback.domain.model.ShippingAddress;
 import com.whalensoft.astrosetupsback.domain.model.User;
+import com.whalensoft.astrosetupsback.domain.model.City;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ public interface ShippingAddressRepository {
     Optional<ShippingAddress> findById(Long id);
     List<ShippingAddress> findAll();
     List<ShippingAddress> findByUser(User user);
+    List<ShippingAddress> findByCity(City city);
     void deleteById(Long id);
     boolean existsById(Long id);
 }

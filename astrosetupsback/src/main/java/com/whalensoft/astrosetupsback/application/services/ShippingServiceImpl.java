@@ -223,7 +223,17 @@ public class ShippingServiceImpl implements ShippingService {
     public List<PostalCodeSummaryDTO> getPostalCodesByCity(Long cityId) {
         City city = cityRepository.findById(cityId)
                 .orElseThrow(() -> new RuntimeException("Ciudad no encontrada"));
-        List<PostalCode> postalCodes = city.getPostalCodes();
+        
+        // Buscar códigos postales a través de las direcciones de envío de esta ciudad
+        List<ShippingAddress> addressesInCity = shippingAddressRepository.findByCity(city);
+        
+        // Extraer códigos postales únicos
+        List<PostalCode> postalCodes = addressesInCity.stream()
+                .map(ShippingAddress::getPostalCode)
+                .filter(postalCode -> postalCode != null)
+                .distinct()
+                .collect(Collectors.toList());
+        
         return postalCodes.stream()
                 .map(this::convertToPostalCodeSummaryDTO)
                 .collect(Collectors.toList());
@@ -596,4 +606,4 @@ public class ShippingServiceImpl implements ShippingService {
         // En un caso real, esto vendría de una consulta a la base de datos
         return 25.0;
     }
-} 
+}

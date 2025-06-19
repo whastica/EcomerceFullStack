@@ -1,0 +1,86 @@
+package com.whalensoft.astrosetupsback.infra.controllers;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.CheckoutSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.CreateOrderDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.OrderDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.OrderSearchDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.OrderSearchResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.OrderStatusHistoryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.OrderSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.OrderTrackingDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.ProcessCheckoutDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.SalesStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.UpdateOrderStatusDTO;
+import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/sales")
+public class SalesController {
+    private final SalesService salesService;
+
+    public SalesController(SalesService salesService) {
+        this.salesService = salesService;
+    }
+
+    // --- Pedidos ---
+    @PostMapping("/orders")
+    public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody CreateOrderDTO dto) {
+        return ResponseEntity.ok(salesService.createOrder(dto));
+    }
+
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+        return ResponseEntity.ok(salesService.getOrderById(id));
+    }
+
+    @PostMapping("/orders/search")
+    public ResponseEntity<PageResponseDTO<OrderSearchResultDTO>> searchOrders(@RequestBody OrderSearchDTO searchDTO) {
+        return ResponseEntity.ok(salesService.searchOrders(searchDTO));
+    }
+
+    @PutMapping("/orders/{id}/status")
+    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody UpdateOrderStatusDTO dto) {
+        return ResponseEntity.ok(salesService.updateOrderStatus(id, dto));
+    }
+
+    @GetMapping("/orders/{id}/status-history")
+    public ResponseEntity<List<OrderStatusHistoryDTO>> getOrderStatusHistory(@PathVariable Long id) {
+        return ResponseEntity.ok(salesService.getOrderStatusHistory(id));
+    }
+
+    @GetMapping("/orders/{id}/tracking")
+    public ResponseEntity<OrderTrackingDTO> getOrderTracking(@PathVariable Long id) {
+        return ResponseEntity.ok(salesService.getOrderTracking(id));
+    }
+
+    @GetMapping("/orders/customer/{customerId}")
+    public ResponseEntity<List<OrderSummaryDTO>> getCustomerOrders(@PathVariable Long customerId) {
+        return ResponseEntity.ok(salesService.getCustomerOrders(customerId));
+    }
+
+    // --- Checkout ---
+    @PostMapping("/checkout")
+    public ResponseEntity<CheckoutSummaryDTO> processCheckout(@Valid @RequestBody ProcessCheckoutDTO dto) {
+        return ResponseEntity.ok(salesService.processCheckout(dto));
+    }
+
+    // --- Estadísticas de Ventas ---
+    @GetMapping("/stats")
+    public ResponseEntity<SalesStatsDTO> getSalesStats() {
+        return ResponseEntity.ok(salesService.getSalesStats());
+    }
+}

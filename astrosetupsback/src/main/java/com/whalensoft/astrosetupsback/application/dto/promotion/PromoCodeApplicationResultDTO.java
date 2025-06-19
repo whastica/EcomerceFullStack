@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.Promotion;
+package com.whalensoft.astrosetupsback.application.dto.promotion;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

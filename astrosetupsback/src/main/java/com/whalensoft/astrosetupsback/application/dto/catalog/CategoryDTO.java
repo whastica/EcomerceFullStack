@@ -1,11 +1,12 @@
 package com.whalensoft.astrosetupsback.application.dto.catalog;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.*;
 
 @Data
 @NoArgsConstructor

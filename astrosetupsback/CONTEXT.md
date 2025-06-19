@@ -4,7 +4,7 @@
 Astro Setups es una tienda en línea de productos de hardware que opera bajo un modelo de intermediación, sin stock propio. La plataforma conecta clientes con proveedores, facilitando la compra de productos sin necesidad de manejar inventario directamente.
 
 ### Funcionalidades Principales
-- Exploración de catálogo con filtros avanzados
+- Exploración de catálogo con filtros
 - Consulta de especificaciones técnicas y comparación de productos
 - Compra rápida sin registro o con cuenta
 - Aplicación de códigos promocionales

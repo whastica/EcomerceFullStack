@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.Promotion;
+package com.whalensoft.astrosetupsback.application.dto.promotion;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,18 +10,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PromoCodeDTO {
+public class PromoCodeSummaryDTO {
     private String code;
     private Double discountPercentage;
     private LocalDateTime expirationDate;
-    private Integer remainingUses;
-    private Boolean forDiscountedProductsOnly;
     private Boolean active;
-
-    // Campos calculados
     private Boolean isValid;
-    private Boolean isExpired;
-    private Integer totalUses;
     private Integer timesUsed;
-    private LocalDateTime createdAt;
+    private Integer remainingUses;
 }

@@ -15,7 +15,6 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {/* Logo + Descripción */}
           <div>
             <div className="flex items-center mb-4">
               <div className="w-9 h-9 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
@@ -29,26 +28,23 @@ export default function Footer() {
             <div className="flex space-x-4">
               {['facebook', 'instagram', 'twitter', 'youtube'].map((platform) => (
                 <a key={platform} href="#" aria-label={platform} className="text-gray-400 hover:text-white text-lg">
-                  {/* Aquí podrías usar íconos reales */}
                   {platform === 'facebook' ? '📘' : platform === 'instagram' ? '📷' : platform === 'twitter' ? '🐦' : '📺'}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Enlaces rápidos */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
             <ul className="space-y-2 text-sm text-gray-300">
               <li><Link to="/" className="hover:text-white">🏠 Inicio</Link></li>
-              <li><Link to="/catalog" className="hover:text-white">📦 Catálogo</Link></li>
+              <li><Link to="/products" className="hover:text-white">📦 Catálogo</Link></li>
               <li><Link to="/promotions" className="hover:text-white">🎉 Promociones</Link></li>
               <li><Link to="/customPc" className="hover:text-white">🖥️ Personaliza tu PC</Link></li>
               <li><Link to="/contact" className="hover:text-white">❓ Preguntas Frecuentes</Link></li>
             </ul>
           </div>
 
-          {/* Rastreo de paquete */}
           <div>
             <h3 className="text-lg font-semibold mb-4">📦 Rastrea tu Paquete</h3>
             <p className="text-gray-400 text-sm mb-4">
@@ -81,7 +77,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Barra inferior */}
       <div className="border-t border-gray-800 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <span className="text-gray-400 text-sm text-center md:text-left">

@@ -1,7 +1,14 @@
-import './styles/global.css';
-import './App.css';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/home/Home';
+import ProductsPage from './pages/products/Products';
+import PromotionsPage from './pages/products/Promotions';
 
 export default function App() {
-  return <Home />;
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/products" element={<ProductsPage />} />
+      <Route path="/promotions" element={<PromotionsPage />} />
+    </Routes>
+  );
 }

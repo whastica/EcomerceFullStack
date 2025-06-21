@@ -58,7 +58,7 @@ export default function Navbar({
           {/* Desktop Links */}
           <div className="hidden lg:flex space-x-4 items-center">
             <Link to="/" className="nav-link">Inicio</Link>
-            <Link to="/catalog" className="nav-link">Catálogo</Link>
+            <Link to="/products" className="nav-link">Catálogo</Link>
             <Link to="/promotions" className="nav-link">Promociones</Link>
             <Link to="/contact" className="nav-link">Preguntas Frecuentes</Link>
             <Link to="/customPc" className="btn-gradient">🖥️ Personaliza tu PC</Link>
@@ -141,7 +141,7 @@ export default function Navbar({
       {isMobileMenuOpen && (
         <div className="lg:hidden px-4 pb-4">
           <Link to="/" className="mobile-link">Inicio</Link>
-          <Link to="/catalog" className="mobile-link">Catálogo</Link>
+          <Link to="/products" className="mobile-link">Catálogo</Link>
           <Link to="/promotions" className="mobile-link">Promociones</Link>
           <Link to="/contact" className="mobile-link">Preguntas Frecuentes</Link>
           <Link to="/customPc" className="btn-gradient block w-full text-center mt-2">🖥️ Personaliza tu PC</Link>

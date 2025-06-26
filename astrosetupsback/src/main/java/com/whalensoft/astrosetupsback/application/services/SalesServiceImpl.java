@@ -225,22 +225,22 @@ public class SalesServiceImpl implements SalesService {
         // Validar que el producto existe
         Product product = productRepository.findById(addToCartDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        
+
         // Validar que el producto está activo
         if (!product.getActive()) {
             throw new RuntimeException("El producto no está disponible");
         }
-        
+
         // Obtener o crear carrito para el usuario
         User user = userRepository.findById(addToCartDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
+
         ShoppingCart cart = shoppingCartRepository.findByUser(user)
                 .orElseGet(() -> createNewShoppingCart(user));
-        
+
         // Verificar si el producto ya está en el carrito
         Optional<CartItem> existingItem = cartItemRepository.findByShoppingCartAndProduct(cart, product);
-        
+
         CartItem cartItem;
         if (existingItem.isPresent()) {
             // Actualizar cantidad
@@ -251,15 +251,17 @@ public class SalesServiceImpl implements SalesService {
             cartItem = CartItem.builder()
                     .shoppingCart(cart)
                     .product(product)
+                    .productName(product.getName()) // ← ¡ESTO es lo que te faltaba!
                     .quantity(addToCartDTO.getQuantity())
-                    .unitPrice(product.getPrice())
+                    .unitPrice(product.getEffectivePrice()) // ← Mejor usar el precio efectivo
                     .build();
         }
-        
+
         CartItem savedItem = cartItemRepository.save(cartItem);
-        
+
         return convertToCartItemDTO(savedItem);
     }
+
 
     @Override
     public CartItemDTO updateCartItem(Long cartItemId, UpdateCartItemDTO updateCartItemDTO) {

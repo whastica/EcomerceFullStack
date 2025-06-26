@@ -4,7 +4,6 @@ import Footer from '../../components/layout/footer';
 import Carousel, { Slide } from '../../components/ui/Carousel';
 import CategoryGrid from '../../components/home/CategoryGrid';
 
-
 export default function Home() {
 
   const carouselSlides: Slide[] = [
@@ -26,7 +25,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">
       <Navbar 
         cartItemCount={3}
         isAuthenticated={true}
@@ -37,7 +36,9 @@ export default function Home() {
       <Carousel slides={carouselSlides} />
 
       <Container padding="large" className="mt-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Explora por categoría</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 transition-colors duration-200">
+          Explora por categoría
+        </h2>
         <CategoryGrid categories={[
           { id: 1, name: 'Tarjetas Gráficas', slug: 'tarjetas-graficas', imageUrl: '/assets/categories/tarjetas-graficas.webp' },
           { id: 2, name: 'Procesadores', slug: 'procesadores', imageUrl: '/assets/categories/procesadores.webp' },

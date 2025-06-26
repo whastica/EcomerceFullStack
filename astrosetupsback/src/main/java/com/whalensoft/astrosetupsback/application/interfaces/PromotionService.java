@@ -8,10 +8,10 @@ import java.util.List;
 public interface PromotionService {
     // Gestión de Códigos Promocionales
     PromoCodeDTO createPromoCode(CreatePromoCodeDTO createPromoCodeDTO);
-    PromoCodeDTO updatePromoCode(Long id, UpdatePromoCodeDTO updatePromoCodeDTO);
-    PromoCodeDTO getPromoCodeById(Long id);
+    PromoCodeDTO updatePromoCode(String code, UpdatePromoCodeDTO updatePromoCodeDTO);
+    PromoCodeDTO getPromoCodeByCode(String code);
     PageResponseDTO<PromoCodeSummaryDTO> searchPromoCodes(PromoCodeSearchDTO searchDTO);
-    void deletePromoCode(Long id);
+    void deletePromoCode(String code);
     
     // Validación y Aplicación de Promociones
     PromoCodeValidationResultDTO validatePromoCode(PromoCodeValidationDTO validationDTO);
@@ -22,7 +22,7 @@ public interface PromotionService {
     PromoCodeStatsDTO getPromoCodeStats();
     
     // Operaciones en Lote
-    BulkPromoCodeActionResultDTO bulkCreatePromoCodes(BulkPromoCodeActionDTO bulkActionDTO);
+    BulkPromoCodeActionResultDTO bulkCreatePromoCodes(BulkCreatePromoCodeDTO bulkCreateDTO);
     BulkPromoCodeActionResultDTO bulkUpdatePromoCodes(BulkPromoCodeActionDTO bulkActionDTO);
     BulkPromoCodeActionResultDTO bulkDeletePromoCodes(BulkPromoCodeActionDTO bulkActionDTO);
 } 

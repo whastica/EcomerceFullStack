@@ -64,7 +64,8 @@ public class CustomerController {
     public ResponseEntity<PageResponseDTO<UserSummaryDTO>> searchUsers(@RequestBody UserSearchDTO searchDTO) {
         return ResponseEntity.ok(customerService.searchUsers(searchDTO));
     }
-
+    //No es recomendable nunca borrar datos de usuraio lo mejor es desactivarlos pero si lo requieren
+    //la funcion esta
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         customerService.deleteUser(id);

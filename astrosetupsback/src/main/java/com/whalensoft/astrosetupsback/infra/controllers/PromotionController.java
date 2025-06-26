@@ -2,6 +2,7 @@ package com.whalensoft.astrosetupsback.infra.controllers;
 
 import java.util.List;
 
+import com.whalensoft.astrosetupsback.application.dto.promotion.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,19 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.whalensoft.astrosetupsback.application.dto.promotion.ApplyPromoCodeDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.BulkPromoCodeActionDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.BulkPromoCodeActionResultDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.CreatePromoCodeDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.PromoCodeApplicationResultDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.PromoCodeDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.PromoCodeSearchDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.PromoCodeStatsDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.PromoCodeSummaryDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.PromoCodeValidationDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.PromoCodeValidationResultDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.UpdatePromoCodeDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.UserPromoCodeHistoryDTO;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.PromotionService;
 
@@ -45,14 +33,14 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.createPromoCode(dto));
     }
 
-    @PutMapping("/codes/{id}")
-    public ResponseEntity<PromoCodeDTO> updatePromoCode(@PathVariable Long id, @Valid @RequestBody UpdatePromoCodeDTO dto) {
-        return ResponseEntity.ok(promotionService.updatePromoCode(id, dto));
+    @PutMapping("/codes/{code}")
+    public ResponseEntity<PromoCodeDTO> updatePromoCode(@PathVariable String code, @Valid @RequestBody UpdatePromoCodeDTO dto) {
+        return ResponseEntity.ok(promotionService.updatePromoCode(code, dto));
     }
 
-    @GetMapping("/codes/{id}")
-    public ResponseEntity<PromoCodeDTO> getPromoCodeById(@PathVariable Long id) {
-        return ResponseEntity.ok(promotionService.getPromoCodeById(id));
+    @GetMapping("/codes/{code}")
+    public ResponseEntity<PromoCodeDTO> getPromoCodeByCode(@PathVariable String code) {
+        return ResponseEntity.ok(promotionService.getPromoCodeByCode(code));
     }
 
     @PostMapping("/codes/search")
@@ -60,9 +48,9 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.searchPromoCodes(searchDTO));
     }
 
-    @DeleteMapping("/codes/{id}")
-    public ResponseEntity<Void> deletePromoCode(@PathVariable Long id) {
-        promotionService.deletePromoCode(id);
+    @DeleteMapping("/codes/{code}")
+    public ResponseEntity<Void> deletePromoCode(@PathVariable String code) {
+        promotionService.deletePromoCode(code);
         return ResponseEntity.noContent().build();
     }
 
@@ -90,7 +78,7 @@ public class PromotionController {
 
     // --- Operaciones en Lote ---
     @PostMapping("/codes/bulk-create")
-    public ResponseEntity<BulkPromoCodeActionResultDTO> bulkCreatePromoCodes(@RequestBody BulkPromoCodeActionDTO dto) {
+    public ResponseEntity<BulkPromoCodeActionResultDTO> bulkCreatePromoCodes(@RequestBody BulkCreatePromoCodeDTO dto) {
         return ResponseEntity.ok(promotionService.bulkCreatePromoCodes(dto));
     }
 

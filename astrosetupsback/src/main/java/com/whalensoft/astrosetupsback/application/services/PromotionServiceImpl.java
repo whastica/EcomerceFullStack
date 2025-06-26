@@ -47,8 +47,8 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public PromoCodeDTO updatePromoCode(Long id, UpdatePromoCodeDTO updatePromoCodeDTO) {
-        PromoCode promoCode = promoCodeRepository.findByCode(id.toString())
+    public PromoCodeDTO updatePromoCode(String code, UpdatePromoCodeDTO updatePromoCodeDTO) {
+        PromoCode promoCode = promoCodeRepository.findByCode(code)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.PROMO_CODE_NOT_FOUND));
 
         if (updatePromoCodeDTO.getDiscountPercentage() != null) {
@@ -72,8 +72,8 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public PromoCodeDTO getPromoCodeById(Long id) {
-        PromoCode promoCode = promoCodeRepository.findByCode(id.toString())
+    public PromoCodeDTO getPromoCodeByCode(String code) {
+        PromoCode promoCode = promoCodeRepository.findByCode(code)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.PROMO_CODE_NOT_FOUND));
         return convertToDTO(promoCode);
     }
@@ -104,11 +104,11 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public void deletePromoCode(Long id) {
-        if (!promoCodeRepository.existsByCode(id.toString())) {
+    public void deletePromoCode(String code) {
+        if (!promoCodeRepository.existsByCode(code)) {
             throw new IllegalArgumentException("Código promocional no encontrado");
         }
-        promoCodeRepository.deleteByCode(id.toString());
+        promoCodeRepository.deleteByCode(code);
     }
 
     @Override
@@ -226,28 +226,22 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public BulkPromoCodeActionResultDTO bulkCreatePromoCodes(BulkPromoCodeActionDTO bulkActionDTO) {
+    public BulkPromoCodeActionResultDTO bulkCreatePromoCodes(BulkCreatePromoCodeDTO bulkCreateDTO) {
         List<String> successfulCodes = new ArrayList<>();
         Map<String, String> failedCodes = new HashMap<>();
 
-        for (String code : bulkActionDTO.getPromoCodes()) {
+        for (CreatePromoCodeDTO dto : bulkCreateDTO.getPromoCodes()) {
             try {
-                CreatePromoCodeDTO createDTO = CreatePromoCodeDTO.builder()
-                        .code(code)
-                        .discountPercentage(10.0) 
-                        // TODO: Hacer configurable
-                        .active(true)
-                        .build();
-                createPromoCode(createDTO);
-                successfulCodes.add(code);
+                createPromoCode(dto);
+                successfulCodes.add(dto.getCode());
             } catch (Exception e) {
-                failedCodes.put(code, e.getMessage());
+                failedCodes.put(dto.getCode(), e.getMessage());
             }
         }
 
         return BulkPromoCodeActionResultDTO.builder()
                 .action("CREATE")
-                .totalCodes(bulkActionDTO.getPromoCodes().size())
+                .totalCodes(bulkCreateDTO.getPromoCodes().size())
                 .successfulActions(successfulCodes.size())
                 .failedActions(failedCodes.size())
                 .successfulCodes(successfulCodes)
@@ -255,7 +249,6 @@ public class PromotionServiceImpl implements PromotionService {
                 .message(InfoMessages.BULK_OPERATION_COMPLETED)
                 .build();
     }
-
     @Override
     public BulkPromoCodeActionResultDTO bulkUpdatePromoCodes(BulkPromoCodeActionDTO bulkActionDTO) {
         List<String> successfulCodes = new ArrayList<>();
@@ -266,7 +259,7 @@ public class PromotionServiceImpl implements PromotionService {
                 UpdatePromoCodeDTO updateDTO = UpdatePromoCodeDTO.builder()
                         .active("ACTIVATE".equals(bulkActionDTO.getAction()))
                         .build();
-                updatePromoCode(Long.parseLong(code), updateDTO);
+                updatePromoCode(code, updateDTO);
                 successfulCodes.add(code);
             } catch (Exception e) {
                 failedCodes.put(code, e.getMessage());
@@ -291,7 +284,7 @@ public class PromotionServiceImpl implements PromotionService {
 
         for (String code : bulkActionDTO.getPromoCodes()) {
             try {
-                deletePromoCode(Long.parseLong(code));
+                deletePromoCode(code);
                 successfulCodes.add(code);
             } catch (Exception e) {
                 failedCodes.put(code, e.getMessage());

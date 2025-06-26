@@ -50,14 +50,14 @@ public class CatalogController {
         return ResponseEntity.ok(catalogService.updateProduct(id, dto));
     }
 
+    @PostMapping("/products/_search")
+    public ResponseEntity<PageResponseDTO<ProductSearchResultDTO>> searchProducts(@RequestBody ProductSearchDTO searchDTO) {
+        return ResponseEntity.ok(catalogService.searchProducts(searchDTO));
+    }
+
     @GetMapping("/products/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(catalogService.getProductById(id));
-    }
-
-    @PostMapping("/products/search")
-    public ResponseEntity<PageResponseDTO<ProductSearchResultDTO>> searchProducts(@RequestBody ProductSearchDTO searchDTO) {
-        return ResponseEntity.ok(catalogService.searchProducts(searchDTO));
     }
 
     @DeleteMapping("/products/{id}")
@@ -101,7 +101,8 @@ public class CatalogController {
     public ResponseEntity<List<CategorySummaryDTO>> getAllCategories() {
         return ResponseEntity.ok(catalogService.getAllCategories());
     }
-
+    // No se puede eliminar una categoria por que hay productos adjuntos a ella en este caso
+    // Tocara eliminar los productos que tiene y luego eliminar la categoria la otra es inhabilitarla
     @DeleteMapping("/categories/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         catalogService.deleteCategory(id);
@@ -123,7 +124,8 @@ public class CatalogController {
     public ResponseEntity<List<CategoryTypeBasicDTO>> getAllCategoryTypes() {
         return ResponseEntity.ok(catalogService.getAllCategoryTypes());
     }
-
+    //Tiene categorias y productos asjuntos por eso no es posible eliminarla asi por asi
+    //Ocurre lo mismo que en category
     @DeleteMapping("/category-types/{id}")
     public ResponseEntity<Void> deleteCategoryType(@PathVariable Long id) {
         catalogService.deleteCategoryType(id);

@@ -333,9 +333,9 @@ public class SalesServiceImpl implements SalesService {
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
         
         // Validar que el carrito no esté expirado
-        if (cart.isExpired()) {
+        /*if (cart.isExpired()) {
             throw new RuntimeException("El carrito ha expirado");
-        }
+        }*/
         
         // Calcular totales
         double subtotal = cart.getTotal();
@@ -502,12 +502,17 @@ public class SalesServiceImpl implements SalesService {
     private OrderItem createOrderItem(CreateOrderItemDTO createOrderItemDTO) {
         Product product = productRepository.findById(createOrderItemDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        
+
+        int quantity = createOrderItemDTO.getQuantity();
+        double finalPrice = createOrderItemDTO.getFinalPrice();
+        double subtotal = finalPrice * quantity;
+
         return OrderItem.builder()
                 .product(product)
                 .productName(product.getName())
-                .quantity(createOrderItemDTO.getQuantity())
-                .finalPrice(product.getPrice())
+                .quantity(quantity)
+                .finalPrice(finalPrice)
+                .subtotal(subtotal)
                 .build();
     }
 

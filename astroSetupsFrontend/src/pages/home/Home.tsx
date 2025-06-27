@@ -48,6 +48,7 @@ export default function Home() {
           { id: 7, name: 'Almacenamiento SSD', slug: 'almacenamiento-ssd', imageUrl: '/assets/categories/ssd.webp' },
           { id: 8, name: 'Periféricos', slug: 'perifericos', imageUrl: '/assets/categories/perisfericos.webp' },
         ]} />
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Preguntas Freceuntes</h2>
       </Container>
       <Footer />
     </div>

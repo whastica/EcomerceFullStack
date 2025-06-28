@@ -60,11 +60,14 @@ public class CatalogController {
         return ResponseEntity.ok(catalogService.getProductById(id));
     }
 
+    /* Recomendacion de mejor deshabilitar un producto en lugar de eliminarlo
+    pero tanmbien hay que consultarlo
+
     @DeleteMapping("/products/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         catalogService.deleteProduct(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
     @GetMapping("/products/featured")
     public ResponseEntity<List<ProductSummaryDTO>> getFeaturedProducts() {
@@ -101,13 +104,14 @@ public class CatalogController {
     public ResponseEntity<List<CategorySummaryDTO>> getAllCategories() {
         return ResponseEntity.ok(catalogService.getAllCategories());
     }
+
     // No se puede eliminar una categoria por que hay productos adjuntos a ella en este caso
     // Tocara eliminar los productos que tiene y luego eliminar la categoria la otra es inhabilitarla
-    @DeleteMapping("/categories/{id}")
+    /*@DeleteMapping("/categories/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         catalogService.deleteCategory(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
     // --- Tipos de Categoría ---
     @PostMapping("/category-types")
@@ -126,9 +130,9 @@ public class CatalogController {
     }
     //Tiene categorias y productos asjuntos por eso no es posible eliminarla asi por asi
     //Ocurre lo mismo que en category
-    @DeleteMapping("/category-types/{id}")
+    /*@DeleteMapping("/category-types/{id}")
     public ResponseEntity<Void> deleteCategoryType(@PathVariable Long id) {
         catalogService.deleteCategoryType(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 }

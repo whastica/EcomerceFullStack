@@ -63,6 +63,7 @@ public class ShippingController {
         return ResponseEntity.ok(shippingService.getAllShippingAddresses());
     }
 
+    // Hay que hablar de este delete
     @DeleteMapping("/addresses/{id}")
     public ResponseEntity<Void> deleteShippingAddress(@PathVariable Long id) {
         shippingService.deleteShippingAddress(id);

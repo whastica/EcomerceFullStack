@@ -64,13 +64,12 @@ public class CustomerController {
     public ResponseEntity<PageResponseDTO<UserSummaryDTO>> searchUsers(@RequestBody UserSearchDTO searchDTO) {
         return ResponseEntity.ok(customerService.searchUsers(searchDTO));
     }
-    //No es recomendable nunca borrar datos de usuraio lo mejor es desactivarlos pero si lo requieren
-    //la funcion esta
-    @DeleteMapping("/{id}")
+    //No es recomendable nunca borrar datos de usuraio lo mejor es desactivarlos
+    /*@DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         customerService.deleteUser(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
     @PutMapping("/{id}/password")
     public ResponseEntity<Void> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordDTO dto) {
@@ -89,6 +88,7 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.updateShippingAddress(userId, addressId, dto));
     }
 
+    //Hablar el manejor de estas eliminaciones
     @DeleteMapping("/{userId}/shipping-addresses/{addressId}")
     public ResponseEntity<Void> deleteShippingAddress(@PathVariable Long userId, @PathVariable Long addressId) {
         customerService.deleteShippingAddress(userId, addressId);

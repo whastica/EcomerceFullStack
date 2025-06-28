@@ -48,6 +48,7 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.searchPromoCodes(searchDTO));
     }
 
+    //Creo que aqui si hay que eliminar para no repetir pero tambien se podrian desactivar
     @DeleteMapping("/codes/{code}")
     public ResponseEntity<Void> deletePromoCode(@PathVariable String code) {
         promotionService.deletePromoCode(code);
@@ -87,8 +88,8 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.bulkUpdatePromoCodes(dto));
     }
 
-    @PostMapping("/codes/bulk-delete")
+    /*@PostMapping("/codes/bulk-delete")
     public ResponseEntity<BulkPromoCodeActionResultDTO> bulkDeletePromoCodes(@RequestBody BulkPromoCodeActionDTO dto) {
         return ResponseEntity.ok(promotionService.bulkDeletePromoCodes(dto));
-    }
+    }*/
 }

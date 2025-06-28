@@ -78,7 +78,7 @@ export default function Sidebar({
               {categories.map((category) => (
                 <Link
                   key={category.id}
-                  to={`/catalog/${category.slug}`}
+                  to={`/products`}
                   className="flex justify-between items-center text-sm text-gray-700 hover:text-purple-600 py-1"
                 >
                   <span>{category.name}</span>

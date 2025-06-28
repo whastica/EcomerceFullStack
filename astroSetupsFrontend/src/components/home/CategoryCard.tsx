@@ -6,10 +6,10 @@ interface CategoryCardProps {
   imageUrl: string;
 }
 
-export default function CategoryCard({ name, slug, imageUrl }: CategoryCardProps) {
+export default function CategoryCard({ name, imageUrl }: CategoryCardProps) {
   return (
     <Link
-      to={`/catalog/${slug}`}
+      to={`/products`}
       className="relative rounded-xl overflow-hidden shadow-md transform hover:scale-105 transition-transform"
     >
       <img

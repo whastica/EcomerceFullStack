@@ -6,6 +6,7 @@ interface NavbarProps {
   isAuthenticated?: boolean;
   userRole?: 'CLIENT' | 'ADMIN';
   userName?: string;
+  onFAQClick?: () => void; // <- ✨ Esta es la nueva línea
 }
 
 export default function Navbar({
@@ -16,12 +17,6 @@ export default function Navbar({
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Búsqueda:', searchQuery);
-  };
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow sticky top-0 z-50">
@@ -36,36 +31,22 @@ export default function Navbar({
             <span className="text-xl font-bold text-gray-900">Astro Setups</span>
           </Link>
 
-          {/* Search bar (desktop) */}
-          <div className="hidden lg:flex flex-1 justify-center">
-            <form onSubmit={handleSearch} className="relative w-full max-w-md">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar productos..."
-                className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <button
-                type="submit"
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                🔍
-              </button>
-            </form>
-          </div>
-
           {/* Desktop Links */}
-          <div className="hidden lg:flex space-x-4 items-center">
-            <Link to="/" className="nav-link">Inicio</Link>
-            <Link to="/products" className="nav-link">Catálogo</Link>
-            <Link to="/promotions" className="nav-link">Promociones</Link>
-            <Link to="/contact" className="nav-link">Preguntas Frecuentes</Link>
-            <Link to="/customPc" className="btn-gradient">🖥️ Personaliza tu PC</Link>
+          <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700">
+            <Link to="/" className="hover:text-purple-600">Inicio</Link>
+            <Link to="/products" className="hover:text-purple-600">Catálogo</Link>
+            <a href="/#faq" className="hover:text-purple-600">Preguntas Frecuentes</a>
+            <Link to="/promotions" className="hover:text-purple-600">Promociones</Link>
+            <Link
+              to="/customPc"
+              className="text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded-md transition whitespace-nowrap"
+            >
+              🖥️ Personaliza tu PC
+            </Link>
           </div>
 
           {/* Right Items */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             {/* Cart */}
             <Link to="/cart" className="relative text-gray-700 hover:text-purple-600">
               🛒
@@ -118,33 +99,14 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Mobile Search */}
-      <div className="lg:hidden px-4 pb-3">
-        <form onSubmit={handleSearch} className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar productos..."
-            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <button
-            type="submit"
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            🔍
-          </button>
-        </form>
-      </div>
-
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden px-4 pb-4">
-          <Link to="/" className="mobile-link">Inicio</Link>
-          <Link to="/products" className="mobile-link">Catálogo</Link>
-          <Link to="/promotions" className="mobile-link">Promociones</Link>
-          <Link to="/contact" className="mobile-link">Preguntas Frecuentes</Link>
-          <Link to="/customPc" className="btn-gradient block w-full text-center mt-2">🖥️ Personaliza tu PC</Link>
+        <div className="lg:hidden px-4 pb-4 flex flex-col space-y-3 pt-2 text-sm font-medium text-gray-700">
+          <Link to="/" className="hover:text-purple-600">Inicio</Link>
+          <Link to="/products" className="hover:text-purple-600">Catálogo</Link>
+          <a href="/#faq" className="hover:text-purple-600">Preguntas Frecuentes</a>
+          <Link to="/promotions" className="hover:text-purple-600">Promociones</Link>
+          <Link to="/customPc" className="btn-gradient text-center">🖥️ Personaliza tu PC</Link>
         </div>
       )}
     </nav>

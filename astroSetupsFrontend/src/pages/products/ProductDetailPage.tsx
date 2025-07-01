@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import Container from '../../components/layout/Container';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/footer';
-import { useCart } from '../../pages/cart/Cart';
 import ProductInfo from '../../components/products/ProductInfo';
 import ProductGrid from '../../components/products/ProductGrid';
 import ProductDescription from '../../components/products/ProductDescription'; // ✅ Importación añadida
@@ -93,7 +92,6 @@ const exampleProducts: ProductDetail[] = [
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { dispatch } = useCart();
   const [product, setProduct] = useState<ProductDetail | null>(null);
 
   useEffect(() => {

@@ -68,7 +68,7 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Especificaciones técnicas</h2>
 
-            {Object.keys(product.specifications).length > 0 ? (
+            {product.specifications && Object.keys(product.specifications).length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {Object.entries(product.specifications).map(([key, value], index) => (
                   <div

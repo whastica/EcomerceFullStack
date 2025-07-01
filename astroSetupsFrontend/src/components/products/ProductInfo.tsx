@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ProductDetail } from '../../pages/products/ProductDetailPage';
 import { useCart } from '../../pages/cart/Cart';
 import { toast } from 'sonner';
@@ -8,25 +7,18 @@ interface ProductInfoProps {
 }
 
 export default function ProductInfo({ product }: ProductInfoProps) {
-  const [quantity, setQuantity] = useState(1);
   const { dispatch } = useCart();
-
-  const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= product.stock) {
-      setQuantity(newQuantity);
-    }
-  };
 
   const handleAddToCart = () => {
     dispatch({
       type: 'ADD_ITEM',
       payload: {
         ...product,
-        quantity,
+        quantity: 1, // Valor por defecto temporal
       },
     });
 
-    toast.success(`${quantity} unidad(es) de "${product.name}" fueron añadidas al carrito 🛒`);
+    toast.success(`"${product.name}" fue añadido al carrito 🛒`);
   };
 
   const renderStars = (rating?: number) => {
@@ -61,20 +53,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
       </div>
 
-      <p className="text-2xl font-semibold text-purple-700">${product.price.toLocaleString()}</p>
-
-      <div className="flex items-center space-x-4">
-        <label className="text-sm font-medium text-gray-700">Cantidad:</label>
-        <input
-          type="number"
-          min={1}
-          max={product.stock}
-          value={quantity}
-          onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
-          className="w-20 px-3 py-2 border border-gray-300 rounded-md text-center"
-        />
-        <span className="text-sm text-gray-500">Stock: {product.stock}</span>
-      </div>
+      <p className="text-2xl font-semibold text-purple-700">
+        ${product.price.toLocaleString()}
+      </p>
 
       <div className="flex flex-col sm:flex-row gap-4">
         <button

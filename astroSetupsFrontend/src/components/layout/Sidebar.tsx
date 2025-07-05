@@ -56,16 +56,15 @@ export default function Sidebar({
     onFilterChange?.({ priceRange: [0, 10000], brands: [], availability: 'all' });
   };
 
-  // Sidebar de catálogo (desktop)
   if (type === 'catalog') {
     return (
-      <div className={`w-64 bg-white shadow-lg border-r border-gray-200 overflow-y-auto ${isOpen ? 'block' : 'hidden lg:block'}`}>
+      <div className={`w-64 bg-[#1E1E1E] shadow-lg border-r border-gray-800 overflow-y-auto ${isOpen ? 'block' : 'hidden lg:block'}`}>
         <div className="p-4">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
+            <h2 className="text-lg font-semibold text-white">Filtros</h2>
             <button 
               onClick={clearFilters}
-              className="text-sm text-purple-600 hover:text-purple-700"
+              className="text-sm text-purple-400 hover:text-purple-300"
             >
               Limpiar
             </button>
@@ -73,13 +72,13 @@ export default function Sidebar({
 
           {/* Categorías */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Categorías</h3>
+            <h3 className="text-sm font-medium text-white mb-3">Categorías</h3>
             <div className="space-y-2">
               {categories.map((category) => (
                 <Link
                   key={category.id}
                   to={`/products`}
-                  className="flex justify-between items-center text-sm text-gray-700 hover:text-purple-600 py-1"
+                  className="flex justify-between items-center text-sm text-gray-300 hover:text-purple-400 py-1"
                 >
                   <span>{category.name}</span>
                   {category.productCount && (
@@ -92,7 +91,7 @@ export default function Sidebar({
 
           {/* Rango de Precio */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Rango de Precio</h3>
+            <h3 className="text-sm font-medium text-white mb-3">Rango de Precio</h3>
             <div className="space-y-3">
               <div className="flex justify-between text-xs text-gray-500">
                 <span>${priceRange[0].toLocaleString()}</span>
@@ -105,21 +104,21 @@ export default function Sidebar({
                 step="100"
                 value={priceRange[1]}
                 onChange={(e) => handlePriceChange(priceRange[0], parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
               />
             </div>
           </div>
 
           {/* Disponibilidad */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Disponibilidad</h3>
+            <h3 className="text-sm font-medium text-white mb-3">Disponibilidad</h3>
             <div className="space-y-2">
               {[
                 { value: 'all', label: 'Todos los productos' },
                 { value: 'inStock', label: 'Próximamente' },
                 { value: 'outOfStock', label: 'Agotado' }
               ].map((option) => (
-                <label key={option.value} className="flex items-center">
+                <label key={option.value} className="flex items-center text-gray-300">
                   <input
                     type="radio"
                     name="availability"
@@ -128,25 +127,25 @@ export default function Sidebar({
                     onChange={() => handleAvailabilityChange(option.value as 'all' | 'inStock' | 'outOfStock')}
                     className="mr-2 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className="text-sm text-gray-700">{option.label}</span>
+                  <span className="text-sm">{option.label}</span>
                 </label>
               ))}
             </div>
           </div>
 
-          {/* Marcas (ejemplo) */}
+          {/* Marcas */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Marcas</h3>
+            <h3 className="text-sm font-medium text-white mb-3">Marcas</h3>
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {['NVIDIA', 'AMD', 'Intel', 'ASUS', 'MSI', 'Gigabyte', 'Corsair', 'Logitech'].map((brand) => (
-                <label key={brand} className="flex items-center">
+                <label key={brand} className="flex items-center text-gray-300">
                   <input
                     type="checkbox"
                     checked={selectedBrands.includes(brand)}
                     onChange={() => handleBrandToggle(brand)}
                     className="mr-2 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className="text-sm text-gray-700">{brand}</span>
+                  <span className="text-sm">{brand}</span>
                 </label>
               ))}
             </div>
@@ -156,22 +155,20 @@ export default function Sidebar({
     );
   }
 
-  // Sidebar administrativo
   if (type === 'admin') {
     return (
-      <div className={`w-64 bg-gray-900 text-white overflow-y-auto ${isOpen ? 'block' : 'hidden lg:block'}`}>
+      <div className={`w-64 bg-[#1E1E1E] text-white overflow-y-auto ${isOpen ? 'block' : 'hidden lg:block'}`}>
         <div className="p-4">
           <div className="mb-6">
             <h2 className="text-lg font-semibold">Panel Admin</h2>
           </div>
-          
           <nav className="space-y-2">
-            <Link to="/admin/dashboard" className="admin-nav-link">📊 Dashboard</Link>
-            <Link to="/admin/products" className="admin-nav-link">📦 Productos</Link>
-            <Link to="/admin/orders" className="admin-nav-link">📋 Pedidos</Link>
-            <Link to="/admin/users" className="admin-nav-link">👥 Usuarios</Link>
-            <Link to="/admin/promotions" className="admin-nav-link">🎉 Promociones</Link>
-            <Link to="/admin/reports" className="admin-nav-link">📈 Reportes</Link>
+            <Link to="/admin/dashboard" className="text-gray-300 hover:text-purple-400">📊 Dashboard</Link>
+            <Link to="/admin/products" className="text-gray-300 hover:text-purple-400">📦 Productos</Link>
+            <Link to="/admin/orders" className="text-gray-300 hover:text-purple-400">📋 Pedidos</Link>
+            <Link to="/admin/users" className="text-gray-300 hover:text-purple-400">👥 Usuarios</Link>
+            <Link to="/admin/promotions" className="text-gray-300 hover:text-purple-400">🎉 Promociones</Link>
+            <Link to="/admin/reports" className="text-gray-300 hover:text-purple-400">📈 Reportes</Link>
           </nav>
         </div>
       </div>

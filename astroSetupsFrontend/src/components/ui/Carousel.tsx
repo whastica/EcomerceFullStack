@@ -3,8 +3,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface Slide {
   image: string;
-  title: string;
-  description: string;
 }
 
 interface CarouselProps {
@@ -36,7 +34,6 @@ export default function Carousel({ slides }: CarouselProps) {
         >
           <img
             src={slide.image}
-            alt={slide.title}
             className="w-full h-full object-cover object-center"
             onError={(e) => {
               console.error('Error cargando imagen:', slide.image);
@@ -44,8 +41,6 @@ export default function Carousel({ slides }: CarouselProps) {
             }}
           />
           <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-4">
-            <h2 className="text-white text-3xl font-bold mb-2 drop-shadow">{slide.title}</h2>
-            <p className="text-white text-sm sm:text-base max-w-lg drop-shadow">{slide.description}</p>
           </div>
         </div>
       ))}

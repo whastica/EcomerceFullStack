@@ -1,8 +1,35 @@
+/* Estilos base para forzar el tema oscuro */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Forzamos el modo oscuro desde el inicio */
+html,
+body {
+  background-color: #010101 !important;
+  color: #FFFFFF !important;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Aseguramos que el div root también tenga el fondo correcto */
 #root {
+  background-color: #010101 !important;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Aplicamos estilos específicos del proyecto */
+.container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 .logo {
@@ -11,9 +38,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -41,6 +70,27 @@
   color: #888;
 }
 
-html {
-  scroll-behavior: smooth;
+/* Forzar tema oscuro en todos los elementos */
+* {
+  border-color: #333333;
+}
+
+/* Asegurar que los inputs mantengan el tema oscuro */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+  border-color: #333333 !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #8B5CF6 !important;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2) !important;
 }

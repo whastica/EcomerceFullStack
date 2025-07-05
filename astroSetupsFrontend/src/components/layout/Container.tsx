@@ -7,6 +7,7 @@ interface ContainerProps {
   padding?: 'none' | 'small' | 'default' | 'large';
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '7xl' | 'full';
   center?: boolean;
+  backgroundColor?: 'transparent' | 'surface' | 'card' | 'background';
 }
 
 export default function Container({ 
@@ -15,9 +16,9 @@ export default function Container({
   variant = 'default',
   padding = 'default',
   maxWidth = '7xl',
-  center = true
+  center = true,
+  backgroundColor = 'transparent'
 }: ContainerProps) {
-  // Configuración de variantes
   const variantClasses = {
     default: 'max-w-7xl',
     narrow: 'max-w-4xl',
@@ -25,7 +26,6 @@ export default function Container({
     full: 'max-w-full'
   };
 
-  // Configuración de max-width personalizado
   const maxWidthClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
@@ -36,7 +36,6 @@ export default function Container({
     full: 'max-w-full'
   };
 
-  // Configuración de padding
   const paddingClasses = {
     none: '',
     small: 'px-2 py-4',
@@ -44,19 +43,19 @@ export default function Container({
     large: 'px-6 sm:px-8 lg:px-12 py-8'
   };
 
-  // Construir clases base
-  const baseClasses = 'w-full';
-  
-  // Construir clases de max-width
+  const backgroundClasses = {
+    transparent: 'bg-transparent',
+    surface: 'bg-dark-surface',
+    card: 'bg-dark-card',
+    background: 'bg-dark-background'
+  };
+
+  // Usamos bg-transparent por defecto para que use el fondo del padre
+  const baseClasses = `w-full ${backgroundClasses[backgroundColor]} text-dark-text`;
   const maxWidthClass = maxWidth !== '7xl' ? maxWidthClasses[maxWidth] : variantClasses[variant];
-  
-  // Construir clases de padding
   const paddingClass = paddingClasses[padding];
-  
-  // Construir clases de centrado
   const centerClass = center ? 'mx-auto' : '';
-  
-  // Combinar todas las clases
+
   const containerClasses = [
     baseClasses,
     maxWidthClass,
@@ -65,9 +64,5 @@ export default function Container({
     className
   ].filter(Boolean).join(' ');
 
-  return (
-    <div className={containerClasses}>
-      {children}
-    </div>
-  );
+  return <div className={containerClasses}>{children}</div>;
 }

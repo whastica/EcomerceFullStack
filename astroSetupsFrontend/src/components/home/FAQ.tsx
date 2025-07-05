@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, forwardRef } from 'react';
 import { ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 
@@ -57,33 +56,32 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
   };
 
   return (
-    <section ref={ref} id={id} className="py-16 bg-white">
+    <section ref={ref} id={id} className="py-16 bg-dark-background text-dark-text">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Preguntas Frecuentes</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-dark-text mb-4">Preguntas Frecuentes</h2>
+          <p className="text-lg text-dark-muted max-w-2xl mx-auto">
             Encuentra respuestas rápidas a las consultas más comunes sobre nuestros productos y servicios.
           </p>
         </div>
-
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Columna izquierda */}
+          {/* Columna izquierda - Contacto */}
           <div className="lg:col-span-1 order-2 lg:order-1">
             <div className="sticky top-8">
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-8 text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <MessageCircle className="h-8 w-8 text-blue-600" />
+              <div className="bg-dark-card border border-dark-border rounded-xl p-8 text-center shadow-lg">
+                <div className="w-16 h-16 bg-dark-surface rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MessageCircle className="h-8 w-8 text-green-400" />
                 </div>
-
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                <h3 className="text-xl font-bold text-dark-text mb-4">
                   ¿Tienes más dudas?
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-dark-muted mb-4">
                   Contacta a nuestro soporte y aclara tus dudas.
                 </p>
                 <button
                   onClick={handleWhatsAppContact}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105"
                 >
                   <MessageCircle className="h-5 w-5" />
                   Contactar con Soporte
@@ -91,33 +89,33 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
               </div>
             </div>
           </div>
-
-          {/* Columna derecha - preguntas */}
+          
+          {/* Columna derecha - Preguntas */}
           <div className="lg:col-span-2 order-1 lg:order-2">
             <div className="space-y-4">
               {FAQ_DATA.map((item) => (
                 <div
                   key={item.id}
-                  className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
+                  className="border border-dark-border bg-dark-card rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-purple-500"
                 >
                   <button
                     onClick={() => toggleItem(item.id)}
-                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50"
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-dark-surface transition-colors duration-200"
                     aria-expanded={openItems.includes(item.id)}
                   >
-                    <span className="font-semibold text-gray-900 text-lg">
+                    <span className="font-semibold text-dark-text text-lg">
                       {item.question}
                     </span>
-                    <span>
+                    <span className="text-dark-muted group-hover:text-purple-400 transition-colors duration-200">
                       {openItems.includes(item.id) ? (
-                        <ChevronUp className="h-5 w-5 text-gray-500" />
+                        <ChevronUp className="h-5 w-5" />
                       ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-500" />
+                        <ChevronDown className="h-5 w-5" />
                       )}
                     </span>
                   </button>
                   {openItems.includes(item.id) && (
-                    <div className="px-6 pb-4 text-gray-700 leading-relaxed">
+                    <div className="px-6 pb-4 text-dark-muted leading-relaxed border-t border-dark-border bg-dark-surface">
                       {item.answer}
                     </div>
                   )}
@@ -130,5 +128,7 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
     </section>
   );
 });
+
+FAQ.displayName = 'FAQ';
 
 export default FAQ;

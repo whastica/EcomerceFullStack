@@ -20,12 +20,12 @@ export default function ProductGrid({ products, productsPerPage = 8 }: ProductGr
 
   return (
     <div className="space-y-8">
-      {/* Grid de Productos */}
-    <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
+      {/* Grid sin separación entre cards */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-y-6 gap-x-0">
         {currentProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
-    </div>
+      </div>
 
       {/* Paginación */}
       {totalPages > 1 && (

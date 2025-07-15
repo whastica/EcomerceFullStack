@@ -24,7 +24,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
         return (
           <div
             key={category.id}
-            className={shouldSpanFullWidth ? 'col-span-2' : 'col-span-1'}
+            className={`${shouldSpanFullWidth ? 'col-span-2' : 'col-span-1'} rounded-xl overflow-hidden`}
           >
             <CategoryCard 
               name={category.name}

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,22 +16,36 @@ export default function Footer() {
     <footer className="bg-dark-card text-dark-text">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-
           {/* Marca */}
           <div>
             <div className="flex items-center mb-4">
-              <div className="w-9 h-9 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">A</span>
-              </div>
-              <span className="ml-2 text-xl font-bold text-dark-text">Astro Setups</span>
+              <img 
+                src="/assets/icono/logo.png" 
+                alt="Astro Setups Logo" 
+                className="ml-2 h-8"
+              />
             </div>
             <p className="text-sm text-dark-muted mb-4">
               Tu lugar indispensable de tecnología. Encuentra las mejores piezas y componentes para tu computadora gamer o profesional.
             </p>
-            <div className="flex space-x-4">
-              {['facebook', 'instagram', 'twitter', 'youtube'].map((platform) => (
-                <a key={platform} href="#" aria-label={platform} className="text-dark-muted hover:text-purple-500 text-lg transition-colors duration-200">
-                  {platform === 'facebook' ? '📘' : platform === 'instagram' ? '📷' : platform === 'twitter' ? '🐦' : '📺'}
+            <div className="flex space-x-3">
+              {[
+                { platform: 'facebook', emoji: '📘' },
+                { platform: 'instagram', emoji: '📷' },
+                { platform: 'twitter', emoji: '🐦' },
+                { platform: 'youtube', emoji: '📺' }
+              ].map(({ platform, emoji }) => (
+                <a 
+                  key={platform} 
+                  href="#" 
+                  aria-label={platform}
+                  className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-lg flex items-center justify-center text-white text-lg shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 active:shadow-md border-2 border-orange-300"
+                  style={{
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
+                    boxShadow: '0 4px 15px rgba(255,165,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.1)'
+                  }}
+                >
+                  {emoji}
                 </a>
               ))}
             </div>
@@ -66,12 +81,15 @@ export default function Footer() {
               <button
                 type="submit"
                 disabled={!trackingNumber.trim()}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-sm font-medium py-2 px-4 rounded-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-sm font-medium py-2 px-4 rounded-md transition-all duration-200 shadow-lg transform hover:scale-105 hover:shadow-xl active:scale-95 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:scale-100 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-2 border-orange-300"
+                style={{
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
+                  boxShadow: '0 4px 15px rgba(255,165,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.1)'
+                }}
               >
                 🔍 Rastrear Paquete
               </button>
             </form>
-
             <div className="mt-6 text-sm text-dark-muted space-y-1">
               <p>📧 info@astrosetups.com</p>
               <p>📞 +57 300 123 4567</p>

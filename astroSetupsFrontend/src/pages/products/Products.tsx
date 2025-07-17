@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Navbar from '../../components/layout/Navbar';
+import {Navbar} from '../../components/layout/navbar/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/footer';
 import Container from '../../components/layout/Container';
@@ -8,16 +8,16 @@ import { Product } from '../../components/products/ProductCard';
 
 interface FilterState {
   priceRange: [number, number];
-  brands: string[];
-  availability: 'all' | 'inStock' | 'outOfStock';
+  searchTerm: string;
+  sortBy: 'newest' | 'oldest' | 'price-asc' | 'price-desc';
 }
 
 export default function ProductsPage() {
   const [isSidebarOpen] = useState(true);
   const [filters, setFilters] = useState<FilterState>({
-    priceRange: [0, 10000],
-    brands: [],
-    availability: 'all'
+    priceRange: [0, 5000000],
+    searchTerm: '',
+    sortBy: 'newest'
   });
 
   // TODO: reemplazar con datos reales de la API
@@ -64,7 +64,7 @@ export default function ProductsPage() {
     },
     {
       id: 6,
-      name: 'Monitor LG UltraGear 27” 144Hz',
+      name: 'Monitor LG UltraGear 27" 144Hz',
       price: 1180000,
       imageUrl: '/assets/products/monitor.webp',
       isAvailable: true,
@@ -88,8 +88,42 @@ export default function ProductsPage() {
     }
   ];
 
-  // TODO: aplicar filtros a products en el futuro
-  const filteredProducts = exampleProducts;
+  // Filtrar y ordenar productos
+  const getFilteredAndSortedProducts = () => {
+    let filtered = exampleProducts.filter(product => {
+      // Solo filtrar por precio si el usuario ha modificado los valores por defecto
+      const isDefaultPriceRange = filters.priceRange[0] === 0 && filters.priceRange[1] === 5000000;
+      const matchesPrice = isDefaultPriceRange || 
+        (product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]);
+      
+      // Solo filtrar por búsqueda si hay texto
+      const matchesSearch = !filters.searchTerm.trim() || 
+        product.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+        product.brand.toLowerCase().includes(filters.searchTerm.toLowerCase());
+      
+      return matchesPrice && matchesSearch;
+    });
+
+    // Ordenar productos
+    switch (filters.sortBy) {
+      case 'newest':
+        filtered = filtered.sort((a, b) => b.id - a.id);
+        break;
+      case 'oldest':
+        filtered = filtered.sort((a, b) => a.id - b.id);
+        break;
+      case 'price-asc':
+        filtered = filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        filtered = filtered.sort((a, b) => b.price - a.price);
+        break;
+    }
+
+    return filtered;
+  };
+
+  const filteredProducts = getFilteredAndSortedProducts();
 
   const categories = [
     { id: 1, name: 'Tarjetas Gráficas', slug: 'tarjetas-graficas', productCount: 18 },
@@ -101,32 +135,78 @@ export default function ProductsPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar 
-        cartItemCount={2}
-        isAuthenticated={true}
-        userRole="CLIENT"
-        userName="Juan"
-      />
-
-      <div className="flex flex-1">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          type="catalog"
-          categories={categories}
-          filters={filters}
-          onFilterChange={setFilters}
-        />
-
-        <main className="flex-1">
-          <Container padding="large">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Productos disponibles</h1>
-            <ProductGrid products={filteredProducts} productsPerPage={8} />
-          </Container>
-        </main>
+    <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">
+      {/* Fondo geométrico animado - igual que en Home */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-dark-gradient"></div>
+        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
+        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
+        
+        {/* Elementos geométricos flotantes */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-xl animate-pulse-slow"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '6s' }}></div>
       </div>
 
-      <Footer />
+      {/* Contenido principal */}
+      <div className="relative z-10">
+        <Navbar 
+          cartItemCount={2}
+        />
+        
+        <div className="flex flex-1">
+          <Sidebar
+            isOpen={isSidebarOpen}
+            type="catalog"
+            categories={categories}
+            filters={filters}
+            onFilterChange={setFilters}
+          />
+          
+          <main className="flex-1">
+            <Container padding="large">
+              <div className="glass-effect rounded-xl p-6 mb-8 animate-fade-in">
+                <h1 className="text-3xl font-bold text-dark-text mb-2 text-shadow-glow">
+                  Todos los productos
+                </h1>
+                <p className="text-dark-muted">
+                  Descubre la mejor tecnología con el rendimiento que necesitas
+                </p>
+              </div>
+
+              {/* Barra de información y filtros */}
+              <div className="glass-effect rounded-xl p-4 mb-6 animate-slide-up">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div className="text-dark-muted text-sm">
+                    Mostrar 1 – {Math.min(8, filteredProducts.length)} de {filteredProducts.length} resultados
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <label className="text-dark-muted text-sm">Ordenar por:</label>
+                    <select 
+                      value={filters.sortBy}
+                      onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as FilterState['sortBy'] })}
+                      className="bg-dark-card border border-dark-border rounded px-3 py-1 text-dark-text text-sm focus:outline-none focus:ring-2 focus:ring-[#FB5607]"
+                    >
+                      <option value="newest">Más recientes</option>
+                      <option value="oldest">Más antiguos</option>
+                      <option value="price-asc">Precio: menor a mayor</option>
+                      <option value="price-desc">Precio: mayor a menor</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="glass-effect rounded-xl p-6 animate-slide-up">
+                <ProductGrid products={filteredProducts} productsPerPage={8} />
+              </div>
+            </Container>
+          </main>
+        </div>
+        
+        <Footer />
+      </div>
     </div>
   );
 }

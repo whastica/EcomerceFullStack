@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Container from '../../components/layout/Container';
-import Navbar from '../../components/layout/Navbar';
+import {Navbar} from '../../components/layout/navbar/Navbar';
 import Footer from '../../components/layout/footer';
 import ProductInfo from '../../components/products/ProductInfo';
 import ProductGrid from '../../components/products/ProductGrid';
@@ -107,9 +107,6 @@ export default function ProductDetailPage() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar
         cartItemCount={2}
-        isAuthenticated={true}
-        userRole="CLIENT"
-        userName="Usuario"
       />
 
       <main className="flex-1">

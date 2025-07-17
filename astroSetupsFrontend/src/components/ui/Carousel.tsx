@@ -1,30 +1,30 @@
-import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import CarouselControls from './CarouselControls';
+import CarouselIndicators from './CarouselIndicators';
+import { useCarousel } from '../../hooks/useCarousel';
+import { Slide } from '../../interfaces/carousel/Slide';
 
-export interface Slide {
-  image: string;
-}
 
 interface CarouselProps {
-  slides: Slide[]; // ahora es obligatorio
+  slides: Slide[];
+  autoSlide?: boolean;
+  slideInterval?: number;
+  showControls?: boolean;
+  showIndicators?: boolean;
+  height?: string;
 }
 
-export default function Carousel({ slides }: CarouselProps) {
-  const [current, setCurrent] = useState(0);
-  const length = slides.length;
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [length]);
-
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % length);
-  const prevSlide = () => setCurrent((prev) => (prev - 1 + length) % length);
+export default function Carousel({
+  slides,
+  autoSlide = true,
+  slideInterval = 5000,
+  showControls = true,
+  showIndicators = true,
+  height = 'h-[400px]',
+}: CarouselProps) {
+  const { current, next, prev, setCurrent } = useCarousel(slides.length, autoSlide, slideInterval);
 
   return (
-    <div className="relative w-full h-[400px] overflow-hidden rounded-xl shadow-lg">
+    <div className={`relative w-full overflow-hidden rounded-xl shadow-lg ${height}`}>
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -34,42 +34,20 @@ export default function Carousel({ slides }: CarouselProps) {
         >
           <img
             src={slide.image}
+            alt={`Slide ${index + 1}`}
             className="w-full h-full object-cover object-center"
             onError={(e) => {
               console.error('Error cargando imagen:', slide.image);
-              (e.target as HTMLImageElement).style.display = 'none';
+              (e.target as HTMLImageElement).src = '/fallback.jpg';
             }}
           />
-          <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-4">
-          </div>
         </div>
       ))}
 
-      {/* Flechas de navegación */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-20"
-      >
-        <ChevronLeft className="w-5 h-5" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-20"
-      >
-        <ChevronRight className="w-5 h-5" />
-      </button>
-
-      {/* Indicadores */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {slides.map((_, index) => (
-          <span
-            key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === current ? 'bg-white' : 'bg-white/50'
-            }`}
-          />
-        ))}
-      </div>
+      {showControls && <CarouselControls onPrev={prev} onNext={next} />}
+      {showIndicators && (
+        <CarouselIndicators total={slides.length} current={current} onSelect={setCurrent} />
+      )}
     </div>
   );
 }

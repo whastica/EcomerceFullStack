@@ -6,14 +6,14 @@ import './styles/global.css';
 import App from './App';
 import { CartProvider } from './pages/cart/Cart'; 
 
-import { Toaster } from 'sonner'; // 👈 importar
+import { Toaster } from 'sonner';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CartProvider>
       <BrowserRouter>
         <App />
-        <Toaster richColors position="top-center" /> {/* 👈 aquí */}
+        <Toaster richColors position="top-center" /> 
       </BrowserRouter>
     </CartProvider>
   </StrictMode>

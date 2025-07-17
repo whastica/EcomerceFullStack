@@ -52,7 +52,7 @@ export default function App() {
     <div className="min-h-screen bg-dark-background text-dark-text">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/catalog" element={<ProductsPage />} />
         <Route path="/promotions" element={<PromotionsPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />

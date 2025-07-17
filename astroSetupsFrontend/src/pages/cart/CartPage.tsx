@@ -1,6 +1,6 @@
 import { useCart } from '../../pages/cart/Cart';
 import Container from '../../components/layout/Container';
-import Navbar from '../../components/layout/Navbar';
+import {Navbar} from '../../components/layout/navbar/Navbar';
 import Footer from '../../components/layout/footer';
 import { Link } from 'react-router-dom';
 
@@ -23,9 +23,6 @@ export default function CartPage() {
       {/* ✅ Navbar al inicio */}
       <Navbar
         cartItemCount={items.length}
-        isAuthenticated={true}
-        userRole="CLIENT"
-        userName="Usuario"
       />
 
       <main className="flex-1">

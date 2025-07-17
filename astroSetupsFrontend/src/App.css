@@ -15,7 +15,7 @@ body {
   padding: 0;
   min-height: 100vh;
   color: #FFFFFF;
-  overflow-x: hidden; /* Evita scroll horizontal en elementos animados */
+  overflow-x: hidden;
 }
 
 #root {
@@ -24,16 +24,41 @@ body {
   position: relative;
 }
 
-/* Inputs adaptados al modo oscuro */
+/* Degradado diagonal principal */
+.bg-diagonal-gradient {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #404040 50%, #808080 75%, #ffffff 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+}
+
+.bg-diagonal-gradient-subtle {
+  background: linear-gradient(135deg, #000000 0%, #0f0f0f 20%, #2a2a2a 40%, #4a4a4a 60%, #6a6a6a 80%, #f0f0f0 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease-in-out infinite;
+}
+
+.bg-diagonal-soft {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 30%, #333333 60%, #999999 90%, #ffffff 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease-in-out infinite;
+}
+
+/* Overlay para mejorar legibilidad */
+.text-overlay {
+  background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 75%, rgba(0,0,0,0.1) 100%);
+}
+
+/* Inputs adaptados al tema dinámico */
 input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea,
 select {
-  background-color: #1A1A1A;
+  background-color: rgba(26, 26, 26, 0.9);
   color: #FFFFFF;
   border-color: #333333;
   transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
 }
 
 input[type="text"]:focus,
@@ -43,9 +68,10 @@ textarea:focus,
 select:focus {
   border-color: #8B5CF6;
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+  background-color: rgba(26, 26, 26, 0.95);
 }
 
-/* Patrones de fondo personalizados */
+/* Patrones de fondo personalizados actualizados */
 .bg-tech-grid {
   background-image: 
     linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
@@ -64,7 +90,7 @@ select:focus {
   animation: geometricShift 20s ease-in-out infinite;
 }
 
-/* Efectos de partículas flotantes */
+/* Efectos de partículas flotantes adaptados */
 .particle {
   position: absolute;
   border-radius: 50%;
@@ -87,6 +113,15 @@ select:focus {
 }
 
 /* Animaciones personalizadas */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
 @keyframes geometricShift {
   0%, 100% { 
     background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
@@ -118,10 +153,11 @@ select:focus {
   }
 }
 
-/* Mejoras en tarjetas y componentes */
+/* Mejoras en tarjetas y componentes con glassmorphism */
 .card {
   padding: 2em;
   backdrop-filter: blur(10px);
+  background: rgba(26, 26, 26, 0.7);
   border: 1px solid rgba(139, 92, 246, 0.1);
   transition: all 0.3s ease;
 }
@@ -129,13 +165,20 @@ select:focus {
 .card:hover {
   border-color: rgba(139, 92, 246, 0.3);
   box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
+  background: rgba(26, 26, 26, 0.8);
 }
 
-/* Efectos de glassmorphism */
+/* Efectos de glassmorphism mejorados */
 .glass-effect {
   background: rgba(26, 26, 26, 0.8);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-effect-light {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Scrollbar personalizada */
@@ -144,7 +187,7 @@ select:focus {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1A1A1A;
+  background: rgba(26, 26, 26, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -161,12 +204,42 @@ select:focus {
   text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
 }
 
+.text-shadow-dark {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.text-shadow-light {
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
 .border-glow {
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
 }
 
 .read-the-docs {
   color: #888;
+}
+
+/* Contenedor con overlay para texto legible */
+.content-overlay {
+  position: relative;
+}
+
+.content-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.05) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.content-overlay > * {
+  position: relative;
+  z-index: 2;
 }
 
 /* Responsive design mejorado */
@@ -176,11 +249,17 @@ select:focus {
   }
   
   .particle {
-    display: none; /* Oculta partículas en móvil para mejor rendimiento */
+    display: none;
+  }
+  
+  .bg-diagonal-gradient,
+  .bg-diagonal-gradient-subtle,
+  .bg-diagonal-soft {
+    background-size: 150% 150%;
   }
 }
 
-/* Animación de logo (si existe) */
+/* Animación de logo */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -200,7 +279,10 @@ select:focus {
 @media (prefers-reduced-motion: reduce) {
   .bg-geometric-pattern,
   .particle,
-  .connection-line {
+  .connection-line,
+  .bg-diagonal-gradient,
+  .bg-diagonal-gradient-subtle,
+  .bg-diagonal-soft {
     animation: none;
   }
 }

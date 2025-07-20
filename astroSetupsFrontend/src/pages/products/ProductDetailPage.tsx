@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Container from '../../components/layout/Container';
+import Container from '../../components/layout/container/Container';
 import {Navbar} from '../../components/layout/navbar/Navbar';
-import Footer from '../../components/layout/footer';
+import Footer from '../../components/layout/footer/footer';
 import ProductInfo from '../../components/products/ProductInfo';
 import ProductGrid from '../../components/products/ProductGrid';
 import ProductDescription from '../../components/products/ProductDescription'; // ✅ Importación añadida

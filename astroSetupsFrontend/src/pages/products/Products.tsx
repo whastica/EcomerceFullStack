@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {Navbar} from '../../components/layout/navbar/Navbar';
-import Sidebar from '../../components/layout/Sidebar';
-import Footer from '../../components/layout/footer';
-import Container from '../../components/layout/Container';
+import Sidebar from '../../components/layout/sidebar/Sidebar';
+import Footer from '../../components/layout/footer/footer';
+import Container from '../../components/layout/container/Container';
 import ProductGrid from '../../components/products/ProductGrid';
 import { Product } from '../../components/products/ProductCard';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {Navbar} from '../../components/layout/navbar/Navbar';
-import Footer from '../../components/layout/footer';
-import Container from '../../components/layout/Container';
+import Footer from '../../components/layout/footer/footer';
+import Container from '../../components/layout/container/Container';
 import ProductGrid from '../../components/products/ProductGrid';
 import { Product } from '../../components/products/ProductCard';
 

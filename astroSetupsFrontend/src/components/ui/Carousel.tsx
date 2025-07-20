@@ -3,7 +3,6 @@ import CarouselIndicators from './CarouselIndicators';
 import { useCarousel } from '../../hooks/useCarousel';
 import { Slide } from '../../interfaces/carousel/Slide';
 
-
 interface CarouselProps {
   slides: Slide[];
   autoSlide?: boolean;

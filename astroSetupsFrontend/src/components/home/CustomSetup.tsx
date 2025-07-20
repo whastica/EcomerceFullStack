@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import Container from '../layout/Container';
+import Container from '../layout/container/Container';
 
 export default function CustomSetupSection() {
   return (

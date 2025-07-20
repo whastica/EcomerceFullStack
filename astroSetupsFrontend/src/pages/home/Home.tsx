@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
-import Container from '../../components/layout/Container';
-import {Navbar} from '../../components/layout/navbar/Navbar';
-import Footer from '../../components/layout/footer';
+import Container from '../../components/layout/container/Container';
+import { Navbar } from '../../components/layout/navbar/Navbar';
+import Footer from '../../components/layout/footer/footer';
 import { carouselSlides } from '../../interfaces/carousel/CarouselSlide';
 import CategoryGrid from '../../components/home/CategoryGrid';
 import CustomSetup from '../../components/home/CustomSetup';
@@ -84,16 +84,12 @@ export default function Home() {
         <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
         <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-gradient-to-br from-blue-500/15 to-purple-500/15 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '4s' }}></div>
         <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-gradient-to-br from-purple-500/15 to-cyan-500/15 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '6s' }}></div>
-        <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"></div>
-        <div className="absolute bottom-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
         <div className="absolute inset-0 text-overlay"></div>
       </div>
 
       {/* Contenido */}
       <div className="relative z-10 content-overlay">
-        <Navbar 
-          cartItemCount={3}
-        />
+        <Navbar cartItemCount={3} />
 
         {/* Carousel principal */}
         <div className="relative">

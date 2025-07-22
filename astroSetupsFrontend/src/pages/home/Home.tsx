@@ -1,11 +1,10 @@
-import { useRef, useEffect } from 'react';
+import { useEffect, RefObject } from 'react';
 import Container from '../../components/layout/container/Container';
-import { Navbar } from '../../components/layout/navbar/Navbar';
 import Footer from '../../components/layout/footer/footer';
 import { carouselSlides } from '../../interfaces/carousel/CarouselSlide';
 import CategoryGrid from '../../components/home/CategoryGrid';
-import CustomSetup from '../../components/home/CustomSetup';
-import FAQ from '../../components/home/FAQ';
+import CustomSetup from '../../components/home/customSetup/CustomSetup';
+import FAQ from '../../components/home/FAQ/FAQ';
 import ProductGrid from '../../components/products/ProductGrid';
 import { Product } from '../../components/products/ProductCard';
 import Carousel from '../../components/ui/Carousel';
@@ -21,9 +20,12 @@ export interface ProductDetail extends Product {
   features?: string[];
 }
 
-export default function Home() {
-  const faqRef = useRef<HTMLElement>(null);
+// ✅ Recibimos faqRef como prop
+interface HomeProps {
+  faqRef?: RefObject<HTMLElement | null>;
+}
 
+export default function Home({ faqRef }: HomeProps) {
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
@@ -89,7 +91,7 @@ export default function Home() {
 
       {/* Contenido */}
       <div className="relative z-10 content-overlay">
-        <Navbar cartItemCount={3} />
+        {/* ✅ Navbar se elimina aquí porque ya está en App.tsx */}
 
         {/* Carousel principal */}
         <div className="relative">
@@ -118,7 +120,7 @@ export default function Home() {
           <CustomSetup />
         </div>
 
-        {/* Preguntas frecuentes */}
+        {/* Preguntas frecuentes con ref ✅ */}
         <div className="relative">
           <FAQ ref={faqRef} id="faq" />
         </div>

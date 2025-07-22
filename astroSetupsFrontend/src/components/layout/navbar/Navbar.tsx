@@ -1,3 +1,4 @@
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CartIcon } from './CartIcon';
@@ -14,6 +15,17 @@ export function Navbar({
   onFAQClick,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleFAQClick = () => {
+    if (location.pathname !== '/') {
+      // Redirigir a "/" y usar hash para ir al FAQ
+      navigate('/#faq');
+    } else {
+      onFAQClick?.();
+    }
+  };
 
   return (
     <nav className="bg-[#4D4D4D] shadow-lg sticky top-0 z-50">
@@ -39,7 +51,7 @@ export function Navbar({
               Catálogo
             </Link>
             <button
-              onClick={onFAQClick}
+              onClick={handleFAQClick}
               className="text-gray-300 hover:text-[#D7FE3B] px-3 py-2 text-sm font-medium transition-colors duration-200"
             >
               Preguntas Frecuentes
@@ -48,7 +60,7 @@ export function Navbar({
               Promociones
             </Link>
             <Link
-              to="/customize"
+              to="/customSetup"
               className="mx-2 px-4 py-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold text-sm
                          shadow-lg transform transition-all duration-200 hover:from-orange-600 hover:to-orange-700 hover:scale-105 hover:shadow-xl
                          active:scale-95 active:shadow-md border-2 border-orange-300"
@@ -65,7 +77,6 @@ export function Navbar({
           {/* Right section */}
           <div className="hidden lg:flex items-center space-x-4">
             <CartIcon count={cartItemCount} />
-
             <div className="flex items-center space-x-3">
               <Link to="/login" className="text-gray-300 hover:text-[#D7FE3B] px-3 py-2 text-sm font-medium">
                 Iniciar Sesión
@@ -76,13 +87,13 @@ export function Navbar({
             </div>
           </div>
 
-          {/* Mobile toggle button (always visible) */}
+          {/* Mobile toggle button */}
           <MobileToggleButton isOpen={menuOpen} onClick={() => setMenuOpen(!menuOpen)} />
         </div>
       </div>
 
       {/* Mobile Menu */}
-      <NavbarMobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} onFAQClick={onFAQClick} />
+      <NavbarMobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} onFAQClick={handleFAQClick} />
     </nav>
   );
 }

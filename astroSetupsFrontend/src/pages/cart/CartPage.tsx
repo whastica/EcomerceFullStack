@@ -1,6 +1,5 @@
 import { useCart } from '../../pages/cart/Cart';
 import Container from '../../components/layout/container/Container';
-import {Navbar} from '../../components/layout/navbar/Navbar';
 import Footer from '../../components/layout/footer/footer';
 import { Link } from 'react-router-dom';
 
@@ -19,20 +18,31 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* ✅ Navbar al inicio */}
-      <Navbar
-        cartItemCount={items.length}
-      />
+    <div className="min-h-screen flex flex-col bg-dark-tech-pattern text-dark-text relative">
+      {/* Fondo decorativo animado */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Capas base */}
+        <div className="absolute inset-0 bg-dark-gradient"></div>
+        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
+        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
 
-      <main className="flex-1">
+        {/* Degradado gris claro en diagonal hacia la parte superior derecha */}
+        <div
+          className="absolute top-0 left-0 w-full h-full opacity-20"
+          style={{
+            backgroundImage: `linear-gradient(45deg, transparent 0%, #f3f4f6 200%)`,
+          }}
+        />
+      </div>
+
+      <main className="flex-1 relative z-10">
         <Container padding="large" className="py-12">
-          <h1 className="text-2xl font-bold text-gray-900 mb-8">🛒 Tu Carrito</h1>
+          <h1 className="text-2xl font-bold text-dark-text mb-8">🛒 Tu Carrito</h1>
 
           {items.length === 0 ? (
-            <div className="text-center text-gray-600 py-20 space-y-4">
+            <div className="text-center text-dark-muted py-20 space-y-4">
               <p className="text-lg">Tu carrito está vacío.</p>
-              <Link to="/products" className="text-purple-600 font-semibold hover:underline">
+              <Link to="/products" className="text-purple-400 font-semibold hover:underline">
                 Ver productos
               </Link>
             </div>
@@ -43,7 +53,7 @@ export default function CartPage() {
                 {items.map(item => (
                   <div
                     key={item.id}
-                    className="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row gap-4"
+                    className="bg-white/90 rounded-lg shadow p-4 flex flex-col sm:flex-row gap-4"
                   >
                     <img
                       src={item.imageUrl}
@@ -80,7 +90,7 @@ export default function CartPage() {
               </div>
 
               {/* Resumen del carrito */}
-              <div className="bg-white rounded-lg shadow p-6 space-y-4 h-fit">
+              <div className="bg-white/90 rounded-lg shadow p-6 space-y-4 h-fit">
                 <h2 className="text-lg font-semibold text-gray-800">Resumen</h2>
 
                 <div className="flex justify-between text-sm text-gray-700">
@@ -113,7 +123,6 @@ export default function CartPage() {
         </Container>
       </main>
 
-      {/* ✅ Footer al final */}
       <Footer />
     </div>
   );

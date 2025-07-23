@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import {Navbar} from '../../components/layout/navbar/Navbar';
 import Sidebar from '../../components/layout/sidebar/Sidebar';
 import Footer from '../../components/layout/footer/footer';
 import Container from '../../components/layout/container/Container';
@@ -135,26 +134,25 @@ export default function ProductsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">
-      {/* Fondo geométrico animado - igual que en Home */}
-      <div className="fixed inset-0 pointer-events-none">
+    <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">
+
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Capas base */}
         <div className="absolute inset-0 bg-dark-gradient"></div>
         <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
         <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
-        
-        {/* Elementos geométricos flotantes */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-xl animate-pulse-slow"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '4s' }}></div>
-        <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '6s' }}></div>
-      </div>
 
+        {/* Degradado gris claro en diagonal hacia la parte superior derecha */}
+        <div
+          className="absolute top-0 left-0 w-full h-full opacity-20"
+          style={{
+            backgroundImage: `linear-gradient(45deg, transparent 0%, #f3f4f6 200%)`,
+          }}
+        />
+      </div>
+      
       {/* Contenido principal */}
       <div className="relative z-10">
-        <Navbar 
-          cartItemCount={2}
-        />
-        
         <div className="flex flex-1">
           <Sidebar
             isOpen={isSidebarOpen}

@@ -1,3 +1,6 @@
+/* ===== FONT IMPORTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;500;600;700&display=swap');
+
 /* ===== BASE STYLES ===== */
 *,
 *::before,
@@ -8,7 +11,7 @@
 
 html {
   scroll-behavior: smooth;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -37,6 +40,83 @@ body {
   --glow-color: rgba(139, 92, 246, 0.2);
   --glass-bg: rgba(26, 26, 26, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
+  --navbar-green: #D7FE3B;
+  --navbar-green-rgb: 215, 254, 59;
+}
+
+/* ===== NAVBAR HOVER EFFECTS ===== */
+.navbar-link-hover {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--navbar-green);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(var(--navbar-green-rgb), 0.6);
+}
+
+.navbar-link-hover:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+.navbar-link-hover:hover {
+  color: var(--navbar-green);
+  text-shadow: 0 0 8px rgba(var(--navbar-green-rgb), 0.4);
+  transform: translateY(-1px);
+}
+
+/* ===== NAVBAR RESPONSIVE OPTIMIZATIONS ===== */
+@media (max-width: 1280px) {
+  .navbar-compact-text {
+    font-size: 0.75rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .navbar-mobile-hide {
+    display: none;
+  }
+}
+
+/* ===== ELEGANT DARK DIAGONAL BACKGROUND ===== */
+.bg-elegant-dark-diagonal {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  min-height: 100vh;
+}
+
+/* Versiones mejoradas del gradiente diagonal */
+.bg-elegant-dark-diagonal-enhanced {
+  background: linear-gradient(135deg, #000000 0%, #0f0f0f 30%, #1a1a1a 70%, #2a2a2a 100%);
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  min-height: 100vh;
+}
+
+.bg-elegant-dark-diagonal-visible {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #333333 100%);
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  min-height: 100vh;
+}
+
+.bg-elegant-dark-diagonal-subtle {
+  background: linear-gradient(135deg, #000000 0%, #111111 40%, #1a1a1a 80%, #222222 100%);
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  min-height: 100vh;
 }
 
 /* ===== GRADIENT BACKGROUNDS ===== */
@@ -164,6 +244,7 @@ select {
   -webkit-backdrop-filter: blur(8px);
   font-size: 0.875rem;
   outline: none;
+  font-family: 'Helvetica Neue', sans-serif;
 }
 
 input[type="text"]:focus,
@@ -284,6 +365,27 @@ select:hover {
   }
 }
 
+/* ===== NAVBAR SPECIFIC ANIMATIONS ===== */
+@keyframes underlineExpand {
+  0% {
+    width: 0%;
+    left: 50%;
+  }
+  100% {
+    width: 100%;
+    left: 0%;
+  }
+}
+
+@keyframes textGlow {
+  0% {
+    text-shadow: none;
+  }
+  100% {
+    text-shadow: 0 0 8px rgba(215, 254, 59, 0.6);
+  }
+}
+
 /* ===== LOGO ANIMATION ===== */
 @keyframes logo-spin {
   from {
@@ -291,6 +393,24 @@ select:hover {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Animación de la barra de progreso mejorada */
+@keyframes progressFill {
+  0% { 
+    width: 0%;
+    opacity: 0.8;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% { 
+    width: 100%;
+    opacity: 0.9;
   }
 }
 
@@ -328,6 +448,19 @@ select:hover {
   select {
     font-size: 16px; /* Previene zoom en iOS */
   }
+
+  /* Mantener fondos elegantes en móviles */
+  .bg-elegant-dark-diagonal,
+  .bg-elegant-dark-diagonal-enhanced,
+  .bg-elegant-dark-diagonal-visible,
+  .bg-elegant-dark-diagonal-subtle {
+    background-attachment: scroll; /* Mejor rendimiento en móviles */
+  }
+
+  /* Ajustar efectos de hover en móviles */
+  .navbar-link-hover:hover {
+    transform: none; /* Evitar transformaciones en touch devices */
+  }
 }
 
 @media (max-width: 480px) {
@@ -347,12 +480,22 @@ select:hover {
   .bg-diagonal-gradient,
   .bg-diagonal-gradient-subtle,
   .bg-diagonal-soft,
-  .card {
+  .card,
+  .navbar-link-hover {
     animation: none;
   }
   
-  .card:hover {
+  .card:hover,
+  .navbar-link-hover:hover {
     transform: none;
+  }
+
+  /* El fondo elegante no tiene animaciones, así que se mantiene */
+  .bg-elegant-dark-diagonal,
+  .bg-elegant-dark-diagonal-enhanced,
+  .bg-elegant-dark-diagonal-visible,
+  .bg-elegant-dark-diagonal-subtle {
+    background-attachment: fixed;
   }
 }
 
@@ -361,6 +504,29 @@ select:hover {
   .glass-effect-light {
     border-width: 2px;
     background: rgba(0, 0, 0, 0.9);
+  }
+
+  /* Mejorar contraste de los fondos elegantes */
+  .bg-elegant-dark-diagonal {
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  }
+  
+  .bg-elegant-dark-diagonal-enhanced {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 30%, #333333 70%, #444444 100%);
+  }
+  
+  .bg-elegant-dark-diagonal-visible {
+    background: linear-gradient(135deg, #000000 0%, #2a2a2a 50%, #444444 100%);
+  }
+  
+  .bg-elegant-dark-diagonal-subtle {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 40%, #2a2a2a 80%, #333333 100%);
+  }
+
+  /* Mejorar contraste en navbar */
+  .navbar-link-hover:hover {
+    color: #FFFFFF;
+    background-color: rgba(215, 254, 59, 0.2);
   }
 }
 
@@ -379,4 +545,67 @@ select:hover {
 *:focus-visible {
   outline: 2px solid #8B5CF6;
   outline-offset: 2px;
+}
+
+/* Clase de utilidad para la animación de progreso */
+.animate-progress {
+  animation-name: progressFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  transform-origin: left center;
+  width: 0%;
+}
+
+/* Opcional: Efecto de brillo en la barra de progreso */
+.progress-bar-glow {
+  position: relative;
+}
+
+.progress-bar-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===== BUTTON IMPROVEMENTS ===== */
+button,
+.btn {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+}
+
+/* ===== UTILITY CLASSES FOR HELVETICA NEUE ===== */
+.font-helvetica-light {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 300;
+}
+
+.font-helvetica-regular {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+}
+
+.font-helvetica-medium {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+}
+
+.font-helvetica-semibold {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 600;
+}
+
+.font-helvetica-bold {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 700;
 }

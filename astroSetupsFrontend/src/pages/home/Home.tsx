@@ -77,16 +77,21 @@ export default function Home({ faqRef }: HomeProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-diagonal-gradient-subtle text-dark-text flex flex-col relative">
+    <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">
       {/* Fondo decorativo animado */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-geometric-pattern opacity-20"></div>
-        <div className="absolute inset-0 bg-tech-grid opacity-15"></div>
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-xl animate-pulse-slow"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-gradient-to-br from-blue-500/15 to-purple-500/15 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '4s' }}></div>
-        <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-gradient-to-br from-purple-500/15 to-cyan-500/15 rounded-full blur-xl animate-pulse-slow" style={{ animationDelay: '6s' }}></div>
-        <div className="absolute inset-0 text-overlay"></div>
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Capas base */}
+        <div className="absolute inset-0 bg-dark-gradient"></div>
+        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
+        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
+
+        {/* Degradado gris claro en diagonal hacia la parte superior derecha */}
+        <div
+          className="absolute top-0 left-0 w-full h-full opacity-20"
+          style={{
+            backgroundImage: `linear-gradient(45deg, transparent 0%, #f3f4f6 200%)`,
+          }}
+        />
       </div>
 
       {/* Contenido */}
@@ -101,15 +106,14 @@ export default function Home({ faqRef }: HomeProps) {
             slideInterval={4000}
             showControls={true}
             showIndicators={true}
-            height="h-[400px]"
           />
         </div>
 
         {/* Categorías */}
         <Container padding="large" className="mt-8">
           <div className="glass-effect rounded-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold mb-6 text-dark-text text-shadow-dark">
-              ¡Las mejores partes y componentes para armar tu computadora Personalizada!
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-dark-text text-shadow-dark text-center max-w-2xl mx-auto leading-snug">
+              ¡Las mejores partes y componentes<br />para armar tu computadora personalizada!
             </h2>
             <CategoryGrid categories={categories} />
           </div>
@@ -127,8 +131,8 @@ export default function Home({ faqRef }: HomeProps) {
 
         {/* Productos relacionados */}
         <Container padding="large" className="pt-0">
-          <div className="glass-effect rounded-lg p-6 border-t border-dark-border">
-            <h2 className="text-2xl font-bold mb-6 text-dark-text text-shadow-dark">
+          <div className="glass-effect rounded-lg p-6 border-dark-border">
+            <h2 className="text-6xl sm:text-4xl font-bold mb-6 text-dark-text text-shadow-dark">
               Explora Nuestros Productos
             </h2>
             <ProductGrid products={relatedProducts} productsPerPage={4} />

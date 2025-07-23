@@ -3,15 +3,13 @@
 import { useState, forwardRef } from 'react';
 import { ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { FAQProps } from './faqTypes';
-import { FAQ_DATA } from './faqData';
+import { FAQ_DATA } from './FAQdata';
 
 const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
-  const [openItems, setOpenItems] = useState<number[]>([]);
+  const [openItem, setOpenItem] = useState<number | null>(null);
 
   const toggleItem = (id: number) => {
-    setOpenItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    setOpenItem((prev) => (prev === id ? null : id));
   };
 
   const handleWhatsAppContact = () => {
@@ -71,24 +69,24 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
               {FAQ_DATA.map((item) => (
                 <div
                   key={item.id}
-                  className="border border-gray-600/20 bg-[#4D4D4D] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-purple-500"
+                  className="border border-gray-600/20 bg-[#4D4D4D] overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-purple-500"
                 >
                   <button
                     onClick={() => toggleItem(item.id)}
                     className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-500 transition-colors duration-200"
-                    aria-expanded={openItems.includes(item.id)}
+                    aria-expanded={openItem === item.id}
                   >
                     <span className="font-semibold text-white text-lg">{item.question}</span>
                     <span className="text-gray-300 hover:text-purple-400 transition-colors duration-200">
-                      {openItems.includes(item.id) ? (
+                      {openItem === item.id ? (
                         <ChevronUp className="h-5 w-5" />
                       ) : (
                         <ChevronDown className="h-5 w-5" />
                       )}
                     </span>
                   </button>
-                  {openItems.includes(item.id) && (
-                    <div className="px-6 pb-4 leading-relaxed border-t border-gray-600/20 bg-white text-black">
+                  {openItem === item.id && (
+                    <div className="px-6 pb-4 leading-relaxed border-t border-gray-600/20 bg-white/80 text-black">
                       {item.answer}
                     </div>
                   )}

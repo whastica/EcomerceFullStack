@@ -1,4 +1,3 @@
-
 import { type Config } from 'tailwindcss';
 
 const config: Config = {
@@ -9,8 +8,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'helvetica': ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        'sans': ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'], // También actualiza la fuente por defecto
+      },
       colors: {
-        // Theme colors optimizados
         dark: {
           background: '#010101',
           surface: '#1A1A1A',
@@ -27,7 +29,6 @@ const config: Config = {
           muted: '#6B7280',
           border: '#E5E7EB',
         },
-        // Brand colors
         brand: {
           primary: '#8B5CF6',
           secondary: '#3B82F6',
@@ -35,12 +36,13 @@ const config: Config = {
         }
       },
       backgroundImage: {
-        // Gradientes principales optimizados
+        'elegant-dark-diagonal': 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+        'elegant-dark-diagonal-enhanced': 'linear-gradient(135deg, #000000 0%, #0f0f0f 30%, #1a1a1a 70%, #2a2a2a 100%)',
+        'elegant-dark-diagonal-visible': 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #333333 100%)',
+        'elegant-dark-diagonal-subtle': 'linear-gradient(135deg, #000000 0%, #111111 40%, #1a1a1a 80%, #222222 100%)',
         'diagonal-gradient': 'linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #404040 50%, #808080 75%, #ffffff 100%)',
         'diagonal-gradient-subtle': 'linear-gradient(135deg, #000000 0%, #0f0f0f 20%, #2a2a2a 40%, #4a4a4a 60%, #6a6a6a 80%, #f0f0f0 100%)',
         'diagonal-soft': 'linear-gradient(135deg, #000000 0%, #1a1a1a 30%, #333333 60%, #999999 90%, #ffffff 100%)',
-        
-        // Patrones de fondo mejorados
         'geometric-pattern': `
           radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
           radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
@@ -56,11 +58,7 @@ const config: Config = {
           linear-gradient(90deg, transparent 24%, rgba(139, 92, 246, 0.03) 25%, rgba(139, 92, 246, 0.03) 26%, transparent 27%, transparent 74%, rgba(139, 92, 246, 0.03) 75%, rgba(139, 92, 246, 0.03) 76%, transparent 77%, transparent),
           linear-gradient(transparent 24%, rgba(59, 130, 246, 0.03) 25%, rgba(59, 130, 246, 0.03) 26%, transparent 27%, transparent 74%, rgba(59, 130, 246, 0.03) 75%, rgba(59, 130, 246, 0.03) 76%, transparent 77%, transparent)
         `,
-        
-        // Overlay para legibilidad
         'text-overlay': 'linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0.05) 100%)',
-        
-        // Glassmorphism backgrounds
         'glass-dark': 'linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(30, 30, 30, 0.6) 100%)',
         'glass-light': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
       },
@@ -82,6 +80,10 @@ const config: Config = {
         'geometric-shift': 'geometricShift 25s ease-in-out infinite',
         'float': 'float 8s ease-in-out infinite',
         'scale-in': 'scaleIn 0.3s ease-out',
+        'progress': 'progressFill linear forwards',
+        // Nuevas animaciones para efectos de hover
+        'underline-expand': 'underlineExpand 0.3s ease-out forwards',
+        'text-glow': 'textGlow 0.3s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -105,43 +107,38 @@ const config: Config = {
           '100%': { boxShadow: '0 0 40px rgba(139, 92, 246, 0.3)' },
         },
         glowPulse: {
-          '0%, 100%': { 
-            boxShadow: '0 0 20px rgba(139, 92, 246, 0.1)',
-            transform: 'scale(1)',
-          },
-          '50%': { 
-            boxShadow: '0 0 40px rgba(139, 92, 246, 0.3)',
-            transform: 'scale(1.02)',
-          },
+          '0%, 100%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.1)', transform: 'scale(1)' },
+          '50%': { boxShadow: '0 0 40px rgba(139, 92, 246, 0.3)', transform: 'scale(1.02)' },
         },
         gradientShift: {
           '0%, 100%': { backgroundPosition: '0% 0%' },
           '50%': { backgroundPosition: '100% 100%' },
         },
         geometricShift: {
-          '0%, 100%': { 
-            backgroundPosition: '0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%',
-          },
-          '33%': { 
-            backgroundPosition: '33% 33%, 66% 66%, 99% 99%, 33% 33%, 66% 66%',
-          },
-          '66%': { 
-            backgroundPosition: '66% 66%, 33% 33%, 0% 0%, 66% 66%, 33% 33%',
-          },
+          '0%, 100%': { backgroundPosition: '0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%' },
+          '33%': { backgroundPosition: '33% 33%, 66% 66%, 99% 99%, 33% 33%, 66% 66%' },
+          '66%': { backgroundPosition: '66% 66%, 33% 33%, 0% 0%, 66% 66%, 33% 33%' },
         },
         float: {
-          '0%, 100%': {
-            transform: 'translateY(0px) rotate(0deg)',
-            opacity: '0.1',
-          },
-          '50%': {
-            transform: 'translateY(-30px) rotate(180deg)',
-            opacity: '0.3',
-          },
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)', opacity: '0.1' },
+          '50%': { transform: 'translateY(-30px) rotate(180deg)', opacity: '0.3' },
         },
         scaleIn: {
           '0%': { transform: 'scale(0.95)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        progressFill: {
+          '0%': { width: '0%' },
+          '100%': { width: '100%' },
+        },
+        // Nuevos keyframes para efectos mejorados
+        underlineExpand: {
+          '0%': { width: '0%', left: '50%' },
+          '100%': { width: '100%', left: '0%' },
+        },
+        textGlow: {
+          '0%': { textShadow: 'none' },
+          '100%': { textShadow: '0 0 8px rgba(215, 254, 59, 0.6)' },
         },
       },
       backdropBlur: {
@@ -168,6 +165,7 @@ const config: Config = {
         'glow-sm': '0 0 20px rgba(139, 92, 246, 0.15)',
         'glow-md': '0 0 30px rgba(139, 92, 246, 0.25)',
         'glow-lg': '0 0 40px rgba(139, 92, 246, 0.35)',
+        'text-glow': '0 0 8px rgba(215, 254, 59, 0.6)',
       },
       zIndex: {
         '60': '60',

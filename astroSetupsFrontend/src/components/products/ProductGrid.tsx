@@ -33,7 +33,7 @@ export default function ProductGrid({ products, productsPerPage = 8 }: ProductGr
   return (
     <div className="space-y-8">
       {/* Grid de productos con espaciado uniforme */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-y-0 gap-x-0">
         {currentProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

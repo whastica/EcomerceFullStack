@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export interface FAQProps {
   id?: string;
 }
@@ -5,5 +7,5 @@ export interface FAQProps {
 export interface FAQItem {
   id: number;
   question: string;
-  answer: string;
+  answer: JSX.Element;
 }

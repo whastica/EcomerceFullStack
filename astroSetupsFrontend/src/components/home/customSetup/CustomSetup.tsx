@@ -2,6 +2,7 @@ import Container from '../../layout/container/Container';
 import CustomSetupContent from './CustomSetupContent';
 import CustomSetupImage from './CustomSetupImage';
 import CustomSetupButton from './CustomSetupButton';
+import CustomSetupFeatures from './CustomSetupFeatures';
 
 export default function CustomSetup() {
   return (
@@ -22,6 +23,7 @@ export default function CustomSetup() {
           </div>
 
           <CustomSetupButton />
+          <CustomSetupFeatures />
         </Container>
       </div>
     </section>

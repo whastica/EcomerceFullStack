@@ -13,7 +13,7 @@ export default function CarouselIndicators({ total, current, onSelect }: Props) 
           aria-label={`Ir al slide ${index + 1}`}
           onClick={() => onSelect(index)}
           className={`w-3 h-3 rounded-full transition-all duration-300 ${
-            index === current ? 'bg-white' : 'bg-white/50'
+            index === current ? 'bg-orange-500' : 'bg-white/50'
           }`}
         />
       ))}

@@ -1,6 +1,5 @@
 import { useEffect, RefObject } from 'react';
 import Container from '../../components/layout/container/Container';
-import Footer from '../../components/layout/footer/footer';
 import { carouselSlides } from '../../interfaces/carousel/CarouselSlide';
 import CategoryGrid from '../../components/home/CategoryGrid';
 import CustomSetup from '../../components/home/customSetup/CustomSetup';
@@ -138,8 +137,6 @@ export default function Home({ faqRef }: HomeProps) {
             <ProductGrid products={relatedProducts} productsPerPage={4} />
           </div>
         </Container>
-
-        <Footer />
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ export default function SearchBox({ value, onChange }: Props) {
       <div className="relative">
         <input
           type="text"
-          placeholder="Buscar por nombre o marca..."
+          placeholder="Buscar por nombre "
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full px-3 py-2 bg-dark-card border border-dark-border rounded-lg text-dark-text placeholder-dark-muted focus:outline-none focus:ring-2 focus:ring-[#FB5607] focus:border-transparent"

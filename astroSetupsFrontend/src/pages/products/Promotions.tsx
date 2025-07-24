@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Footer from '../../components/layout/footer/footer';
 import Container from '../../components/layout/container/Container';
 import ProductGrid from '../../components/products/ProductGrid';
 import { Product } from '../../components/products/ProductCard';
@@ -86,8 +85,6 @@ export default function PromotionsPage() {
             </div>
           </Container>
         </main>
-
-        <Footer />
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import ProductsPage from './pages/products/Products';
 import PromotionsPage from './pages/products/Promotions';
 import ProductDetailPage from './pages/products/ProductDetailPage';
 import CartPage from './pages/cart/CartPage';
+import Footer from './components/layout/footer/footer';
+import Login from './pages/login/login';
 
 export default function App() {
   const faqRef = useRef<HTMLElement | null>(null);
@@ -70,8 +72,10 @@ export default function App() {
           <Route path="/promotions" element={<PromotionsPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
+      <Footer />
     </>
   );
 }

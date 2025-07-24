@@ -42,7 +42,7 @@ export default function PriceRangeSlider({ value, onChange }: Props) {
             onChange={(e) => onChange(min, parseInt(e.target.value))}
             className="w-full h-2 bg-dark-border rounded-lg appearance-none cursor-pointer slider-thumb-orange"
             style={{
-              background: `linear-gradient(to right, #FB5607 0%, #FB5607 ${(max / 5000000) * 100}%, #374151 ${(max / 5000000) * 100}%, #374151 100%)`,
+              background: `linear-gradient(to right, #FB5607 0%, #FB5607 ${(min / 5000000) * 100}%, #374151 ${(min / 5000000) * 100}%, #374151 100%)`
             }}
           />
         </div>

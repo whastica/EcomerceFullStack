@@ -1,12 +1,11 @@
 export type SortOption = 'newest' | 'oldest' | 'price-asc' | 'price-desc';
 
-// Define el estado del filtro del sidebar
 export interface FilterState {
   priceRange: [number, number];
   searchTerm: string;
   sortBy: SortOption;
+  categories: number[]; // Filtro por categorías seleccionadas
 }
-
 // Define la estructura de una categoría individual
 export interface CategoryItem {
   id: number;

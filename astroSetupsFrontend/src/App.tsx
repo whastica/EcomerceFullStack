@@ -7,7 +7,7 @@ import PromotionsPage from './pages/products/Promotions';
 import ProductDetailPage from './pages/products/ProductDetailPage';
 import CartPage from './pages/cart/CartPage';
 import Footer from './components/layout/footer/footer';
-import Login from './pages/login/login';
+import Login from './pages/login/Login';
 
 export default function App() {
   const faqRef = useRef<HTMLElement | null>(null);

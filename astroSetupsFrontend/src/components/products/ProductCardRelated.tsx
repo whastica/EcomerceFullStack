@@ -20,7 +20,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       to={`/product/${product.id}`}
       className="group block transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
     >
-      <div className="relative overflow-hidden rounded-b-lg bg-transparent">
+      <div className="relative overflow-hidden bg-transparent border border-white border-t-0">
         {/* Imagen del producto */}
         <div className="relative overflow-hidden">
           <img

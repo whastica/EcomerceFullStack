@@ -1,11 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Container from '../../components/layout/container/Container';
-import {Navbar} from '../../components/layout/navbar/Navbar';
-import Footer from '../../components/layout/footer/footer';
 import ProductInfo from '../../components/products/ProductInfo';
-import ProductGrid from '../../components/products/ProductGrid';
-import ProductDescription from '../../components/products/ProductDescription'; // ✅ Importación añadida
+import ProductGridRelated from '../../components/products/ProductGridRelated';
+import ProductDescription from '../../components/products/ProductDescription';
 
 // ✅ Tipo extendido completo
 export type Product = {
@@ -33,7 +31,7 @@ const exampleProducts: ProductDetail[] = [
     id: 1,
     name: 'NVIDIA RTX 4070 Ti',
     price: 3400000,
-    imageUrl: '/assets/products/rtx-4070.webp',
+    imageUrl: '/assets/products/rtx-4070.png',
     isAvailable: true,
     brand: 'NVIDIA',
     description: 'GPU de alto rendimiento con trazado de rayos y DLSS 3. Ideal para gamers y creadores.',
@@ -53,7 +51,7 @@ const exampleProducts: ProductDetail[] = [
     id: 2,
     name: 'AMD Ryzen 7 5800X',
     price: 999000,
-    imageUrl: '/assets/products/ryzen-7.webp',
+    imageUrl: '/assets/products/ryzen-7.png',
     isAvailable: true,
     brand: 'AMD',
     description: 'Procesador con 8 núcleos y 16 hilos, perfecto para multitarea y juegos exigentes.',
@@ -73,7 +71,7 @@ const exampleProducts: ProductDetail[] = [
     id: 3,
     name: 'SSD Samsung 980 PRO 1TB',
     price: 520000,
-    imageUrl: '/assets/products/SSD.webp',
+    imageUrl: '/assets/products/SSD.png',
     isAvailable: false,
     brand: 'Samsung',
     description: 'SSD NVMe ultrarrápido con velocidades de lectura de hasta 7000MB/s.',
@@ -104,11 +102,19 @@ export default function ProductDetailPage() {
     .slice(0, 4);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar
-        cartItemCount={2}
-      />
-
+    <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">
+      {/* Fondo decorativo */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-dark-gradient"></div>
+        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
+        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
+        <div
+          className="absolute top-0 left-0 w-full h-full opacity-20"
+          style={{
+            backgroundImage: 'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)',
+          }}
+        />
+      </div>
       <main className="flex-1">
         <Container padding="large" className="py-12">
           {!product ? (
@@ -140,15 +146,14 @@ export default function ProductDetailPage() {
         {/* Productos relacionados */}
         <Container padding="large" className="pt-0">
           <div className="border-t border-gray-200 pt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Productos Relacionados
-            </h2>
-            <ProductGrid products={relatedProducts} productsPerPage={4} />
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">Productos Relacionados</h2>
+            
+            <div className="flex justify-center">
+              <ProductGridRelated products={relatedProducts} productsPerPage={4} />
+            </div>
           </div>
         </Container>
       </main>
-
-      <Footer />
     </div>
   );
 }

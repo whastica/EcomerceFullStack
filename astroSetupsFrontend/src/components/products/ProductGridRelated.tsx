@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ProductCard, { Product } from './ProductCard';
+import ProductCardRelated, { Product } from './ProductCardRelated';
 
 interface ProductGridProps {
   products: Product[];
@@ -33,9 +33,9 @@ export default function ProductGrid({ products, productsPerPage = 8 }: ProductGr
   return (
     <div className="space-y-8">
       {/* Grid de productos con espaciado uniforme */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-0">
         {currentProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCardRelated key={product.id} product={product} />
         ))}
       </div>
 

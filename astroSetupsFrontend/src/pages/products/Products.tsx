@@ -15,14 +15,14 @@ export default function ProductsPage() {
   });
 
   const exampleProducts: Product[] = [
-    { id: 1, name: 'NVIDIA RTX 4070 Ti', price: 3400000, imageUrl: '/assets/products/rtx-4070.webp', isAvailable: true, brand: 'NVIDIA' },
-    { id: 2, name: 'Procesador AMD Ryzen 7 5800X', price: 999000, imageUrl: '/assets/products/ryzen-7.webp', isAvailable: true, brand: 'AMD' },
-    { id: 3, name: 'SSD NVMe Samsung 980 PRO 1TB', price: 520000, imageUrl: '/assets/products/SSD.webp', isAvailable: false, brand: 'Samsung' },
-    { id: 4, name: 'Memoria RAM Corsair Vengeance RGB Pro 16GB', price: 340000, imageUrl: '/assets/products/memoriaram.webp', isAvailable: true, brand: 'Corsair' },
-    { id: 5, name: 'Tarjeta Madre ASUS ROG STRIX B550-F', price: 740000, imageUrl: '/assets/products/board-asus.webp', isAvailable: true, brand: 'ASUS' },
-    { id: 6, name: 'Monitor LG UltraGear 27" 144Hz', price: 1180000, imageUrl: '/assets/products/monitor.webp', isAvailable: true, brand: 'LG' },
-    { id: 7, name: 'Fuente de Poder EVGA 750W 80+ Gold', price: 420000, imageUrl: '/assets/products/fuente_poder.webp', isAvailable: true, brand: 'EVGA' },
-    { id: 8, name: 'Case NZXT H510 Flow', price: 370000, imageUrl: '/assets/products/case.webp', isAvailable: false, brand: 'NZXT' },
+    { id: 1, name: 'NVIDIA RTX 4070 Ti', price: 3400000, imageUrl: '/assets/products/rtx-4070.png', isAvailable: true, brand: 'NVIDIA' },
+    { id: 2, name: 'Procesador AMD Ryzen 7 5800X', price: 999000, imageUrl: '/assets/products/ryzen-7.png', isAvailable: true, brand: 'AMD' },
+    { id: 3, name: 'SSD NVMe Samsung 980 PRO 1TB', price: 520000, imageUrl: '/assets/products/SSD.png', isAvailable: false, brand: 'Samsung' },
+    { id: 4, name: 'Memoria RAM Corsair Vengeance RGB Pro 16GB', price: 340000, imageUrl: '/assets/products/memoriaram.png', isAvailable: true, brand: 'Corsair' },
+    { id: 5, name: 'Tarjeta Madre ASUS ROG STRIX B550-F', price: 740000, imageUrl: '/assets/products/board-asus.png', isAvailable: true, brand: 'ASUS' },
+    { id: 6, name: 'Monitor LG UltraGear 27" 144Hz', price: 1180000, imageUrl: '/assets/products/monitor.png', isAvailable: true, brand: 'LG' },
+    { id: 7, name: 'Fuente de Poder EVGA 750W 80+ Gold', price: 420000, imageUrl: '/assets/products/fuente_poder.png', isAvailable: true, brand: 'EVGA' },
+    { id: 8, name: 'Case NZXT H510 Flow', price: 370000, imageUrl: '/assets/products/case.png', isAvailable: false, brand: 'NZXT' },
   ];
 
   const categories = [
@@ -104,7 +104,7 @@ export default function ProductsPage() {
         <main className="flex-1">
           <Container padding="large">
             {/* Encabezado + Ordenamiento en un solo bloque */}
-            <div className="rounded-xl p-6 mb-8 animate-fade-in border border-[#666] bg-[#4D4D4D]">
+            <div className="rounded-xl p-6 mb-8 animate-fade-in border border-[#666] bg-[#4D4D4D] max-w-6xl mx-auto">
               {/* Título y descripción */}
               <h1 className="text-3xl font-bold text-dark-text mb-2 text-shadow-glow">
                 Todos los productos

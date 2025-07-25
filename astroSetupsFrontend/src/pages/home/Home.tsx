@@ -4,7 +4,7 @@ import { carouselSlides } from '../../interfaces/carousel/CarouselSlide';
 import CategoryGrid from '../../components/home/CategoryGrid';
 import CustomSetup from '../../components/home/customSetup/CustomSetup';
 import FAQ from '../../components/home/FAQ/FAQ';
-import ProductGrid from '../../components/products/ProductGrid';
+import ProductGridRelated from '../../components/products/ProductGridRelated';
 import { Product } from '../../components/products/ProductCard';
 import Carousel from '../../components/ui/Carousel';
 
@@ -134,7 +134,7 @@ export default function Home({ faqRef }: HomeProps) {
             <h2 className="text-6xl sm:text-4xl font-bold mb-6 text-dark-text text-shadow-dark">
               Explora Nuestros Productos
             </h2>
-            <ProductGrid products={relatedProducts} productsPerPage={4} />
+            <ProductGridRelated products={relatedProducts} productsPerPage={4} />
           </div>
         </Container>
       </div>

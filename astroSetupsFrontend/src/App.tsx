@@ -8,24 +8,24 @@ import ProductDetailPage from './pages/products/ProductDetailPage';
 import CartPage from './pages/cart/CartPage';
 import Footer from './components/layout/footer/footer';
 import Login from './pages/login/Login';
+import Register from './pages/login/Register'; // Nueva importación
 
 export default function App() {
   const faqRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
-
+  
   const scrollToFAQ = () => {
     faqRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
+  
   useEffect(() => {
     document.documentElement.classList.add('dark');
     document.body.classList.add('dark');
-
     document.body.style.backgroundColor = '#010101';
     document.body.style.color = '#FFFFFF';
     document.documentElement.style.backgroundColor = '#010101';
     document.documentElement.style.color = '#FFFFFF';
-
+    
     const observer = new MutationObserver(() => {
       if (!document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.add('dark');
@@ -33,26 +33,24 @@ export default function App() {
       if (!document.body.classList.contains('dark')) {
         document.body.classList.add('dark');
       }
-
       if (document.body.style.backgroundColor !== 'rgb(1, 1, 1)') {
         document.body.style.backgroundColor = '#010101';
         document.body.style.color = '#FFFFFF';
       }
     });
-
+    
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class', 'style'],
     });
-
     observer.observe(document.body, {
       attributes: true,
       attributeFilter: ['class', 'style'],
     });
-
+    
     return () => observer.disconnect();
   }, []);
-
+  
   useEffect(() => {
     // Si llegamos a la página con /#faq, hacer scroll al elemento
     if (location.pathname === '/' && location.hash === '#faq') {
@@ -61,7 +59,7 @@ export default function App() {
       }, 100); // Pequeño delay para esperar al render del DOM
     }
   }, [location]);
-
+  
   return (
     <>
       <Navbar onFAQClick={scrollToFAQ} />
@@ -73,6 +71,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} /> {/* Nueva ruta */}
         </Routes>
       </div>
       <Footer />

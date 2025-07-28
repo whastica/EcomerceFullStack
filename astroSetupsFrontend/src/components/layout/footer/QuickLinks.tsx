@@ -6,7 +6,7 @@ export default function QuickLinks() {
     { to: '/products', label: '📦 Catálogo' },
     { to: '/promotions', label: '🎉 Promociones' },
     { to: '/customPc', label: '🖥️ Personaliza tu PC' },
-    { to: '/contact', label: '❓ Preguntas Frecuentes' },
+    { to: '/contact', label: '❓ Contacto' },
   ];
 
   return (

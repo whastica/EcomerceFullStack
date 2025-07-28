@@ -8,7 +8,8 @@ import ProductDetailPage from './pages/products/ProductDetailPage';
 import CartPage from './pages/cart/CartPage';
 import Footer from './components/layout/footer/footer';
 import Login from './pages/login/Login';
-import Register from './pages/login/Register'; // Nueva importación
+import Register from './pages/login/Register';
+import Contact from './pages/login/Contact'; // Nueva importación
 
 export default function App() {
   const faqRef = useRef<HTMLElement | null>(null);
@@ -71,7 +72,8 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} /> {/* Nueva ruta */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </div>
       <Footer />

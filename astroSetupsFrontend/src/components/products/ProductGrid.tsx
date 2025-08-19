@@ -35,7 +35,10 @@ export default function ProductGrid({ products, productsPerPage = 8 }: ProductGr
       {/* Grid de productos con espaciado uniforme */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
         {currentProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+          />
         ))}
       </div>
 

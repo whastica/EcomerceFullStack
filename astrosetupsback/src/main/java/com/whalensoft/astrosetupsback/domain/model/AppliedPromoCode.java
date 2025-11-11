@@ -30,7 +30,7 @@ public class AppliedPromoCode {
 
     @ManyToOne
     @JoinColumn(name = "promo_code", insertable = false, updatable = false)
-    private PromoCode promoCodeEntity;
+    private PromoCode promoCodeRef;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)

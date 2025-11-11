@@ -3,14 +3,8 @@ package com.whalensoft.astrosetupsback.domain.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,10 +24,11 @@ public class CategoryType {
     @Column(name = "category_type_id")
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "El nombre del tipo de categoría es obligatorio.")
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "categoryType", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "categoryType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Builder.Default

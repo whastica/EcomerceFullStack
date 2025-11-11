@@ -1,50 +1,41 @@
 package com.whalensoft.astrosetupsback.domain.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 @Entity
 @Table(name = "shopping_carts")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "cartItems")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ShoppingCart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "shopping_cart_id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @NotNull
+    @Future
     @Column(nullable = false)
     private LocalDateTime expiration;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Builder.Default
     private List<CartItem> cartItems = new ArrayList<>();
 
@@ -55,15 +46,14 @@ public class ShoppingCart {
         }
     }
 
-    // Método para verificar si el carrito ha expirado
-    public Boolean isExpired() {
+    public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiration);
     }
 
-    // Método para calcular total del carrito
-    public Double getTotal() {
+    public BigDecimal getTotal() {
         return cartItems.stream()
-                .mapToDouble(CartItem::getSubtotal)
-                .sum();
+                .map(CartItem::getSubtotal)
+                .map(BigDecimal::valueOf)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

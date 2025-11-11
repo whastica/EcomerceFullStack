@@ -1,18 +1,13 @@
 package com.whalensoft.astrosetupsback.domain.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,70 +17,71 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "products")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"warranties", "cartItems", "orderItems"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Column(nullable = false, unique = true, length = 150)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String description;
 
-    @Column(nullable = false)
-    private Double price;
+    @NotNull
+    @Positive
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
-    @Column(name = "discount_price")
-    private Double discountPrice;
+    @Positive
+    @Column(name = "discount_price", precision = 10, scale = 2)
+    private BigDecimal discountPrice;
 
+    @Column(length = 100)
     private String brand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Column(name = "has_variations")
+    @NotNull
     @Builder.Default
+    @Column(name = "has_variations", nullable = false)
     private Boolean hasVariations = false;
 
-    @Column(nullable = false)
+    @NotNull
     @Builder.Default
+    @Column(nullable = false)
     private Boolean active = true;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Warranty> warranties = new ArrayList<>();
 
+    // Estos dos se pueden omitir si no los necesitas directamente desde Product:
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @Builder.Default
     private List<CartItem> cartItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    // Método para verificar si tiene descuento
     public boolean hasDiscount() {
-        return discountPrice != null && discountPrice < price;
+        return discountPrice != null && discountPrice.compareTo(price) < 0;
     }
 
-    // Método para obtener precio efectivo
-    public Double getEffectivePrice() {
+    public BigDecimal getEffectivePrice() {
         return hasDiscount() ? discountPrice : price;
     }
 }

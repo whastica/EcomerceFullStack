@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.catalog;
+package com.whalensoft.astrosetupsback.application.dto.catalog.Product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

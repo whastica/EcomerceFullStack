@@ -1,7 +1,11 @@
 package com.whalensoft.astrosetupsback.application.interfaces;
 
-import com.whalensoft.astrosetupsback.application.dto.customer.*;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Address.UpdateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Address.UserShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.*;
 
 import java.util.List;
 

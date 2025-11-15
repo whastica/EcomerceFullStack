@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.catalog;
+package com.whalensoft.astrosetupsback.application.dto.catalog.Category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,10 +14,7 @@ import java.util.List;
 public class CategoryTypeDTO {
     private Long id;
 
-    @NotBlank(message = "El nombre del tipo de categoría es obligatorio")
-    @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
+    @NotBlank
+    @Size(max = 100)
     private String name;
-
-    private List<CategorySummaryDTO> categories;
-    private Integer categoryCount;
 }

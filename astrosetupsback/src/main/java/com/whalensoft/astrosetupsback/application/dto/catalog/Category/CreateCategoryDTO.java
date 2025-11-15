@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.catalog;
+package com.whalensoft.astrosetupsback.application.dto.catalog.Category;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

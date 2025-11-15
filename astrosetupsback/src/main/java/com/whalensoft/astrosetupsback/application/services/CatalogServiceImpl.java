@@ -1,6 +1,7 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import com.whalensoft.astrosetupsback.application.dto.catalog.*;
+import com.whalensoft.astrosetupsback.application.dto.catalog.Category.*;
+import com.whalensoft.astrosetupsback.application.dto.catalog.Product.*;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.CatalogService;
 import com.whalensoft.astrosetupsback.domain.model.Category;

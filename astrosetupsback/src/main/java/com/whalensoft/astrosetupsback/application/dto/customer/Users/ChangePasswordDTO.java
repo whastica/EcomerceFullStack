@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.customer;
+package com.whalensoft.astrosetupsback.application.dto.customer.Users;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,7 @@ public class ChangePasswordDTO {
     @NotBlank(message = "La nueva contraseña es obligatoria")
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$",
-            message = "La contraseña debe contener al menos una mayúscula, una minúscula y un número")
+            message = "La contraseña debe contener mayúscula, minúscula y un número")
     private String newPassword;
 
     @NotBlank(message = "La confirmación de contraseña es obligatoria")

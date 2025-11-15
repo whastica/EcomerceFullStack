@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.catalog;
+package com.whalensoft.astrosetupsback.application.dto.catalog.Category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CategoryTypeBasicDTO {
+public class CategorySummaryDTO {
     private Long id;
     private String name;
+    private String categoryTypeName;
 }

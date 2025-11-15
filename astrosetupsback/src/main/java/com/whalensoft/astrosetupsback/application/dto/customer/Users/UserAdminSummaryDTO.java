@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.customer;
+package com.whalensoft.astrosetupsback.application.dto.customer.Users;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,24 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDTO {
+public class UserAdminSummaryDTO {
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private String email;
-    private String phone;
-    private String address;
     private UserRole role;
     private UserStatus status;
     private Boolean verified;
     private LocalDateTime createdAt;
-
-    // Información de ubicación
-    private String cityName;
-    private String postalCode;
-
-    // Campos calculados
-    private String fullName;
     private Integer totalOrders;
-    private Integer activeShippingAddresses;
 }

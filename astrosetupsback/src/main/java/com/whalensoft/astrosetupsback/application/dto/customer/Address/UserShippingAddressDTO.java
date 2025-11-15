@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.customer;
+package com.whalensoft.astrosetupsback.application.dto.customer.Address;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +14,7 @@ public class UserShippingAddressDTO {
     private String address;
     private String cityName;
     private String postalCode;
-    private Boolean isDefault;
-    private Integer ordersCount;
-}
+    private Boolean defaultAddress;
 
+    private Integer totalOrdersUsingThisAddress;
+}

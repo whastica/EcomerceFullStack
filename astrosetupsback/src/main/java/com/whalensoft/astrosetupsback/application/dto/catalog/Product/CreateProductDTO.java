@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.catalog;
+package com.whalensoft.astrosetupsback.application.dto.catalog.Product;
 
 
 import jakarta.validation.constraints.DecimalMin;
@@ -17,29 +17,32 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateProductDTO {
+
     @NotBlank(message = "El nombre del producto es obligatorio")
-    @Size(max = 200, message = "El nombre no puede exceder 200 caracteres")
+    @Size(max = 200)
     private String name;
 
-    @Size(max = 2000, message = "La descripción no puede exceder 2000 caracteres")
+    @Size(max = 2000)
     private String description;
 
     @NotNull(message = "El precio es obligatorio")
-    @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0")
+    @DecimalMin(value = "0.01")
     private Double price;
 
     @DecimalMin(value = "0.01", message = "El precio de descuento debe ser mayor a 0")
-    private Double discountPrice;
+    private Double discountPrice; // opcional
 
-    @Size(max = 100, message = "La marca no puede exceder 100 caracteres")
+    @Size(max = 100)
     private String brand;
 
     @NotNull(message = "La categoría es obligatoria")
     private Long categoryId;
 
-    @Pattern(regexp = "^(http|https)://.*", message = "La URL de la imagen debe ser válida")
-    private String imageUrl;
-    
+    private String imageUrl; // Puede ser opcional
+
     @Builder.Default
     private Boolean hasVariations = false;
+
+    @Builder.Default
+    private Boolean active = true;
 }

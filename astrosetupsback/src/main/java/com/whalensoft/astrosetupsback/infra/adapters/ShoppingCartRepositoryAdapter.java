@@ -33,6 +33,11 @@ public class ShoppingCartRepositoryAdapter implements ShoppingCartRepository {
     }
 
     @Override
+    public Optional<ShoppingCart> findByUserId(Long userId) {
+        return jpaShoppingCartRepository.findByUserId(userId);
+    }
+
+    @Override
     public List<ShoppingCart> findByExpirationBefore(LocalDateTime dateTime) {
         return jpaShoppingCartRepository.findByExpirationBefore(dateTime);
     }
@@ -48,7 +53,17 @@ public class ShoppingCartRepositoryAdapter implements ShoppingCartRepository {
     }
 
     @Override
+    public void deleteByUserId(Long userId) {
+        jpaShoppingCartRepository.deleteByUserId(userId);
+    }
+
+    @Override
     public boolean existsByUser(User user) {
         return jpaShoppingCartRepository.existsByUser(user);
+    }
+
+    @Override
+    public boolean existsByUserId(Long userId) {
+        return jpaShoppingCartRepository.existsByUserId(userId);
     }
 }

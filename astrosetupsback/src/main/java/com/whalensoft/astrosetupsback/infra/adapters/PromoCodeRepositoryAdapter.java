@@ -38,11 +38,16 @@ public class PromoCodeRepositoryAdapter implements PromoCodeRepository {
 
     @Override
     public void deleteByCode(String code) {
-        jpaPromoCodeRepository.deleteById(code);
+        jpaPromoCodeRepository.deleteByCode(code);
     }
 
     @Override
     public boolean existsByCode(String code) {
         return jpaPromoCodeRepository.existsByCode(code);
+    }
+
+    @Override
+    public List<PromoCode> findValidPromoCodes(LocalDateTime now) {
+        return jpaPromoCodeRepository.findValidPromoCodes(now);
     }
 }

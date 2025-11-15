@@ -1,6 +1,7 @@
 package com.whalensoft.astrosetupsback.domain.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,9 @@ public class Product {
     @Positive
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Positive
     @Column(name = "discount_price", precision = 10, scale = 2)

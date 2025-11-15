@@ -38,6 +38,11 @@ public class ShippingAddressRepositoryAdapter implements ShippingAddressReposito
     }
 
     @Override
+    public List<ShippingAddress> findByUserId(Long userId) {
+        return jpaShippingAddressRepository.findByUserId(userId);
+    }
+
+    @Override
     public List<ShippingAddress> findByCity(City city) {
         return jpaShippingAddressRepository.findByCity(city);
     }
@@ -45,6 +50,11 @@ public class ShippingAddressRepositoryAdapter implements ShippingAddressReposito
     @Override
     public void deleteById(Long id) {
         jpaShippingAddressRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteByUser(User user) {
+        jpaShippingAddressRepository.deleteByUser(user);
     }
 
     @Override

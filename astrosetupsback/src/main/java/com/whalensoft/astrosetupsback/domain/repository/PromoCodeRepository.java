@@ -9,11 +9,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PromoCodeRepository {
+
     PromoCode save(PromoCode promoCode);
-    @Query("SELECT p FROM PromoCode p WHERE LOWER(p.code) = LOWER(:code)")
-    Optional<PromoCode> findByCode(@Param("code") String code);
+
+    Optional<PromoCode> findByCode(String code);
+
     List<PromoCode> findByActiveTrue();
+
     List<PromoCode> findByActiveTrueAndExpirationDateAfter(LocalDateTime date);
+
     void deleteByCode(String code);
+
     boolean existsByCode(String code);
+
+    // Método recomendado
+    List<PromoCode> findValidPromoCodes(LocalDateTime now);
 }

@@ -9,6 +9,12 @@ import java.util.List;
 
 @Repository
 public interface JpaShippingAddressRepository extends JpaRepository<ShippingAddress, Long> {
+
     List<ShippingAddress> findByUser(User user);
+
+    List<ShippingAddress> findByUserId(Long userId);
+
     List<ShippingAddress> findByCity(City city);
+
+    void deleteByUser(User user);
 }

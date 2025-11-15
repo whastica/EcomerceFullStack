@@ -10,15 +10,29 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository {
+
     Order save(Order order);
+
     Optional<Order> findById(Long id);
+
     List<Order> findByUser(User user);
-    List<Order> findByStatus(OrderStatus status);
+
     Page<Order> findByUser(User user, Pageable pageable);
-    Page<Order> findAll(Pageable pageable);
-    List<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    List<Order> findByStatus(OrderStatus status);
+
     List<Order> findByUserAndStatus(User user, OrderStatus status);
-    void deleteById(Long id);
-    boolean existsById(Long id);
+
+    List<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
     Long countByStatus(OrderStatus status);
+
+    boolean existsById(Long id);
+
+    void deleteById(Long id);
+
+    // --- Métodos recomendados ---
+    Page<Order> findLatestOrders(Pageable pageable);
+
+    Page<Order> findByUserId(Long userId, Pageable pageable);
 }

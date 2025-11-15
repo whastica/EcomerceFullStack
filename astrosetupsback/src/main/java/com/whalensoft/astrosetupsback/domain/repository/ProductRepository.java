@@ -10,24 +10,33 @@ import com.whalensoft.astrosetupsback.domain.model.Category;
 import com.whalensoft.astrosetupsback.domain.model.Product;
 
 public interface ProductRepository {
+
     Product save(Product product);
     Optional<Product> findById(Long id);
+
+    // Activos y/o por categoría
     List<Product> findByCategory(Category category);
     List<Product> findByActiveTrue();
     List<Product> findByActiveTrueAndCategory(Category category);
     Page<Product> findByActiveTrue(Pageable pageable);
     Page<Product> findByActiveTrueAndCategory(Category category, Pageable pageable);
+
+    // Atributos adicionales
     List<Product> findByActiveTrueAndDiscountPriceIsNotNull();
     List<Product> findByActiveTrueAndBrand(String brand);
     Page<Product> findByActiveTrueAndNameContainingIgnoreCase(String name, Pageable pageable);
+
+    // Admin
     void deleteById(Long id);
     boolean existsById(Long id);
+
+    // Utilidades
     List<String> findDistinctBrands();
-    
-    // Nuevo método para búsqueda con filtros
+
+    // Búsqueda avanzada
     Page<Product> findByFilters(Long categoryId, Double minPrice, Double maxPrice, String brand, Pageable pageable);
-    
-    // Nuevos métodos para productos destacados
+
+    // Productos destacados
     List<Product> findFeaturedProducts();
     List<Product> findNewArrivals();
     List<Product> findBestSellers();

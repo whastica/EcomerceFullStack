@@ -45,6 +45,11 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
+    public List<User> findByRole(UserRole role) {
+        return jpaUserRepository.findByRole(role);
+    }
+
+    @Override
     public Page<User> findAll(Pageable pageable) {
         return jpaUserRepository.findAll(pageable);
     }
@@ -60,7 +65,22 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public List<User> findByRole(UserRole role) {
-        return jpaUserRepository.findByRole(role);
+    public boolean existsById(Long id) {
+        return jpaUserRepository.existsById(id);
+    }
+
+    @Override
+    public List<User> findActiveUsers() {
+        return jpaUserRepository.findAllActive();
+    }
+
+    @Override
+    public Page<User> search(String keyword, Pageable pageable) {
+        return jpaUserRepository.search(keyword, pageable);
+    }
+
+    @Override
+    public long countByRole(UserRole role) {
+        return jpaUserRepository.countByRole(role);
     }
 }

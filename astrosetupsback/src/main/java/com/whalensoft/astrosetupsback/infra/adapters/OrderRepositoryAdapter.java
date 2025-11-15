@@ -36,23 +36,13 @@ public class OrderRepositoryAdapter implements OrderRepository {
     }
 
     @Override
-    public List<Order> findByStatus(OrderStatus status) {
-        return jpaOrderRepository.findByStatus(status);
-    }
-
-    @Override
     public Page<Order> findByUser(User user, Pageable pageable) {
         return jpaOrderRepository.findByUser(user, pageable);
     }
 
     @Override
-    public Page<Order> findAll(Pageable pageable) {
-        return jpaOrderRepository.findAll(pageable);
-    }
-
-    @Override
-    public List<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
-        return jpaOrderRepository.findByOrderDateBetween(startDate, endDate);
+    public List<Order> findByStatus(OrderStatus status) {
+        return jpaOrderRepository.findByStatus(status);
     }
 
     @Override
@@ -61,8 +51,13 @@ public class OrderRepositoryAdapter implements OrderRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-        jpaOrderRepository.deleteById(id);
+    public List<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return jpaOrderRepository.findByOrderDateBetween(startDate, endDate);
+    }
+
+    @Override
+    public Long countByStatus(OrderStatus status) {
+        return jpaOrderRepository.countByStatus(status);
     }
 
     @Override
@@ -71,7 +66,17 @@ public class OrderRepositoryAdapter implements OrderRepository {
     }
 
     @Override
-    public Long countByStatus(OrderStatus status) {
-        return jpaOrderRepository.countByStatus(status);
+    public void deleteById(Long id) {
+        jpaOrderRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Order> findLatestOrders(Pageable pageable) {
+        return jpaOrderRepository.findAllOrderByOrderDateDesc(pageable);
+    }
+
+    @Override
+    public Page<Order> findByUserId(Long userId, Pageable pageable) {
+        return jpaOrderRepository.findByUserId(userId, pageable);
     }
 }

@@ -10,8 +10,15 @@ import java.util.Optional;
 
 @Repository
 public interface JpaShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
+
     Optional<ShoppingCart> findByUser(User user);
+    Optional<ShoppingCart> findByUserId(Long userId);
+
     List<ShoppingCart> findByExpirationBefore(LocalDateTime dateTime);
+
     void deleteByUser(User user);
+    void deleteByUserId(Long userId);
+
     boolean existsByUser(User user);
+    boolean existsByUserId(Long userId);
 }

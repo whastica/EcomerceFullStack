@@ -31,8 +31,8 @@ public class CategoryTypeRepositoryAdapter implements CategoryTypeRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-        jpaCategoryTypeRepository.deleteById(id);
+    public Optional<CategoryType> findByName(String name) {
+        return jpaCategoryTypeRepository.findByName(name);
     }
 
     @Override
@@ -41,7 +41,12 @@ public class CategoryTypeRepositoryAdapter implements CategoryTypeRepository {
     }
 
     @Override
-    public Optional<CategoryType> findByName(String name) {
-        return jpaCategoryTypeRepository.findByName(name);
+    public boolean existsByName(String name) {
+        return jpaCategoryTypeRepository.existsByName(name);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaCategoryTypeRepository.deleteById(id);
     }
 }

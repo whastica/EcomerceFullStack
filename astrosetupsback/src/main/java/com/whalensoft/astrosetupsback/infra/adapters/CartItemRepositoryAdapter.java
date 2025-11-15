@@ -3,6 +3,7 @@ package com.whalensoft.astrosetupsback.infra.adapters;
 import com.whalensoft.astrosetupsback.domain.model.CartItem;
 import com.whalensoft.astrosetupsback.domain.model.ShoppingCart;
 import com.whalensoft.astrosetupsback.domain.model.Product;
+import com.whalensoft.astrosetupsback.domain.model.User;
 import com.whalensoft.astrosetupsback.domain.repository.CartItemRepository;
 import com.whalensoft.astrosetupsback.infra.repository.JpaCartItemRepository;
 import org.springframework.stereotype.Component;
@@ -55,5 +56,27 @@ public class CartItemRepositoryAdapter implements CartItemRepository {
     @Override
     public boolean existsByShoppingCartAndProduct(ShoppingCart cart, Product product) {
         return jpaCartItemRepository.existsByShoppingCartAndProduct(cart, product);
+    }
+
+
+    // --- Métodos nuevos ---
+    @Override
+    public void deleteByProduct(Product product) {
+        jpaCartItemRepository.deleteByProduct(product);
+    }
+
+    @Override
+    public List<CartItem> findByProduct(Product product) {
+        return jpaCartItemRepository.findByProduct(product);
+    }
+
+    @Override
+    public List<CartItem> findByUser(User user) {
+        return jpaCartItemRepository.findByUser(user);
+    }
+
+    @Override
+    public List<CartItem> findActiveCartItemsByUser(Long userId) {
+        return jpaCartItemRepository.findActiveCartItemsByUser(userId);
     }
 }

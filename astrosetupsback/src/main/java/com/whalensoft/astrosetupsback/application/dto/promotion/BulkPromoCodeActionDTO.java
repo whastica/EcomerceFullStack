@@ -12,11 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class BulkPromoCodeActionDTO {
+
     @NotEmpty(message = "La lista de códigos promocionales no puede estar vacía")
+    @Size(max = 500, message = "Solo se permiten hasta 500 códigos por operación")
     private List<String> promoCodes;
 
-    @NotBlank(message = "La acción es obligatoria")
-    @Pattern(regexp = "^(ACTIVATE|DEACTIVATE|DELETE)$",
-            message = "La acción debe ser ACTIVATE, DEACTIVATE o DELETE")
-    private String action;
+    @NotNull(message = "La acción es obligatoria")
+    private PromoCodeBulkAction action;
+
+    @Size(max = 255, message = "El motivo no puede exceder 255 caracteres")
+    private String reason; // opcional, para trazabilidad
 }

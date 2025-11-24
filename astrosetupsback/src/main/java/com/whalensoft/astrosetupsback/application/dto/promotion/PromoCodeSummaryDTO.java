@@ -11,11 +11,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PromoCodeSummaryDTO {
+
     private String code;
-    private Double discountPercentage;
+
+    // Nuevo: coherente con el diseño moderno de promociones
+    private PromoDiscountType discountType;
+    private Double discountValue;
+
     private LocalDateTime expirationDate;
+
     private Boolean active;
-    private Boolean isValid;
+
+    // Métricas esenciales
     private Integer timesUsed;
     private Integer remainingUses;
+
+    // Campo derivado muy útil en tablas
+    private Boolean expired;
 }

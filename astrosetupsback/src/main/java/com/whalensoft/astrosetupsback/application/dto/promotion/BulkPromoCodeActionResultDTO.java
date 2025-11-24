@@ -12,11 +12,17 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class BulkPromoCodeActionResultDTO {
-    private String action;
+
+    private PromoCodeBulkAction action;
+
     private Integer totalCodes;
     private Integer successfulActions;
     private Integer failedActions;
+
     private List<String> successfulCodes;
-    private Map<String, String> failedCodes; // código -> razón del fallo
-    private String message;
+
+    // código -> razón del fallo
+    private Map<String, String> failedCodes;
+
+    private String summary;
 }

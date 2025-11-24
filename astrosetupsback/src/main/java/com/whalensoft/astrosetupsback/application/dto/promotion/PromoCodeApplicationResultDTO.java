@@ -10,12 +10,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PromoCodeApplicationResultDTO {
+
     private Boolean success;
-    private String message;
+
+    private String message; // Ej: "Cupón aplicado correctamente", "Cupón expirado", etc.
+
     private String promoCode;
-    private Double discountPercentage;
-    private Double discountAmount;
+
+    private PromoDiscountType discountType; // NUEVO: porcentaje, valor fijo o free_shipping
+
+    private Double discountApplied; // El monto real descontado (en $)
+
     private Double originalAmount;
+
     private Double finalAmount;
+
     private Integer remainingUses;
 }

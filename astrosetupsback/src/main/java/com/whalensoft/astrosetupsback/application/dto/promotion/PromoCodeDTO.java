@@ -11,17 +11,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PromoCodeDTO {
+
     private String code;
-    private Double discountPercentage;
+
+    private PromoDiscountType discountType;  // porcentaje, valor fijo, free_shipping
+
+    private Double discountValue; // % o valor fijo. Si free_shipping = 0.
+
     private LocalDateTime expirationDate;
-    private Integer remainingUses;
-    private Boolean forDiscountedProductsOnly;
+
     private Boolean active;
 
-    // Campos calculados
-    private Boolean isValid;
-    private Boolean isExpired;
-    private Integer totalUses;
-    private Integer timesUsed;
+    private Integer remainingUses;
+
+    private Integer maxUses; // Opcional pero recomendado
+
+    private Double minimumOrderAmount; // Si aplica (puede ser null)
+
+    private Boolean appliesToDiscountedProducts;
+
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

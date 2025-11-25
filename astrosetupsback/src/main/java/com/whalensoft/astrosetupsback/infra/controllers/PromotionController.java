@@ -2,7 +2,13 @@ package com.whalensoft.astrosetupsback.infra.controllers;
 
 import java.util.List;
 
-import com.whalensoft.astrosetupsback.application.dto.promotion.*;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkCreatePromoCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.code.*;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.ApplyPromoCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationResultDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

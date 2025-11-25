@@ -2,8 +2,14 @@ package com.whalensoft.astrosetupsback.application.services;
 
 import com.whalensoft.astrosetupsback.application.common.InfoMessages;
 import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
-import com.whalensoft.astrosetupsback.application.dto.promotion.*;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkCreatePromoCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.code.*;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.ApplyPromoCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationResultDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.PromotionService;
 import com.whalensoft.astrosetupsback.domain.model.PromoCode;
 import com.whalensoft.astrosetupsback.domain.repository.PromoCodeRepository;

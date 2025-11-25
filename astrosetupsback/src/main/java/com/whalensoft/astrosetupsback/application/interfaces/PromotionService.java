@@ -1,7 +1,13 @@
 package com.whalensoft.astrosetupsback.application.interfaces;
 
-import com.whalensoft.astrosetupsback.application.dto.promotion.*;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkCreatePromoCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.code.*;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.ApplyPromoCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationResultDTO;
 
 import java.util.List;
 

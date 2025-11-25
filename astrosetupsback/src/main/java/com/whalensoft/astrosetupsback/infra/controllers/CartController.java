@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.whalensoft.astrosetupsback.application.dto.sales.AddToCartDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.AddToCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.CartItemDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.CartSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartSummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.ShoppingCartDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.UpdateCartItemDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.UpdateCartItemDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
 
 import jakarta.validation.Valid;

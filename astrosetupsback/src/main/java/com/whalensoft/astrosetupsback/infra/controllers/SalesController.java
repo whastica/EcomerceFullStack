@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.CheckoutSummaryDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.CreateOrderDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.OrderDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.OrderSearchDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.OrderSearchResultDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.OrderStatusHistoryDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.OrderSummaryDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.OrderTrackingDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.ProcessCheckoutDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.SalesStatsDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.UpdateOrderStatusDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.checkout.CheckoutSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.orders.CreateOrderDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderStatusHistoryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderTrackingDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ProcessCheckoutDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.orders.UpdateOrderStatusDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
 
 import jakarta.validation.Valid;

@@ -1,11 +1,20 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import com.whalensoft.astrosetupsback.application.dto.sales.*;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.AddToCartDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.UpdateCartItemDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.checkout.CheckoutSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ProcessCheckoutDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.orders.*;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderItemDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesStatsDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
 import com.whalensoft.astrosetupsback.domain.model.*;
 import com.whalensoft.astrosetupsback.domain.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

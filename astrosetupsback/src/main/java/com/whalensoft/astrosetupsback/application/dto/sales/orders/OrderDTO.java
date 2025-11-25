@@ -2,8 +2,6 @@ package com.whalensoft.astrosetupsback.application.dto.sales.orders;
 
 
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.GuestUserDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderItemDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ShippingAddressDTO;
 import com.whalensoft.astrosetupsback.domain.model.OrderStatus;
 import com.whalensoft.astrosetupsback.domain.model.PaymentMethod;
 import lombok.AllArgsConstructor;

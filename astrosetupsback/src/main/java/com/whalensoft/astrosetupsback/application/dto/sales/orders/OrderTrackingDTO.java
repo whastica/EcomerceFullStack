@@ -1,6 +1,5 @@
 package com.whalensoft.astrosetupsback.application.dto.sales.orders;
 
-import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ShippingAddressDTO;
 import com.whalensoft.astrosetupsback.domain.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +14,19 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class OrderTrackingDTO {
-    private Long id;
-    private OrderStatus status;
+
+    /** ID de la orden */
+    private Long orderId;
+
+    /** Estado actual de la orden */
+    private OrderStatus currentStatus;
+
+    /** Fecha de creación de la orden */
     private LocalDateTime orderDate;
+
+    /** Fecha estimada de entrega calculada por backend */
     private LocalDateTime estimatedDelivery;
+
+    /** Historial de estados más recientes, opcionalmente limitado a los últimos N cambios */
     private List<OrderStatusHistoryDTO> statusHistory;
-    private ShippingAddressDTO shippingAddress;
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -12,10 +13,16 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ShippingZoneDTO {
+
     private Long id;
-    private String zoneName;
+
+    private String name;
+
     private List<CitySummaryDTO> cities;
-    private Double baseCost;
+
+    private BigDecimal baseCost;
+
     private Integer deliveryDays;
+
     private Boolean expressAvailable;
 }

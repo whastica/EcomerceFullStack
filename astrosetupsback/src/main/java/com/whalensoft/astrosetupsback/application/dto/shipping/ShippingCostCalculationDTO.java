@@ -7,11 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ShippingCostCalculationDTO {
+
     @NotNull(message = "La ciudad de destino es obligatoria")
     private Long destinationCityId;
 

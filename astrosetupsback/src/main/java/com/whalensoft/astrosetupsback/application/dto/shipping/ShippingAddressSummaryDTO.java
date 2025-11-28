@@ -10,9 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ShippingAddressSummaryDTO {
+
     private Long id;
-    private String address;
+    private String recipientName;
+    private String addressLine1;
+
     private String cityName;
-    private String postalCode;
+    private String stateName;
+    private String countryName;
+
     private Boolean isDefault;
+
+    private Integer ordersCount;
 }

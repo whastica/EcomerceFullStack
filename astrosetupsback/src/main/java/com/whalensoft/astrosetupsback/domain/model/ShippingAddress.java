@@ -10,12 +10,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "shipping_addresses")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@ToString(exclude = {"orders"})
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
+@ToString(exclude = "orders")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ShippingAddress {
 
@@ -29,24 +26,38 @@ public class ShippingAddress {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @NotBlank(message = "La dirección no puede estar vacía")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "country_id")
+    private Country country;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "state_id")
+    private State state;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "city_id")
+    private City city;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "postal_code_id")
+    private PostalCode postalCode;
+
     @Column(nullable = false, length = 255)
-    private String address;
+    private String addressLine1;
 
-    @NotBlank(message = "La ciudad es obligatoria")
-    @Column(nullable = false, length = 100)
-    private String city;
+    @Column(length = 255)
+    private String addressLine2;
 
-    @NotBlank(message = "El código postal es obligatorio")
-    @Pattern(regexp = "^[0-9A-Za-z\\-]{4,10}$", message = "El código postal no es válido")
-    @Column(name = "postal_code", nullable = false, length = 10)
-    private String postalCode;
+    @Column(nullable = false)
+    private String recipientName;
 
-    @Column(name = "is_default", nullable = false)
+    @Column(nullable = false, length = 20)
+    private String phone;
+
+    @Column(nullable = false)
     @Builder.Default
     private Boolean isDefault = false;
 
     @OneToMany(mappedBy = "shippingAddress", fetch = FetchType.LAZY)
-    @Builder.Default
     private List<Order> orders = new ArrayList<>();
 }

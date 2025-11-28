@@ -12,9 +12,25 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserShippingPreferencesDTO {
-    private Long userId;
+
+    /**
+     * Lista de direcciones guardadas por el usuario
+     */
     private List<ShippingAddressSummaryDTO> addresses;
+
+    /**
+     * Dirección principal del usuario
+     */
     private ShippingAddressSummaryDTO defaultAddress;
+
+    /**
+     * Cantidad total de direcciones registradas
+     */
     private Integer totalAddresses;
-    private String preferredCity;
+
+    /**
+     * Ciudad preferida calculada a partir de su dirección principal
+     * o comportamiento de compra.
+     */
+    private CitySummaryDTO preferredCity;
 }

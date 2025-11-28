@@ -14,13 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CityDTO {
+
     private Long id;
 
     @NotBlank(message = "El nombre de la ciudad es obligatorio")
     @Size(max = 100, message = "El nombre de la ciudad no puede exceder 100 caracteres")
     private String name;
 
-    private Integer usersCount;
-    private Integer shippingAddressesCount;
+    // Lista de códigos postales disponibles para esta ciudad
     private List<PostalCodeSummaryDTO> postalCodes;
 }

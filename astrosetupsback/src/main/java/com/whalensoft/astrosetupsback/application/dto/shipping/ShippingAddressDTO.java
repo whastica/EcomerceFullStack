@@ -10,12 +10,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ShippingAddressDTO {
+
     private Long id;
-    private Long userId;
-    private String userFullName;
-    private String address;
-    private CityDTO city;
-    private PostalCodeDTO postalCode;
+
+    private String recipientName;
+    private String phone;
+
+    private String addressLine1;
+    private String addressLine2;
+
+    private Long countryId;
+    private String countryName;
+
+    private Long stateId;
+    private String stateName;
+
+    private Long cityId;
+    private String cityName;
+
+    private Long postalCodeId;
+    private String postalCode;
+
     private Boolean isDefault;
-    private Integer ordersCount; // Número de órdenes asociadas a esta dirección
 }

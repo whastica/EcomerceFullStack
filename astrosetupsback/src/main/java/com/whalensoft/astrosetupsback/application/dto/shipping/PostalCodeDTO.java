@@ -12,13 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PostalCodeDTO {
+
     private Long id;
 
     @NotBlank(message = "El código postal es obligatorio")
     @Size(max = 20, message = "El código postal no puede exceder 20 caracteres")
     private String code;
 
-    private CityDTO city;
-    private Integer usersCount;
-    private Integer shippingAddressesCount;
+    // Información mínima y necesaria (sin exponer CityDTO completo)
+    private Long cityId;
+    private String cityName;
 }

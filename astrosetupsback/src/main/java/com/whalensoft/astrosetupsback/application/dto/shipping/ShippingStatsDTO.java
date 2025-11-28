@@ -5,16 +5,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ShippingStatsDTO {
+
     private Long totalShippingAddresses;
+
     private Long totalCities;
+
     private Long totalPostalCodes;
+
     private Long activeShippingAddresses;
-    private String mostPopularCity;
+
+    private CitySummaryDTO mostPopularCity;
+
     private Long ordersWithShipping;
-    private Double averageShippingCost;
+
+    private BigDecimal averageShippingCost;
 }

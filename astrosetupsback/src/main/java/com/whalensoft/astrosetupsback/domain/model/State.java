@@ -1,22 +1,24 @@
 package com.whalensoft.astrosetupsback.domain.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "cities")
+@Table(name = "states")
 @Getter
 @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class City {
+public class State {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "city_id")
+    @Column(name = "state_id")
     @EqualsAndHashCode.Include
     private Long id;
 
@@ -24,10 +26,10 @@ public class City {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
 
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "state", fetch = FetchType.LAZY)
     @Builder.Default
-    private List<PostalCode> postalCodes = new ArrayList<>();
+    private List<City> cities = new ArrayList<>();
 }

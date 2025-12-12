@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.shipping;
+package com.whalensoft.astrosetupsback.application.dto.shipping.address;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

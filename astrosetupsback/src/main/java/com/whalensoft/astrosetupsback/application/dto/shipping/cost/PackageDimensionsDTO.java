@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.shipping;
+package com.whalensoft.astrosetupsback.application.dto.shipping.cost;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;

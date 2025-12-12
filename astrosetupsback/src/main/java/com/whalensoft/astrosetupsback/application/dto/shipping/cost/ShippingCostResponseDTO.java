@@ -1,5 +1,7 @@
-package com.whalensoft.astrosetupsback.application.dto.shipping;
+package com.whalensoft.astrosetupsback.application.dto.shipping.cost;
 
+import com.whalensoft.astrosetupsback.application.dto.shipping.location.CitySummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.location.PostalCodeSummaryDTO;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

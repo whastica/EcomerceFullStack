@@ -9,17 +9,19 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Map;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+import java.util.Map;
+
 @Builder
-public class BulkOperationDTO {
-    @NotEmpty(message = "La lista de IDs no puede estar vacía")
-    private List<Long> ids;
+public record BulkOperationDTO(
 
-    @NotBlank(message = "La operación es obligatoria")
-    private String operation; // DELETE, UPDATE, ACTIVATE, DEACTIVATE
+        @NotEmpty(message = "La lista de IDs no puede estar vacía")
+        @Size(max = 2000, message = "El número máximo permitido de IDs es 2000")
+        java.util.List<Long> ids,
 
-    private Map<String, Object> parameters;
-    private String reason;
-}
+        @NotNull(message = "La operación es obligatoria")
+        BulkOperationType operation,
+
+        Map<String, Object> parameters,
+
+        String reason
+) {}

@@ -9,23 +9,25 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Map;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class EmailTemplateDTO {
-    @NotBlank(message = "El destinatario es obligatorio")
-    @Email(message = "El formato del email no es válido")
-    private String toEmail;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.Map;
 
-    private String toName;
+public record EmailTemplateDTO(
+        @NotBlank(message = "El destinatario es obligatorio")
+        @Email(message = "El formato del email no es válido")
+        String toEmail,
 
-    @NotBlank(message = "El asunto es obligatorio")
-    private String subject;
+        String toName,
 
-    @NotBlank(message = "El template es obligatorio")
-    private String templateName;
+        @NotBlank(message = "El asunto es obligatorio")
+        String subject,
 
-    private Map<String, Object> variables;
-    private List<String> attachments;
-}
+        @NotBlank(message = "El template es obligatorio")
+        String templateName,
+
+        Map<String, Object> variables,
+
+        List<String> attachments
+) { }

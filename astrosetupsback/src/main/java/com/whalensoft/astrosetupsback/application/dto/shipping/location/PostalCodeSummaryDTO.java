@@ -1,4 +1,4 @@
-package com.whalensoft.astrosetupsback.application.dto.shipping;
+package com.whalensoft.astrosetupsback.application.dto.shipping.location;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,19 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import com.whalensoft.astrosetupsback.application.dto.shipping.*;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.CreateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.UpdateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.cost.PackageDimensionsDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.cost.ShippingCostCalculationDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.cost.ShippingCostResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.location.CityDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.location.CitySummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.location.PostalCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.location.PostalCodeSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.preferences.UserShippingPreferencesDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.stats.ShippingStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.zone.ShippingZoneDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.ShippingService;
 import com.whalensoft.astrosetupsback.domain.model.*;
 import com.whalensoft.astrosetupsback.domain.repository.*;

@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../pages/cart/Cart';
 import Container from '../../components/layout/container/Container';
 import TrustBanner from './TrustBanner';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function CartPage() {
   const { state, dispatch } = useCart();
+  const navigate = useNavigate();
   const { items } = state;
   const [showDiscountInput, setShowDiscountInput] = useState(false);
   const [discountCode, setDiscountCode] = useState('');
@@ -13,15 +16,33 @@ export default function CartPage() {
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   
   const handleQuantityChange = (id: number, quantity: number) => {
+    if (quantity < 1) {
+      toast.error('La cantidad mínima es 1');
+      return;
+    }
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
   };
   
   const handleRemove = (id: number) => {
     dispatch({ type: 'REMOVE_ITEM', payload: id });
+    toast.success('Producto eliminado del carrito');
   };
   
   const handleValidateDiscount = () => {
-    alert(`Código ingresado: ${discountCode}`);
+    if (discountCode.trim() === '') {
+      toast.error('Por favor ingresa un código de descuento');
+      return;
+    }
+    toast.info(`Código ingresado: ${discountCode}`);
+    // Aquí puedes agregar lógica real de validación de cupones
+  };
+  
+  const handleCheckout = () => {
+    if (items.length === 0) {
+      toast.error('El carrito está vacío');
+      return;
+    }
+    navigate('/checkout');
   };
   
   return (
@@ -46,7 +67,10 @@ export default function CartPage() {
           {items.length === 0 ? (
             <div className="text-center text-dark-muted py-10 space-y-4">
               <p className="text-lg">Tu carrito está vacío.</p>
-              <Link to="/products" className="text-purple-400 font-semibold hover:underline">
+              <Link 
+                to="/catalog" 
+                className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+              >
                 Ver productos
               </Link>
             </div>
@@ -87,7 +111,7 @@ export default function CartPage() {
                                 </p>
                                 <button
                                   onClick={() => handleRemove(item.id)}
-                                  className="text-red-400 text-lg"
+                                  className="text-red-400 hover:text-red-300 text-lg transition"
                                   title="Quitar producto"
                                 >
                                   🗑️
@@ -120,7 +144,7 @@ export default function CartPage() {
                     <div className="text-center">
                       <button
                         onClick={() => setShowDiscountInput(true)}
-                        className="text-xs underline font-medium"
+                        className="text-xs underline font-medium hover:opacity-80 transition"
                         style={{ color: '#F54A00' }}
                       >
                         Insertar código de descuento
@@ -137,7 +161,7 @@ export default function CartPage() {
                       />
                       <button
                         onClick={handleValidateDiscount}
-                        className="text-white text-sm py-2 px-4 rounded hover:brightness-110 transition"
+                        className="w-full text-white text-sm py-2 px-4 rounded hover:brightness-110 transition"
                         style={{ backgroundColor: '#F54A00' }}
                       >
                         Validar código
@@ -147,12 +171,13 @@ export default function CartPage() {
                   
                   <div className="flex flex-col gap-3 pt-4">
                     <Link
-                      to="/products"
+                      to="/catalog"
                       className="text-center text-sm text-black hover:underline"
                     >
                       ← Seguir comprando
                     </Link>
                     <button
+                      onClick={handleCheckout}
                       className="bg-[#FB5607] hover:bg-orange-600 text-white py-2 px-4 rounded text-sm font-medium transition"
                     >
                       Ir a pagar 💳

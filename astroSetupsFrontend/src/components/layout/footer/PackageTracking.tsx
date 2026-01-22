@@ -34,7 +34,7 @@ export default function PackageTracking() {
         </button>
       </form>
       <div className="mt-6 space-y-1 text-dark-muted">
-        <p>📧 info@astrosetups.com</p>
+        <p>📧 gamerzone@info.com</p>
         <p>📞 +57 300 123 4567</p>
         <p>📍 Bogotá, Colombia</p>
       </div>

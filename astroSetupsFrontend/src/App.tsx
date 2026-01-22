@@ -10,6 +10,7 @@ import Footer from './components/layout/footer/footer';
 import Login from './pages/login/Login';
 import Register from './pages/login/Register';
 import Contact from './pages/login/Contact'; // Nueva importación
+import CheckoutPage from './pages/checkout/CheckoutPage';
 
 export default function App() {
   const faqRef = useRef<HTMLElement | null>(null);
@@ -74,6 +75,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>
       </div>
       <Footer />

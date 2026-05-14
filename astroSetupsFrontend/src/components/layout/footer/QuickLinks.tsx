@@ -7,6 +7,8 @@ export default function QuickLinks() {
     { to: '/promotions', label: '🎉 Promociones' },
     { to: '/customPc', label: '🖥️ Personaliza tu PC' },
     { to: '/contact', label: '❓ Contacto' },
+    { to: '/privacy-policies', label: '❓ Políticas de privacidad' },
+    { to: '/conditions', label: '📜 Condiciones de Uso y Garantías' },
   ];
 
   return (

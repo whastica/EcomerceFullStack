@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.ChangePasswordDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.CityDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.CreateCityDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.CreateUserDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;

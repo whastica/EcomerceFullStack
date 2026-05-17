@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
 
 import com.whalensoft.astrosetupsback.domain.model.Category;
 import com.whalensoft.astrosetupsback.domain.model.Product;
@@ -20,8 +23,13 @@ public interface JpaProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByActiveTrue();
     List<Product> findByActiveTrueAndCategory(Category category);
 
-    Page<Product> findByActiveTrue(Pageable pageable);
-    Page<Product> findByActiveTrueAndCategory(Category category, Pageable pageable);
+    @EntityGraph(attributePaths = {"category", "category.categoryType"})
+    @Query("SELECT p FROM Product p WHERE p.active = true AND p.category = :category")
+    Page<Product> findByActiveTrueAndCategory(
+            @Param("category") Category category,
+            Pageable pageable
+    );
+
 
     List<Product> findByActiveTrueAndDiscountPriceIsNotNull();
 
@@ -36,41 +44,49 @@ public interface JpaProductRepository extends JpaRepository<Product, Long> {
            """)
     List<String> findDistinctBrands();
 
+    @EntityGraph(attributePaths = {"category", "category.categoryType"})
+    @Query("SELECT p FROM Product p WHERE p.active = true")
+    Page<Product> findByActiveTrue(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"category", "category.categoryType"})
     @Query("""
-           SELECT p FROM Product p
-           WHERE (:categoryId IS NULL OR p.category.id = :categoryId)
-           AND (:minPrice IS NULL OR p.price >= :minPrice)
-           AND (:maxPrice IS NULL OR p.price <= :maxPrice)
-           AND (:brand IS NULL OR p.brand = :brand)
-           AND p.active = true
-           """)
+       SELECT p FROM Product p
+       WHERE (:categoryId IS NULL OR p.category.id = :categoryId)
+       AND (:minPrice IS NULL OR p.price >= :minPrice)
+       AND (:maxPrice IS NULL OR p.price <= :maxPrice)
+       AND (:brand IS NULL OR p.brand = :brand)
+       AND p.active = true
+       """)
     Page<Product> findByFilters(
             @Param("categoryId") Long categoryId,
-            @Param("minPrice") Double minPrice,
-            @Param("maxPrice") Double maxPrice,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
             @Param("brand") String brand,
             Pageable pageable
     );
 
+    @EntityGraph(attributePaths = {"category", "category.categoryType"})
     @Query("""
-           SELECT p FROM Product p
-           WHERE p.active = true
-           AND p.discountPrice IS NOT NULL
-           ORDER BY p.discountPrice ASC
-           """)
+       SELECT p FROM Product p
+       WHERE p.active = true
+       AND p.discountPrice IS NOT NULL
+       ORDER BY p.discountPrice ASC
+       """)
     List<Product> findFeaturedProducts();
 
+    @EntityGraph(attributePaths = {"category", "category.categoryType"})
     @Query("""
-           SELECT p FROM Product p
-           WHERE p.active = true
-           ORDER BY p.createdAt DESC
-           """)
+       SELECT p FROM Product p
+       WHERE p.active = true
+       ORDER BY p.createdAt DESC
+       """)
     List<Product> findNewArrivals();
 
+    @EntityGraph(attributePaths = {"category", "category.categoryType"})
     @Query("""
-           SELECT p FROM Product p
-           WHERE p.active = true
-           ORDER BY SIZE(p.orderItems) DESC
-           """)
+       SELECT p FROM Product p
+       WHERE p.active = true
+       ORDER BY SIZE(p.orderItems) DESC
+       """)
     List<Product> findBestSellers();
 }

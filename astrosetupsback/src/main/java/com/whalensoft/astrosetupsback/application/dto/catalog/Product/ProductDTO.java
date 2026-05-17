@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,13 +17,15 @@ public class ProductDTO {
     private Long id;
     private String name;
     private String description;
-    private Double price;
-    private Double discountPrice;
-    private Double effectivePrice;
+
+    private BigDecimal price;
+    private BigDecimal discountPrice;
+    private BigDecimal effectivePrice;
     private Double discountPercentage;
 
     private String brand;
     private String imageUrl;
+    private Integer stock;
 
     private Boolean hasVariations;
     private Boolean hasDiscount;

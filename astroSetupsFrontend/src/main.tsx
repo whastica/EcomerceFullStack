@@ -1,20 +1,45 @@
 import { StrictMode } from 'react';
+
 import { createRoot } from 'react-dom/client';
+
 import { BrowserRouter } from 'react-router-dom';
+
+import { QueryClientProvider } from '@tanstack/react-query';
+
 import './index.css';
 import './styles/global.css';
+
 import App from './App';
-import { CartProvider } from './pages/cart/Cart'; 
+
+import { CartProvider } from './pages/cart/Cart';
 
 import { Toaster } from 'sonner';
 
-createRoot(document.getElementById('root')!).render(
+import { queryClient } from './lib/react-query';
+
+createRoot(
+  document.getElementById('root')!
+).render(
   <StrictMode>
-    <CartProvider>
-      <BrowserRouter>
-        <App />
-        <Toaster richColors position="top-center" /> 
-      </BrowserRouter>
-    </CartProvider>
+
+    <QueryClientProvider client={queryClient}>
+
+      <CartProvider>
+
+        <BrowserRouter>
+
+          <App />
+
+          <Toaster
+            richColors
+            position="top-center"
+          />
+
+        </BrowserRouter>
+
+      </CartProvider>
+
+    </QueryClientProvider>
+
   </StrictMode>
 );

@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,8 +15,8 @@ public class ProductSearchDTO {
     private Long categoryId;
     private Long categoryTypeId;
     private String brand;
-    private Double minPrice;
-    private Double maxPrice;
+    private BigDecimal minPrice;
+    private BigDecimal maxPrice;
     private Boolean hasDiscount;
     private Boolean hasVariations;
     private String sortBy; // "price", "name", "newest", "discount"

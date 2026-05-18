@@ -1,5 +1,6 @@
 package com.whalensoft.astrosetupsback.application.dto.sales.orders;
 
+import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.GuestUserDTO;
 import com.whalensoft.astrosetupsback.domain.model.PaymentMethod;
 import lombok.AllArgsConstructor;
@@ -30,10 +31,19 @@ public class CreateOrderDTO {
     /** Código promocional aplicado, si aplica */
     private String promoCode;
 
+    /** ID de dirección de envío registrada */
+    private Long shippingAddressId;
+
+    /** Dirección de envío para invitados */
+    private CreateShippingAddressDTO guestShippingAddress;
+
     /** Items del pedido (obligatorio, al menos 1) */
     @NotNull(message = "El pedido debe contener al menos un ítem")
     @Size(min = 1, message = "El pedido debe contener al menos un ítem")
-    private List<CreateOrderItemDTO> items;
+    private List<CreateOrderItemDTO> orderItems;
+
+    /** Códigos promocionales a aplicar */
+    private List<String> promoCodes;
 
     /** Notas adicionales del pedido */
     private String orderNotes;

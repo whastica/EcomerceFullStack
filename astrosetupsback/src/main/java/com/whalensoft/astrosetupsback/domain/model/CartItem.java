@@ -5,6 +5,8 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "cart_items")
 @Getter
@@ -22,45 +24,25 @@ public class CartItem {
     @EqualsAndHashCode.Include
     private Long id;
 
-    /**
-     * Relación muchos-a-uno con el carrito.
-     * Cada item pertenece a un único ShoppingCart.
-     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shopping_cart_id", nullable = false)
     private ShoppingCart shoppingCart;
 
-    /**
-     * Relación muchos-a-uno con el producto.
-     * Se carga perezosamente para optimizar rendimiento.
-     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    /**
-     * Cantidad del producto en el carrito.
-     * Debe ser al menos 1.
-     */
     @Column(nullable = false)
     @Min(value = 1, message = "La cantidad mínima es 1")
     private Integer quantity;
 
-    /**
-     * Precio unitario en el momento de agregar al carrito.
-     * No puede ser cero ni negativo.
-     */
-    @Column(name = "unit_price", nullable = false)
+    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     @DecimalMin(value = "0.01", message = "El precio unitario debe ser mayor a 0")
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 
-    /**
-     * Calcula el subtotal dinámicamente (sin persistir).
-     * Si los valores son nulos, devuelve 0.0 para evitar errores.
-     */
     @Transient
-    public Double getSubtotal() {
-        if (quantity == null || unitPrice == null) return 0.0;
-        return quantity * unitPrice;
+    public BigDecimal getSubtotal() {
+        if (quantity == null || unitPrice == null) return BigDecimal.ZERO;
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }

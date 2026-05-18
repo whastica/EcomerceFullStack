@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.whalensoft.astrosetupsback.application.dto.shipping.location.CityDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.location.CitySummaryDTO;
-import com.whalensoft.astrosetupsback.application.dto.shipping.CreateCityDTO;
-import com.whalensoft.astrosetupsback.application.dto.shipping.CreatePostalCodeDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.CreateShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.shipping.location.PostalCodeDTO;
+
 import com.whalensoft.astrosetupsback.application.dto.shipping.location.PostalCodeSummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressSummaryDTO;
@@ -25,8 +23,6 @@ import com.whalensoft.astrosetupsback.application.dto.shipping.cost.ShippingCost
 import com.whalensoft.astrosetupsback.application.dto.shipping.cost.ShippingCostResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.stats.ShippingStatsDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.zone.ShippingZoneDTO;
-import com.whalensoft.astrosetupsback.application.dto.shipping.UpdateCityDTO;
-import com.whalensoft.astrosetupsback.application.dto.shipping.UpdatePostalCodeDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.UpdateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.preferences.UserShippingPreferencesDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.ShippingService;
@@ -70,31 +66,9 @@ public class ShippingController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- Ciudades ---
-    @PostMapping("/cities")
-    public ResponseEntity<CityDTO> createCity(@Valid @RequestBody CreateCityDTO dto) {
-        return ResponseEntity.ok(shippingService.createCity(dto));
-    }
-
-    @PutMapping("/cities/{id}")
-    public ResponseEntity<CityDTO> updateCity(@PathVariable Long id, @Valid @RequestBody UpdateCityDTO dto) {
-        return ResponseEntity.ok(shippingService.updateCity(id, dto));
-    }
-
     @GetMapping("/cities")
     public ResponseEntity<List<CitySummaryDTO>> getAllCities() {
         return ResponseEntity.ok(shippingService.getAllCities());
-    }
-
-    // --- Códigos Postales ---
-    @PostMapping("/postal-codes")
-    public ResponseEntity<PostalCodeDTO> createPostalCode(@Valid @RequestBody CreatePostalCodeDTO dto) {
-        return ResponseEntity.ok(shippingService.createPostalCode(dto));
-    }
-
-    @PutMapping("/postal-codes/{id}")
-    public ResponseEntity<PostalCodeDTO> updatePostalCode(@PathVariable Long id, @Valid @RequestBody UpdatePostalCodeDTO dto) {
-        return ResponseEntity.ok(shippingService.updatePostalCode(id, dto));
     }
 
     @GetMapping("/postal-codes/city/{cityId}")

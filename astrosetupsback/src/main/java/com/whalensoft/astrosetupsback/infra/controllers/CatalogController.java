@@ -3,13 +3,7 @@ package com.whalensoft.astrosetupsback.infra.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CategoryDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CategorySummaryDTO;
@@ -20,12 +14,12 @@ import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CreateCat
 import com.whalensoft.astrosetupsback.application.dto.catalog.Product.CreateProductDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Product.ProductDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Product.ProductSearchDTO;
-import com.whalensoft.astrosetupsback.application.dto.catalog.Product.ProductSearchResultDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Product.ProductSummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.UpdateCategoryDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Product.UpdateProductDTO;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.CatalogService;
+import com.whalensoft.astrosetupsback.application.dto.catalog.Product.ProductDetailDTO;
 
 import jakarta.validation.Valid;
 

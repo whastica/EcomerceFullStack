@@ -12,6 +12,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@ToString(exclude = "order")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,5 +51,9 @@ public class OrderItem {
         if (quantity != null && finalPrice != null) {
             subtotal = quantity * finalPrice;
         }
+    }
+
+    public Double getSubtotal() {
+        return subtotal;
     }
 }

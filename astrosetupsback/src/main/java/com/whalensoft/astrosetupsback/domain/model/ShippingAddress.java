@@ -1,8 +1,6 @@
 package com.whalensoft.astrosetupsback.domain.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -59,5 +57,6 @@ public class ShippingAddress {
     private Boolean isDefault = false;
 
     @OneToMany(mappedBy = "shippingAddress", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Order> orders = new ArrayList<>();
 }

@@ -33,4 +33,12 @@ public class AppliedPromoCode {
 
     @Column(name = "application_date")
     private LocalDateTime applicationDate;
+
+    public String getPromoCode() {
+        return id != null ? id.getPromoCode() : null;
+    }
+
+    public PromoCode getPromoCodeEntity() {
+        return promoCodeRef;
+    }
 }

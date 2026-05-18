@@ -39,6 +39,11 @@ public class CartItemRepositoryAdapter implements CartItemRepository {
     }
 
     @Override
+    public List<CartItem> findByUserId(Long userId) {
+        return jpaCartItemRepository.findByUserId(userId);
+    }
+
+    @Override
     public void deleteById(Long id) {
         jpaCartItemRepository.deleteById(id);
     }
@@ -68,11 +73,6 @@ public class CartItemRepositoryAdapter implements CartItemRepository {
     @Override
     public List<CartItem> findByProduct(Product product) {
         return jpaCartItemRepository.findByProduct(product);
-    }
-
-    @Override
-    public List<CartItem> findByUser(User user) {
-        return jpaCartItemRepository.findByUser(user);
     }
 
     @Override

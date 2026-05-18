@@ -1,42 +1,27 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
+import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Address.UpdateShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Address.UserShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.ChangePasswordDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.CreateUserDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.UpdateUserDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserAdminDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserAdminProfileDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.interfaces.CustomerService;
+import com.whalensoft.astrosetupsback.domain.model.*;
+import com.whalensoft.astrosetupsback.domain.repository.*;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
-import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.ChangePasswordDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.CreateUserDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Address.UpdateShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UpdateUserDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserProfileDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserSearchDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Address.UserShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserSummaryDTO;
-import com.whalensoft.astrosetupsback.application.interfaces.CustomerService;
-import com.whalensoft.astrosetupsback.domain.model.City;
-import com.whalensoft.astrosetupsback.domain.model.Order;
-import com.whalensoft.astrosetupsback.domain.model.OrderStatus;
-import com.whalensoft.astrosetupsback.domain.model.ShippingAddress;
-import com.whalensoft.astrosetupsback.domain.model.User;
-import com.whalensoft.astrosetupsback.domain.model.UserRole;
-import com.whalensoft.astrosetupsback.domain.model.UserStatus;
-import com.whalensoft.astrosetupsback.domain.repository.CityRepository;
-import com.whalensoft.astrosetupsback.domain.repository.ShippingAddressRepository;
-import com.whalensoft.astrosetupsback.domain.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,22 +29,23 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final UserRepository userRepository;
     private final ShippingAddressRepository shippingAddressRepository;
-    private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
 
     public CustomerServiceImpl(
             UserRepository userRepository,
             ShippingAddressRepository shippingAddressRepository,
-            CityRepository cityRepository,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.shippingAddressRepository = shippingAddressRepository;
-        this.cityRepository = cityRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    // =========================================================
+    // GESTIÓN DE USUARIOS
+    // =========================================================
+
     @Override
-    public UserDTO createUser(CreateUserDTO createUserDTO) {
+    public UserAdminDTO createUser(CreateUserDTO createUserDTO) {
         if (userRepository.existsByEmail(createUserDTO.getEmail())) {
             throw new RuntimeException(ErrorMessages.USER_NOT_FOUND);
         }
@@ -69,25 +55,18 @@ public class CustomerServiceImpl implements CustomerService {
                 .lastName(createUserDTO.getLastName())
                 .email(createUserDTO.getEmail())
                 .phone(createUserDTO.getPhone())
-                .address(createUserDTO.getAddress())
                 .passwordHash(passwordEncoder.encode(createUserDTO.getPassword()))
                 .role(UserRole.CLIENT)
                 .status(UserStatus.ACTIVE)
                 .verified(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-
-        if (createUserDTO.getCityId() != null) {
-            cityRepository.findById(createUserDTO.getCityId())
-                    .ifPresent(user::setCity);
-        }
-
         User savedUser = userRepository.save(user);
-        return convertToUserDTO(savedUser);
+        return convertToUserAdminDTO(savedUser);
     }
 
     @Override
-    public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
+    public UserAdminDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
 
@@ -103,42 +82,32 @@ public class CustomerServiceImpl implements CustomerService {
         if (updateUserDTO.getAddress() != null) {
             user.setAddress(updateUserDTO.getAddress());
         }
-        if (updateUserDTO.getCityId() != null) {
-            cityRepository.findById(updateUserDTO.getCityId())
-                    .ifPresent(user::setCity);
-        }
 
         User updatedUser = userRepository.save(user);
-        return convertToUserDTO(updatedUser);
+        return convertToUserAdminDTO(updatedUser);
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
+    public UserAdminDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
-        return convertToUserDTO(user);
+        return convertToUserAdminDTO(user);
     }
 
     @Override
-    public UserProfileDTO getUserProfile(Long id) {
+    public UserAdminProfileDTO getUserProfile(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
-        
-        return UserProfileDTO.builder()
+
+        return UserAdminProfileDTO.builder()
                 .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
+                .fullName(user.getFirstName() + " " + user.getLastName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .address(user.getAddress())
+                .role(user.getRole())
                 .status(user.getStatus())
                 .verified(user.getVerified())
                 .createdAt(user.getCreatedAt())
-                .cityName(user.getCity() != null ? user.getCity().getName() : null)
-                .postalCode(user.getPostalCode() != null ? user.getPostalCode().getCode() : null)
-                .shippingAddresses(user.getShippingAddresses().stream()
-                        .map(this::convertToUserShippingAddressDTO)
-                        .toList())
                 .totalOrders(user.getOrders().size())
                 .pendingOrders((int) user.getOrders().stream()
                         .filter(order -> order.getStatus() == OrderStatus.PENDING)
@@ -147,44 +116,11 @@ public class CustomerServiceImpl implements CustomerService {
                         .mapToDouble(Order::getTotal)
                         .sum())
                 .lastOrderDate(user.getOrders().stream()
-                        .max((o1, o2) -> o1.getOrderDate().compareTo(o2.getOrderDate()))
                         .map(Order::getOrderDate)
+                        .max(LocalDateTime::compareTo)
                         .orElse(null))
-                .fullName(user.getFirstName() + " " + user.getLastName())
                 .hasActiveOrders(user.getOrders().stream()
                         .anyMatch(order -> order.getStatus() == OrderStatus.PENDING))
-                .build();
-    }
-
-    @Override
-    public PageResponseDTO<UserSummaryDTO> searchUsers(UserSearchDTO searchDTO) {
-        int page = Optional.ofNullable(searchDTO.getPage()).orElse(0);
-        int size = Optional.ofNullable(searchDTO.getSize()).orElse(10);
-        String sortBy = Optional.ofNullable(searchDTO.getSortBy()).orElse("createdAt");
-        String direction = Optional.ofNullable(searchDTO.getSortDirection()).orElse("ASC");
-
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by(Sort.Direction.fromString(direction), sortBy)
-        );
-
-        Page<User> userPage = userRepository.findAll(pageable);
-
-        List<UserSummaryDTO> userSummaries = userPage.getContent().stream()
-                .map(this::convertToUserSummaryDTO)
-                .toList();
-
-        return PageResponseDTO.<UserSummaryDTO>builder()
-                .content(userSummaries)
-                .totalElements(userPage.getTotalElements())
-                .totalPages(userPage.getTotalPages())
-                .currentPage(userPage.getNumber())
-                .size(userPage.getSize())
-                .first(userPage.isFirst())
-                .last(userPage.isLast())
-                .empty(userPage.isEmpty())
-                .numberOfElements(userPage.getNumberOfElements())
                 .build();
     }
 
@@ -204,7 +140,6 @@ public class CustomerServiceImpl implements CustomerService {
         if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPasswordHash())) {
             throw new RuntimeException(ErrorMessages.INCORRECT_CURRENT_PASSWORD);
         }
-
         if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
             throw new RuntimeException(ErrorMessages.PASSWORDS_DO_NOT_MATCH);
         }
@@ -213,28 +148,28 @@ public class CustomerServiceImpl implements CustomerService {
         userRepository.save(user);
     }
 
+    // =========================================================
+    // GESTIÓN DE DIRECCIONES
+    // =========================================================
+
     @Override
-    public UserShippingAddressDTO createShippingAddress(Long userId, CreateShippingAddressDTO createAddressDTO) {
+    public ShippingAddressDTO createShippingAddress(
+            Long userId, CreateShippingAddressDTO createAddressDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
 
         ShippingAddress shippingAddress = ShippingAddress.builder()
                 .user(user)
-                .address(createAddressDTO.getAddress())
                 .isDefault(false)
                 .build();
 
-        if (createAddressDTO.getCityId() != null) {
-            cityRepository.findById(createAddressDTO.getCityId())
-                    .ifPresent(shippingAddress::setCity);
-        }
-
         ShippingAddress savedAddress = shippingAddressRepository.save(shippingAddress);
-        return convertToUserShippingAddressDTO(savedAddress);
+        return convertToShippingAddressDTO(savedAddress);
     }
 
     @Override
-    public UserShippingAddressDTO updateShippingAddress(Long userId, Long addressId, UpdateShippingAddressDTO updateAddressDTO) {
+    public ShippingAddressDTO updateShippingAddress(
+            Long userId, Long addressId, UpdateShippingAddressDTO updateAddressDTO) {
         ShippingAddress shippingAddress = shippingAddressRepository.findById(addressId)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.SHIPPING_ADDRESS_NOT_FOUND));
 
@@ -242,16 +177,8 @@ public class CustomerServiceImpl implements CustomerService {
             throw new RuntimeException(ErrorMessages.ADDRESS_DOES_NOT_BELONG_TO_USER);
         }
 
-        if (updateAddressDTO.getAddress() != null) {
-            shippingAddress.setAddress(updateAddressDTO.getAddress());
-        }
-        if (updateAddressDTO.getCityId() != null) {
-            cityRepository.findById(updateAddressDTO.getCityId())
-                    .ifPresent(shippingAddress::setCity);
-        }
-
         ShippingAddress updatedAddress = shippingAddressRepository.save(shippingAddress);
-        return convertToUserShippingAddressDTO(updatedAddress);
+        return convertToShippingAddressDTO(updatedAddress);
     }
 
     @Override
@@ -267,37 +194,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<UserShippingAddressDTO> getUserShippingAddresses(Long userId) {
+    public List<ShippingAddressDTO> getUserShippingAddresses(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
-
         return user.getShippingAddresses().stream()
-                .map(this::convertToUserShippingAddressDTO)
+                .map(this::convertToShippingAddressDTO)
                 .toList();
     }
 
-    @Override
-    public CityDTO createCity(CreateCityDTO createCityDTO) {
-        City city = City.builder()
-                .name(createCityDTO.getName())
-                .build();
-
-        City savedCity = cityRepository.save(city);
-        return convertToCityDTO(savedCity);
-    }
-
-    @Override
-    public List<CityDTO> getAllCities() {
-        return cityRepository.findAll().stream()
-                .map(this::convertToCityDTO)
-                .toList();
-    }
+    // =========================================================
+    // ESTADÍSTICAS
+    // =========================================================
 
     @Override
     public CustomerStatsDTO getCustomerStats() {
-        Page<User> userPage = userRepository.findAll(Pageable.unpaged());
-        List<User> users = userPage.getContent();
-        
+        List<User> users = userRepository.findAll(Pageable.unpaged()).getContent();
+
         return CustomerStatsDTO.builder()
                 .totalCustomers((long) users.size())
                 .activeCustomers(users.stream()
@@ -306,30 +218,23 @@ public class CustomerServiceImpl implements CustomerService {
                 .verifiedCustomers(users.stream()
                         .filter(User::getVerified)
                         .count())
-                .customersByStatus(users.stream()
-                        .collect(Collectors.groupingBy(
-                                User::getStatus,
-                                Collectors.counting()
-                        )))
+
                 .build();
     }
 
-    // Métodos de conversión privados
-    private UserDTO convertToUserDTO(User user) {
-        return UserDTO.builder()
+    // =========================================================
+    // CONVERSORES
+    // =========================================================
+
+    private UserAdminDTO convertToUserAdminDTO(User user) {
+        return UserAdminDTO.builder()
                 .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
+                .fullName(user.getFirstName() + " " + user.getLastName())
                 .email(user.getEmail())
-                .phone(user.getPhone())
-                .address(user.getAddress())
                 .role(user.getRole())
                 .status(user.getStatus())
                 .verified(user.getVerified())
                 .createdAt(user.getCreatedAt())
-                .cityName(user.getCity() != null ? user.getCity().getName() : null)
-                .postalCode(user.getPostalCode() != null ? user.getPostalCode().getCode() : null)
-                .fullName(user.getFirstName() + " " + user.getLastName())
                 .totalOrders(user.getOrders().size())
                 .activeShippingAddresses((int) user.getShippingAddresses().stream()
                         .filter(ShippingAddress::getIsDefault)
@@ -337,34 +242,16 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
     }
 
-    private UserSummaryDTO convertToUserSummaryDTO(User user) {
-        return UserSummaryDTO.builder()
-                .id(user.getId())
-                .fullName(user.getFirstName() + " " + user.getLastName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .status(user.getStatus())
-                .verified(user.getVerified())
-                .createdAt(user.getCreatedAt())
-                .totalOrders(user.getOrders().size())
+    private ShippingAddressDTO convertToShippingAddressDTO(ShippingAddress address) {
+        return ShippingAddressDTO.builder()
+                .id(address.getId())
+                .addressLine1(address.getAddressLine1())
+                .addressLine2(address.getAddressLine2())
+                .cityId(address.getCity() != null ? address.getCity().getId() : null)
+                .cityName(address.getCity() != null ? address.getCity().getName() : null)
+                .postalCodeId(address.getPostalCode() != null ? address.getPostalCode().getId() : null)
+                .postalCode(address.getPostalCode() != null ? address.getPostalCode().getCode() : null)
+                .isDefault(address.getIsDefault())
                 .build();
     }
-
-    private UserShippingAddressDTO convertToUserShippingAddressDTO(ShippingAddress shippingAddress) {
-        return UserShippingAddressDTO.builder()
-                .id(shippingAddress.getId())
-                .address(shippingAddress.getAddress())
-                .cityName(shippingAddress.getCity() != null ? shippingAddress.getCity().getName() : null)
-                .postalCode(shippingAddress.getPostalCode() != null ? shippingAddress.getPostalCode().getCode() : null)
-                .isDefault(shippingAddress.getIsDefault())
-                .ordersCount(shippingAddress.getOrders().size())
-                .build();
-    }
-
-    private CityDTO convertToCityDTO(City city) {
-        return CityDTO.builder()
-                .id(city.getId())
-                .name(city.getName())
-                .build();
-    }
-} 
+}

@@ -1,19 +1,12 @@
 package com.whalensoft.astrosetupsback.infra.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.AddToCartDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.CartItemDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartSummaryDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.ShoppingCartDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.ShoppingCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.UpdateCartItemDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
 
@@ -43,8 +36,11 @@ public class CartController {
     }
 
     // Actualizar la cantidad de un ítem del carrito
-    @PutMapping("/items/{itemId}")
-    public ResponseEntity<CartItemDTO> updateCartItem(@PathVariable Long itemId, @Valid @RequestBody UpdateCartItemDTO updateCartItemDTO) {
+    @PatchMapping("/items/{itemId}")
+    public ResponseEntity<CartItemDTO> updateCartItem(
+            @PathVariable Long itemId,
+            @Valid @RequestBody UpdateCartItemDTO updateCartItemDTO
+    ) {
         CartItemDTO item = salesService.updateCartItem(itemId, updateCartItemDTO);
         return ResponseEntity.ok(item);
     }

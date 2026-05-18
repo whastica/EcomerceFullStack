@@ -27,6 +27,8 @@ public interface OrderRepository {
 
     Long countByStatus(OrderStatus status);
 
+    Page<Order> findAll(Pageable pageable);
+
     boolean existsById(Long id);
 
     void deleteById(Long id);

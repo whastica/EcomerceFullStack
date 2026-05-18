@@ -2,6 +2,8 @@ package com.whalensoft.astrosetupsback.infra.controllers;
 
 import java.util.List;
 
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.*;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,19 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.ChangePasswordDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.CityDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.CreateCityDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.CreateUserDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.UpdateShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UpdateUserDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserProfileDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserSearchDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.UserShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserSummaryDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.CustomerService;
 
 import jakarta.validation.Valid;
@@ -41,29 +34,25 @@ public class CustomerController {
 
     // --- Usuarios ---
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO dto) {
+    public ResponseEntity<UserAdminDTO> createUser(@Valid @RequestBody CreateUserDTO dto) {
         return ResponseEntity.ok(customerService.createUser(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserDTO dto) {
+    public ResponseEntity<UserAdminDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserDTO dto) {
         return ResponseEntity.ok(customerService.updateUser(id, dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserAdminDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getUserById(id));
     }
 
     @GetMapping("/{id}/profile")
-    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id) {
+    public ResponseEntity<UserAdminProfileDTO> getUserProfile(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getUserProfile(id));
     }
 
-    @PostMapping("/search")
-    public ResponseEntity<PageResponseDTO<UserSummaryDTO>> searchUsers(@RequestBody UserSearchDTO searchDTO) {
-        return ResponseEntity.ok(customerService.searchUsers(searchDTO));
-    }
     //No es recomendable nunca borrar datos de usuraio lo mejor es desactivarlos
     /*@DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
@@ -79,12 +68,12 @@ public class CustomerController {
 
     // --- Direcciones de Envío ---
     @PostMapping("/{userId}/shipping-addresses")
-    public ResponseEntity<UserShippingAddressDTO> createShippingAddress(@PathVariable Long userId, @Valid @RequestBody CreateShippingAddressDTO dto) {
+    public ResponseEntity<ShippingAddressDTO> createShippingAddress(@PathVariable Long userId, @Valid @RequestBody CreateShippingAddressDTO dto) {
         return ResponseEntity.ok(customerService.createShippingAddress(userId, dto));
     }
 
     @PutMapping("/{userId}/shipping-addresses/{addressId}")
-    public ResponseEntity<UserShippingAddressDTO> updateShippingAddress(@PathVariable Long userId, @PathVariable Long addressId, @Valid @RequestBody UpdateShippingAddressDTO dto) {
+    public ResponseEntity<ShippingAddressDTO> updateShippingAddress(@PathVariable Long userId, @PathVariable Long addressId, @Valid @RequestBody UpdateShippingAddressDTO dto) {
         return ResponseEntity.ok(customerService.updateShippingAddress(userId, addressId, dto));
     }
 
@@ -96,19 +85,8 @@ public class CustomerController {
     }
 
     @GetMapping("/{userId}/shipping-addresses")
-    public ResponseEntity<List<UserShippingAddressDTO>> getUserShippingAddresses(@PathVariable Long userId) {
+    public ResponseEntity<List<ShippingAddressDTO>> getUserShippingAddresses(@PathVariable Long userId) {
         return ResponseEntity.ok(customerService.getUserShippingAddresses(userId));
-    }
-
-    // --- Ciudades ---
-    @PostMapping("/cities")
-    public ResponseEntity<CityDTO> createCity(@Valid @RequestBody CreateCityDTO dto) {
-        return ResponseEntity.ok(customerService.createCity(dto));
-    }
-
-    @GetMapping("/cities")
-    public ResponseEntity<List<CityDTO>> getAllCities() {
-        return ResponseEntity.ok(customerService.getAllCities());
     }
 
     // --- Estadísticas de Clientes ---

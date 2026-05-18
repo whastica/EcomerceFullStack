@@ -13,25 +13,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CartSummaryDTO {
-
-    /** Totales económicos */
-    private BigDecimal subtotal;            // Total sin descuentos
-    private BigDecimal totalDiscount;       // Descuento total aplicado
-    private BigDecimal total;               // subtotal - totalDiscount
-
-    /** Cantidades */
-    private Integer totalItems;             // Total de productos (sumado)
-    private Integer distinctItems;          // Cantidad de ítems distintos
-
-    /** Estado del carrito */
+    private Long id;
+    private BigDecimal subtotal;
+    private BigDecimal totalDiscount;
+    private BigDecimal total;
+    private Integer totalItems;
+    private Integer distinctItems;
     private Boolean expired;
     private LocalDateTime expiresAt;
-
-    /** Información del cupón aplicado (si hay) */
     private Boolean hasAppliedPromoCode;
     private String appliedPromoCode;
-    private BigDecimal promoDiscount;       // Descuento específico del cupón
-
-    /** Fecha estimada de entrega */
-    private LocalDateTime estimatedDeliveryDate;
+    private BigDecimal promoDiscount;
 }

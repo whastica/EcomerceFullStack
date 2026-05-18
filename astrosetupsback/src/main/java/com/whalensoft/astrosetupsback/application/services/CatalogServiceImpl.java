@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -417,21 +418,16 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategorySummaryDTO>
-    getAllCategories() {
-
+    public List<CategorySummaryDTO> getAllCategories() {
         return categoryRepository.findAll()
                 .stream()
                 .map(category ->
                         CategorySummaryDTO.builder()
                                 .id(category.getId())
                                 .name(category.getName())
+                                .slug(category.getSlug())        // <-- agregar
                                 .categoryTypeName(
-                                        category.getCategoryType()
-                                                .getName()
-                                )
-                                .productCount(
-                                        category.getProducts().size()
+                                        category.getCategoryType().getName()
                                 )
                                 .build()
                 )
@@ -551,10 +547,6 @@ public class CatalogServiceImpl implements CatalogService {
                         product.getEffectivePrice()
                 )
 
-                .discountPercentage(
-                        calculateDiscountPercentage(product)
-                )
-
                 .brand(product.getBrand())
 
                 .imageUrl(product.getImageUrl())
@@ -630,7 +622,6 @@ public class CatalogServiceImpl implements CatalogService {
                 .price(product.getPrice())
                 .discountPrice(product.getDiscountPrice())
                 .effectivePrice(product.getEffectivePrice())
-                .discountPercentage(calculateDiscountPercentage(product))
                 .hasDiscount(product.hasDiscount())
                 .brand(product.getBrand())
                 .stock(product.getStock())
@@ -653,33 +644,18 @@ public class CatalogServiceImpl implements CatalogService {
                 .build();
     }
 
-    private CategoryDTO convertToCategoryDTO(
-            Category category
-    ) {
-
+    private CategoryDTO convertToCategoryDTO(Category category) {
         return CategoryDTO.builder()
-
                 .id(category.getId())
-
                 .name(category.getName())
-
+                .slug(category.getSlug())                        // <-- agregar
                 .categoryType(
                         CategoryTypeDTO.builder()
-                                .id(
-                                        category.getCategoryType()
-                                                .getId()
-                                )
-                                .name(
-                                        category.getCategoryType()
-                                                .getName()
-                                )
+                                .id(category.getCategoryType().getId())
+                                .name(category.getCategoryType().getName())
                                 .build()
                 )
-
-                .productCount(
-                        category.getProducts().size()
-                )
-
+                .productCount(category.getProducts().size())
                 .build();
     }
 
@@ -695,36 +671,5 @@ public class CatalogServiceImpl implements CatalogService {
                 .name(categoryType.getName())
 
                 .build();
-    }
-
-    // =========================================================
-    // HELPERS
-    // =========================================================
-
-    private Double calculateDiscountPercentage(
-            Product product
-    ) {
-
-        if (!product.hasDiscount()) {
-            return null;
-        }
-
-        BigDecimal discount =
-                product.getPrice()
-                        .subtract(
-                                product.getDiscountPrice()
-                        );
-
-        BigDecimal percentage =
-                discount.multiply(
-                                BigDecimal.valueOf(100)
-                        )
-                        .divide(
-                                product.getPrice(),
-                                2,
-                                RoundingMode.HALF_UP
-                        );
-
-        return percentage.doubleValue();
     }
 }

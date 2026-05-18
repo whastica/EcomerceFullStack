@@ -53,7 +53,6 @@ public class ShoppingCart {
     public BigDecimal getTotal() {
         return cartItems.stream()
                 .map(CartItem::getSubtotal)
-                .map(BigDecimal::valueOf)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

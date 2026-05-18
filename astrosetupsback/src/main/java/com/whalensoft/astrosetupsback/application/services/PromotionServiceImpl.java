@@ -7,31 +7,35 @@ import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkCreate
 import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.bullk.BulkPromoCodeActionResultDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.code.*;
+import com.whalensoft.astrosetupsback.application.dto.promotion.enums.PromoCodeBulkAction;
+import com.whalensoft.astrosetupsback.application.dto.promotion.enums.PromoDiscountType;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.ApplyPromoCodeDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationResultDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.PromotionService;
+import com.whalensoft.astrosetupsback.domain.model.Order;
 import com.whalensoft.astrosetupsback.domain.model.PromoCode;
+import com.whalensoft.astrosetupsback.domain.repository.OrderRepository;
 import com.whalensoft.astrosetupsback.domain.repository.PromoCodeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 @Transactional
 public class PromotionServiceImpl implements PromotionService {
 
     private final PromoCodeRepository promoCodeRepository;
-
-    public PromotionServiceImpl(PromoCodeRepository promoCodeRepository) {
-        this.promoCodeRepository = promoCodeRepository;
-    }
+    private final OrderRepository orderRepository;
 
     @Override
     public PromoCodeDTO createPromoCode(CreatePromoCodeDTO createPromoCodeDTO) {
@@ -41,10 +45,10 @@ public class PromotionServiceImpl implements PromotionService {
 
         PromoCode promoCode = PromoCode.builder()
                 .code(createPromoCodeDTO.getCode())
-                .discountPercentage(createPromoCodeDTO.getDiscountPercentage())
+                .discountPercentage(createPromoCodeDTO.getDiscountValue())
                 .expirationDate(createPromoCodeDTO.getExpirationDate())
                 .remainingUses(createPromoCodeDTO.getRemainingUses())
-                .forDiscountedProductsOnly(createPromoCodeDTO.getForDiscountedProductsOnly())
+                .forDiscountedProductsOnly(createPromoCodeDTO.getOnlyForDiscountedProducts())
                 .active(createPromoCodeDTO.getActive())
                 .build();
 
@@ -57,18 +61,24 @@ public class PromotionServiceImpl implements PromotionService {
         PromoCode promoCode = promoCodeRepository.findByCode(code)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.PROMO_CODE_NOT_FOUND));
 
-        if (updatePromoCodeDTO.getDiscountPercentage() != null) {
-            promoCode.setDiscountPercentage(updatePromoCodeDTO.getDiscountPercentage());
+        if (updatePromoCodeDTO.getDiscountValue() != null) {
+            promoCode.setDiscountPercentage(updatePromoCodeDTO.getDiscountValue());
         }
+
         if (updatePromoCodeDTO.getExpirationDate() != null) {
             promoCode.setExpirationDate(updatePromoCodeDTO.getExpirationDate());
         }
+
         if (updatePromoCodeDTO.getRemainingUses() != null) {
             promoCode.setRemainingUses(updatePromoCodeDTO.getRemainingUses());
         }
+
         if (updatePromoCodeDTO.getForDiscountedProductsOnly() != null) {
-            promoCode.setForDiscountedProductsOnly(updatePromoCodeDTO.getForDiscountedProductsOnly());
+            promoCode.setForDiscountedProductsOnly(
+                    updatePromoCodeDTO.getForDiscountedProductsOnly()
+            );
         }
+
         if (updatePromoCodeDTO.getActive() != null) {
             promoCode.setActive(updatePromoCodeDTO.getActive());
         }
@@ -86,13 +96,19 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public PageResponseDTO<PromoCodeSummaryDTO> searchPromoCodes(PromoCodeSearchDTO searchDTO) {
+
+        Sort.Direction direction = searchDTO.getSortDirection() != null
+                ? Sort.Direction.fromString(searchDTO.getSortDirection().name())
+                : Sort.Direction.ASC;
+
+        String sortBy = searchDTO.getSortBy() != null
+                ? searchDTO.getSortBy().name().toLowerCase()
+                : "code";
+
         Pageable pageable = PageRequest.of(
                 searchDTO.getPage() != null ? searchDTO.getPage() : 0,
                 searchDTO.getSize() != null ? searchDTO.getSize() : 10,
-                Sort.by(Sort.Direction.fromString(
-                        searchDTO.getSortDirection() != null ? searchDTO.getSortDirection() : "ASC"),
-                        searchDTO.getSortBy() != null ? searchDTO.getSortBy() : "code"
-                )
+                Sort.by(direction, sortBy)
         );
 
         // TODO: Implementar búsqueda con filtros
@@ -124,44 +140,45 @@ public class PromotionServiceImpl implements PromotionService {
 
         if (promoCode == null) {
             return PromoCodeValidationResultDTO.builder()
-                    .isValid(false)
-                    .message("Código promocional no encontrado")
-                    .promoCode(validationDTO.getPromoCode())
+                    .valid(false)
                     .build();
         }
 
         if (!promoCode.isValid()) {
             return PromoCodeValidationResultDTO.builder()
-                    .isValid(false)
-                    .message("Código promocional no válido")
-                    .promoCode(promoCode.getCode())
+                    .valid(false)
                     .build();
         }
 
         if (promoCode.getForDiscountedProductsOnly() && !validationDTO.getHasDiscountedProducts()) {
             return PromoCodeValidationResultDTO.builder()
-                    .isValid(false)
-                    .message("Este código solo es válido para productos con descuento")
-                    .promoCode(promoCode.getCode())
+                    .valid(false)
                     .build();
         }
 
-        double estimatedDiscount = validationDTO.getSubtotal() * (promoCode.getDiscountPercentage() / 100.0);
+        double subtotal = validationDTO.getCartItems()
+                .stream()
+                .mapToDouble(item ->
+                        item.getUnitPrice()
+                                .multiply(BigDecimal.valueOf(item.getQuantity()))
+                                .doubleValue()
+                )
+                .sum();
+
+        double estimatedDiscount =
+                subtotal * (promoCode.getDiscountPercentage() / 100.0);
 
         return PromoCodeValidationResultDTO.builder()
-                .isValid(true)
-                .message("Código promocional válido")
-                .promoCode(promoCode.getCode())
-                .discountPercentage(promoCode.getDiscountPercentage())
-                .estimatedDiscount(estimatedDiscount)
-                .canBeApplied(true)
+                .valid(false)
                 .build();
     }
 
     @Override
     public PromoCodeApplicationResultDTO applyPromoCode(ApplyPromoCodeDTO applyPromoCodeDTO) {
+
         PromoCode promoCode = promoCodeRepository.findByCode(applyPromoCodeDTO.getPromoCode())
-                .orElseThrow(() -> new IllegalArgumentException("Código promocional no encontrado"));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Código promocional no encontrado"));
 
         if (!promoCode.isValid()) {
             return PromoCodeApplicationResultDTO.builder()
@@ -171,8 +188,17 @@ public class PromotionServiceImpl implements PromotionService {
                     .build();
         }
 
-        double discountAmount = applyPromoCodeDTO.getSubtotal() * (promoCode.getDiscountPercentage() / 100.0);
-        double finalAmount = applyPromoCodeDTO.getSubtotal() - discountAmount;
+        Order order = orderRepository.findById(applyPromoCodeDTO.getOrderId())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Orden no encontrada"));
+
+        double originalAmount = order.getTotal();
+
+        double discountAmount =
+                originalAmount * (promoCode.getDiscountPercentage() / 100.0);
+
+        double finalAmount =
+                Math.max(originalAmount - discountAmount, 0);
 
         if (promoCode.getRemainingUses() != null) {
             promoCode.setRemainingUses(promoCode.getRemainingUses() - 1);
@@ -183,9 +209,9 @@ public class PromotionServiceImpl implements PromotionService {
                 .success(true)
                 .message("Código promocional aplicado exitosamente")
                 .promoCode(promoCode.getCode())
-                .discountPercentage(promoCode.getDiscountPercentage())
-                .discountAmount(discountAmount)
-                .originalAmount(applyPromoCodeDTO.getSubtotal())
+                .discountType(PromoDiscountType.PERCENTAGE)
+                .discountApplied(discountAmount)
+                .originalAmount(originalAmount)
                 .finalAmount(finalAmount)
                 .remainingUses(promoCode.getRemainingUses())
                 .build();
@@ -225,9 +251,44 @@ public class PromotionServiceImpl implements PromotionService {
                 .totalPromoCodes(totalPromoCodes)
                 .activePromoCodes(activePromoCodes)
                 .expiredPromoCodes(expiredPromoCodes)
-                .usedPromoCodes(usedPromoCodes)
-                .averageDiscountPercentage(averageDiscountPercentage)
-                .topUsedCodes(topUsedCodes)
+
+                // Nuevos campos del DTO
+                .disabledPromoCodes(
+                        allPromoCodes.stream()
+                                .filter(pc -> Boolean.FALSE.equals(pc.getActive()))
+                                .count()
+                )
+
+                .totalUniqueCodesUsed(usedPromoCodes)
+
+                // TODO: implementar cálculo real desde AppliedPromoCode
+                .totalApplications(0L)
+
+                // TODO: implementar cálculo monetario real
+                .totalDiscountGiven(0.0)
+
+                .averageDiscountValue(averageDiscountPercentage)
+
+                // TODO: implementar agrupación real por tipo
+                .promoCodesByType(new HashMap<>())
+
+                .totalDiscountGivenByType(new HashMap<>())
+
+                // Tu DTO ahora espera List<PromoCodeUsageRankingDTO>
+                .topUsedCodes(new ArrayList<>())
+
+                .promoCodesExpiringSoon(
+                        allPromoCodes.stream()
+                                .filter(pc ->
+                                        pc.getExpirationDate() != null &&
+                                                pc.getExpirationDate().isAfter(now) &&
+                                                pc.getExpirationDate().isBefore(now.plusDays(30))
+                                )
+                                .count()
+                )
+
+                .lastCodeCreated(null)
+
                 .build();
     }
 
@@ -246,28 +307,39 @@ public class PromotionServiceImpl implements PromotionService {
         }
 
         return BulkPromoCodeActionResultDTO.builder()
-                .action("CREATE")
+                .action(PromoCodeBulkAction.CREATE)
                 .totalCodes(bulkCreateDTO.getPromoCodes().size())
                 .successfulActions(successfulCodes.size())
                 .failedActions(failedCodes.size())
                 .successfulCodes(successfulCodes)
                 .failedCodes(failedCodes)
-                .message(InfoMessages.BULK_OPERATION_COMPLETED)
+                .summary(InfoMessages.BULK_OPERATION_COMPLETED)
                 .build();
     }
     @Override
-    public BulkPromoCodeActionResultDTO bulkUpdatePromoCodes(BulkPromoCodeActionDTO bulkActionDTO) {
+    public BulkPromoCodeActionResultDTO bulkUpdatePromoCodes(
+            BulkPromoCodeActionDTO bulkActionDTO) {
+
         List<String> successfulCodes = new ArrayList<>();
         Map<String, String> failedCodes = new HashMap<>();
 
         for (String code : bulkActionDTO.getPromoCodes()) {
             try {
+
                 UpdatePromoCodeDTO updateDTO = UpdatePromoCodeDTO.builder()
-                        .active("ACTIVATE".equals(bulkActionDTO.getAction()))
+                        .active(
+                                PromoCodeBulkAction.ACTIVATE.equals(
+                                        bulkActionDTO.getAction()
+                                )
+                        )
                         .build();
+
                 updatePromoCode(code, updateDTO);
+
                 successfulCodes.add(code);
+
             } catch (Exception e) {
+
                 failedCodes.put(code, e.getMessage());
             }
         }
@@ -279,7 +351,7 @@ public class PromotionServiceImpl implements PromotionService {
                 .failedActions(failedCodes.size())
                 .successfulCodes(successfulCodes)
                 .failedCodes(failedCodes)
-                .message(InfoMessages.BULK_OPERATION_COMPLETED)
+                .summary(InfoMessages.BULK_OPERATION_COMPLETED)
                 .build();
     }
 
@@ -298,40 +370,77 @@ public class PromotionServiceImpl implements PromotionService {
         }
 
         return BulkPromoCodeActionResultDTO.builder()
-                .action("DELETE")
+                .action(PromoCodeBulkAction.DELETE)
                 .totalCodes(bulkActionDTO.getPromoCodes().size())
                 .successfulActions(successfulCodes.size())
                 .failedActions(failedCodes.size())
                 .successfulCodes(successfulCodes)
                 .failedCodes(failedCodes)
-                .message(InfoMessages.BULK_OPERATION_COMPLETED)
+                .summary(InfoMessages.BULK_OPERATION_COMPLETED)
                 .build();
     }
 
     private PromoCodeDTO convertToDTO(PromoCode promoCode) {
+
         return PromoCodeDTO.builder()
                 .code(promoCode.getCode())
-                .discountPercentage(promoCode.getDiscountPercentage())
+
+                // Tu entidad actual solo maneja porcentaje
+                .discountType(PromoDiscountType.PERCENTAGE)
+
+                .discountValue(promoCode.getDiscountPercentage())
+
                 .expirationDate(promoCode.getExpirationDate())
-                .remainingUses(promoCode.getRemainingUses())
-                .forDiscountedProductsOnly(promoCode.getForDiscountedProductsOnly())
+
                 .active(promoCode.getActive())
-                .isValid(promoCode.isValid())
-                .isExpired(promoCode.getExpirationDate() != null && 
-                          promoCode.getExpirationDate().isBefore(LocalDateTime.now()))
-                .timesUsed(promoCode.getAppliedPromoCodes().size())
+
+                .remainingUses(promoCode.getRemainingUses())
+
+                // Tu entidad NO tiene estos campos todavía
+                .maxUses(null)
+
+                .minimumOrderAmount(null)
+
+                .appliesToDiscountedProducts(
+                        promoCode.getForDiscountedProductsOnly()
+                )
+
+                // Tu entidad actual tampoco tiene timestamps
+                .createdAt(null)
+
+                .updatedAt(null)
+
                 .build();
     }
 
     private PromoCodeSummaryDTO convertToSummaryDTO(PromoCode promoCode) {
+
         return PromoCodeSummaryDTO.builder()
                 .code(promoCode.getCode())
-                .discountPercentage(promoCode.getDiscountPercentage())
+
+                // Tu entidad actual solo soporta porcentaje
+                .discountType(PromoDiscountType.PERCENTAGE)
+
+                .discountValue(promoCode.getDiscountPercentage())
+
                 .expirationDate(promoCode.getExpirationDate())
+
                 .active(promoCode.getActive())
-                .isValid(promoCode.isValid())
-                .timesUsed(promoCode.getAppliedPromoCodes().size())
+
+                .timesUsed(
+                        promoCode.getAppliedPromoCodes() != null
+                                ? promoCode.getAppliedPromoCodes().size()
+                                : 0
+                )
+
                 .remainingUses(promoCode.getRemainingUses())
+
+                .expired(
+                        promoCode.getExpirationDate() != null
+                                && promoCode.getExpirationDate()
+                                .isBefore(LocalDateTime.now())
+                )
+
                 .build();
     }
 } 

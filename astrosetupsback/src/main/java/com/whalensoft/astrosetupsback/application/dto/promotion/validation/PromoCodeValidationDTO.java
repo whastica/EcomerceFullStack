@@ -1,12 +1,13 @@
 package com.whalensoft.astrosetupsback.application.dto.promotion.validation;
 
-import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -24,7 +25,7 @@ public class PromoCodeValidationDTO {
 
     @NotNull(message = "Los ítems del carrito son obligatorios")
     @Size(min = 1, message = "El carrito no puede estar vacío")
-    private List<CartItemResponseDTO> cartItems;
+    private List<CartItemDTO> cartItems;
 
     /**
      * Este campo NO lo envía el frontend.

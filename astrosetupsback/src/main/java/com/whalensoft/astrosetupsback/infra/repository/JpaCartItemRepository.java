@@ -22,14 +22,15 @@ public interface JpaCartItemRepository extends JpaRepository<CartItem, Long> {
 
     boolean existsByShoppingCartAndProduct(ShoppingCart cart, Product product);
 
-
-    // --- Métodos añadidos ---
     void deleteByProduct(Product product);
 
     List<CartItem> findByProduct(Product product);
 
-    List<CartItem> findByUser(User user);
+    // Reemplaza findByUser — CartItem no tiene user directo
+    @Query("SELECT ci FROM CartItem ci WHERE ci.shoppingCart.user.id = :userId")
+    List<CartItem> findByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT ci FROM CartItem ci WHERE ci.shoppingCart.user.id = :userId AND ci.shoppingCart.active = true")
+    // Reemplaza findActiveCartItemsByUser — ShoppingCart no tiene campo active
+    @Query("SELECT ci FROM CartItem ci WHERE ci.shoppingCart.user.id = :userId AND ci.shoppingCart.expiration > CURRENT_TIMESTAMP")
     List<CartItem> findActiveCartItemsByUser(@Param("userId") Long userId);
 }

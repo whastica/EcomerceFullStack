@@ -5,12 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.math.BigDecimal;
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,9 +24,9 @@ public class UpdateProductDTO {
 
     @NotNull
     @DecimalMin("0.01")
-    private Double price;
+    private BigDecimal price;
 
-    private Double discountPrice;
+    private BigDecimal discountPrice;
 
     @Size(max = 100)
     private String brand;

@@ -1,5 +1,6 @@
 package com.whalensoft.astrosetupsback.domain.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,9 +34,7 @@ public interface ProductRepository {
     // Utilidades
     List<String> findDistinctBrands();
 
-    // Búsqueda avanzada
-    Page<Product> findByFilters(Long categoryId, Double minPrice, Double maxPrice, String brand, Pageable pageable);
-
+    Page<Product> findByFilters(Long categoryId, BigDecimal minPrice, BigDecimal maxPrice, String brand, Pageable pageable);
     // Productos destacados
     List<Product> findFeaturedProducts();
     List<Product> findNewArrivals();

@@ -1,20 +1,28 @@
 package com.whalensoft.astrosetupsback.application.services;
 
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationResultDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.AddToCartDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.ShoppingCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.UpdateCartItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.checkout.CheckoutSummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ProcessCheckoutDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.orders.*;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchResultDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.ApplyPromoCodeDTO;
+import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
+import com.whalensoft.astrosetupsback.application.dto.shipping.address.CreateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
 import com.whalensoft.astrosetupsback.domain.model.*;
 import com.whalensoft.astrosetupsback.domain.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,52 +64,45 @@ public class SalesServiceImpl implements SalesService {
         this.shippingAddressRepository = shippingAddressRepository;
     }
 
+    // =========================================================
+    // ÓRDENES
+    // =========================================================
+
     @Override
     public OrderDTO createOrder(CreateOrderDTO createOrderDTO) {
-        // Validar datos de entrada
         validateCreateOrderData(createOrderDTO);
-        
+
         User user = null;
         ShippingAddress shippingAddress = null;
-        
-        // Obtener usuario si se proporciona
+
         if (createOrderDTO.getUserId() != null) {
             user = userRepository.findById(createOrderDTO.getUserId())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         }
-        
-        // Obtener dirección de envío
+
         if (createOrderDTO.getShippingAddressId() != null) {
             shippingAddress = shippingAddressRepository.findById(createOrderDTO.getShippingAddressId())
                     .orElseThrow(() -> new RuntimeException("Dirección de envío no encontrada"));
-        } else if (createOrderDTO.getGuestShippingAddress() != null) {
-            // Crear dirección temporal para usuario invitado
-            shippingAddress = createGuestShippingAddress(createOrderDTO.getGuestShippingAddress());
         }
-        
-        // Crear items de la orden
+
         List<OrderItem> orderItems = createOrderDTO.getOrderItems().stream()
                 .map(this::createOrderItem)
                 .collect(Collectors.toList());
-        
-        // Calcular totales
+
         double subtotal = orderItems.stream()
                 .mapToDouble(OrderItem::getSubtotal)
                 .sum();
-        
-        // Aplicar códigos promocionales y calcular descuento total
+
         List<AppliedPromoCode> appliedPromoCodes = new ArrayList<>();
         double totalDiscount = 0.0;
-        
+
         if (createOrderDTO.getPromoCodes() != null && !createOrderDTO.getPromoCodes().isEmpty()) {
             appliedPromoCodes = applyPromoCodesToOrder(createOrderDTO.getPromoCodes(), subtotal, user);
-            // Calcular descuento total basado en los códigos promocionales aplicados
             totalDiscount = calculateTotalDiscountFromPromoCodes(appliedPromoCodes, subtotal);
         }
-        
+
         double total = subtotal - totalDiscount;
-        
-        // Crear la orden
+
         Order order = Order.builder()
                 .user(user)
                 .total(total)
@@ -111,14 +113,11 @@ public class SalesServiceImpl implements SalesService {
                 .orderItems(orderItems)
                 .appliedPromoCodes(appliedPromoCodes)
                 .build();
-        
-        // Asignar la orden a los items
+
         orderItems.forEach(item -> item.setOrder(order));
         appliedPromoCodes.forEach(apc -> apc.setOrder(order));
-        
-        // Guardar la orden
+
         Order savedOrder = orderRepository.save(order);
-        
         return convertToOrderDTO(savedOrder);
     }
 
@@ -126,29 +125,22 @@ public class SalesServiceImpl implements SalesService {
     public OrderDTO getOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
-        
         return convertToOrderDTO(order);
     }
 
     @Override
     public PageResponseDTO<OrderSearchResultDTO> searchOrders(OrderSearchDTO searchDTO) {
-        // Crear Pageable
+        // Se pasan los Enums directamente al nuevo createSort corregido
         Sort sort = createSort(searchDTO.getSortBy(), searchDTO.getSortDirection());
         Pageable pageable = PageRequest.of(searchDTO.getPage(), searchDTO.getSize(), sort);
-        
-        // Obtener órdenes paginadas
+
         Page<Order> ordersPage = orderRepository.findAll(pageable);
-        
-        // Filtrar por criterios adicionales si es necesario
-        List<Order> filteredOrders = ordersPage.getContent().stream()
+
+        List<OrderSearchResultDTO> results = ordersPage.getContent().stream()
                 .filter(order -> filterOrderByCriteria(order, searchDTO))
-                .collect(Collectors.toList());
-        
-        // Convertir a DTOs
-        List<OrderSearchResultDTO> results = filteredOrders.stream()
                 .map(this::convertToOrderSearchResultDTO)
                 .collect(Collectors.toList());
-        
+
         return PageResponseDTO.<OrderSearchResultDTO>builder()
                 .content(results)
                 .totalElements(ordersPage.getTotalElements())
@@ -162,32 +154,18 @@ public class SalesServiceImpl implements SalesService {
     public OrderDTO updateOrderStatus(Long id, UpdateOrderStatusDTO updateStatusDTO) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
-        
-        // Validar transición de estado
+
         validateStatusTransition(order.getStatus(), updateStatusDTO.getStatus());
-        
-        // Actualizar estado
         order.setStatus(updateStatusDTO.getStatus());
-        
-        // Agregar observación si se proporciona
-        if (updateStatusDTO.getObservation() != null && !updateStatusDTO.getObservation().trim().isEmpty()) {
-            // Aquí podrías implementar un sistema de historial de estados
-            // Por ahora solo actualizamos el estado
-        }
-        
+
         Order updatedOrder = orderRepository.save(order);
-        
         return convertToOrderDTO(updatedOrder);
     }
 
     @Override
     public List<OrderStatusHistoryDTO> getOrderStatusHistory(Long id) {
-        // Validar que la orden existe
         orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
-        
-        // Por ahora retornamos una lista vacía ya que no tenemos implementado
-        // el historial de estados. Esto se puede implementar con una entidad separada
         return new ArrayList<>();
     }
 
@@ -195,13 +173,13 @@ public class SalesServiceImpl implements SalesService {
     public OrderTrackingDTO getOrderTracking(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
-        
+
         return OrderTrackingDTO.builder()
-                .id(order.getId())
-                .status(order.getStatus())
+                .orderId(order.getId())
+                .currentStatus(order.getStatus())
                 .orderDate(order.getOrderDate())
                 .estimatedDelivery(calculateEstimatedDelivery(order.getOrderDate()))
-                .statusHistory(new ArrayList<>()) // Implementar historial real
+                .statusHistory(new ArrayList<>())
                 .shippingAddress(convertToShippingAddressDTO(order.getShippingAddress()))
                 .build();
     }
@@ -210,396 +188,424 @@ public class SalesServiceImpl implements SalesService {
     public List<OrderSummaryDTO> getCustomerOrders(Long customerId) {
         User user = userRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        
-        List<Order> orders = orderRepository.findByUser(user);
-        
-        return orders.stream()
+
+        return orderRepository.findByUser(user).stream()
                 .map(this::convertToOrderSummaryDTO)
                 .collect(Collectors.toList());
     }
+
+    // =========================================================
+    // CARRITO
+    // =========================================================
 
     @Override
     public ShoppingCartDTO getShoppingCart(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
+
         ShoppingCart cart = shoppingCartRepository.findByUser(user)
                 .orElseGet(() -> createNewShoppingCart(user));
-        
+
         return convertToShoppingCartDTO(cart);
     }
 
     @Override
     public CartItemDTO addToCart(AddToCartDTO addToCartDTO) {
-        // Validar que el producto existe
         Product product = productRepository.findById(addToCartDTO.getProductId())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
 
-        // Validar que el producto está activo
         if (!product.getActive()) {
-            throw new RuntimeException("El producto no está disponible");
+            throw new IllegalStateException("El producto no está disponible");
         }
 
-        // Obtener o crear carrito para el usuario
-        User user = userRepository.findById(addToCartDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (product.getStock() <= 0) {
+            throw new IllegalStateException("El producto no tiene stock disponible");
+        }
 
-        ShoppingCart cart = shoppingCartRepository.findByUser(user)
-                .orElseGet(() -> createNewShoppingCart(user));
+        ShoppingCart cart;
 
-        // Verificar si el producto ya está en el carrito
-        Optional<CartItem> existingItem = cartItemRepository.findByShoppingCartAndProduct(cart, product);
+        if (addToCartDTO.getUserId() != null) {
+            User user = userRepository.findById(addToCartDTO.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+            cart = shoppingCartRepository.findByUser(user)
+                    .orElseGet(() -> createNewShoppingCart(user));
+        } else {
+            cart = resolveGuestCart(addToCartDTO.getGuestCartId());
+        }
+
+        Optional<CartItem> existingItem =
+                cartItemRepository.findByShoppingCartAndProduct(cart, product);
 
         CartItem cartItem;
+
         if (existingItem.isPresent()) {
-            // Actualizar cantidad
             cartItem = existingItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + addToCartDTO.getQuantity());
+            int newQuantity = cartItem.getQuantity() + addToCartDTO.getQuantity();
+
+            if (newQuantity > product.getStock()) {
+                throw new IllegalStateException(
+                        "Stock insuficiente. Disponible: " + product.getStock());
+            }
+            cartItem.setQuantity(newQuantity);
         } else {
-            // Crear nuevo item
+            if (addToCartDTO.getQuantity() > product.getStock()) {
+                throw new IllegalStateException(
+                        "Stock insuficiente. Disponible: " + product.getStock());
+            }
             cartItem = CartItem.builder()
                     .shoppingCart(cart)
                     .product(product)
-                    .productName(product.getName()) // ← ¡ESTO es lo que te faltaba!
                     .quantity(addToCartDTO.getQuantity())
-                    .unitPrice(product.getEffectivePrice()) // ← Mejor usar el precio efectivo
+                    .unitPrice(product.getEffectivePrice())
                     .build();
         }
 
         CartItem savedItem = cartItemRepository.save(cartItem);
-
         return convertToCartItemDTO(savedItem);
     }
 
-
     @Override
-    public CartItemDTO updateCartItem(Long cartItemId, UpdateCartItemDTO updateCartItemDTO) {
+    public CartItemDTO updateCartItem(Long cartItemId, UpdateCartItemDTO dto) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Item del carrito no encontrado"));
-        
-        // Validar cantidad
-        if (updateCartItemDTO.getQuantity() <= 0) {
-            cartItemRepository.deleteById(cartItemId);
-            return null; // Item eliminado
+                .orElseThrow(() -> new EntityNotFoundException("Item del carrito no encontrado"));
+
+        int newQuantity = Boolean.FALSE.equals(dto.getReplace())
+                ? cartItem.getQuantity() + dto.getQuantity()
+                : dto.getQuantity();
+
+        Product product = cartItem.getProduct();
+        if (newQuantity > product.getStock()) {
+            throw new IllegalStateException(
+                    "Stock insuficiente. Disponible: " + product.getStock());
         }
-        
-        cartItem.setQuantity(updateCartItemDTO.getQuantity());
-        CartItem updatedItem = cartItemRepository.save(cartItem);
-        
-        return convertToCartItemDTO(updatedItem);
+
+        cartItem.setQuantity(newQuantity);
+        CartItem updated = cartItemRepository.save(cartItem);
+        return convertToCartItemDTO(updated);
     }
 
     @Override
     public void removeFromCart(Long cartItemId) {
         if (!cartItemRepository.existsById(cartItemId)) {
-            throw new RuntimeException("Item del carrito no encontrado");
+            throw new EntityNotFoundException("Item del carrito no encontrado");
         }
-        
         cartItemRepository.deleteById(cartItemId);
     }
 
     @Override
     public CartSummaryDTO getCartSummary(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        ShoppingCart cart = shoppingCartRepository.findByUser(user)
-                .orElse(null);
-        
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        ShoppingCart cart = shoppingCartRepository.findByUser(user).orElse(null);
+
         if (cart == null || cart.getCartItems().isEmpty()) {
             return CartSummaryDTO.builder()
                     .id(null)
-                    .total(0.0)
+                    .subtotal(BigDecimal.ZERO)
+                    .totalDiscount(BigDecimal.ZERO)
+                    .total(BigDecimal.ZERO)
                     .totalItems(0)
-                    .isExpired(false)
-                    .expiration(null)
+                    .distinctItems(0)
+                    .expired(false)
+                    .expiresAt(null)
+                    .hasAppliedPromoCode(false)
                     .build();
         }
-        
-        int totalItems = cart.getCartItems().stream()
-                .mapToInt(CartItem::getQuantity)
-                .sum();
-        
+
+        BigDecimal subtotal = cart.getTotal();
+        int totalItems = cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum();
+        int distinctItems = cart.getCartItems().size();
+
         return CartSummaryDTO.builder()
                 .id(cart.getId())
-                .total(cart.getTotal())
+                .subtotal(subtotal)
+                .totalDiscount(BigDecimal.ZERO)
+                .total(subtotal)
                 .totalItems(totalItems)
-                .isExpired(cart.isExpired())
-                .expiration(cart.getExpiration())
+                .distinctItems(distinctItems)
+                .expired(cart.isExpired())
+                .expiresAt(cart.getExpiration())
+                .hasAppliedPromoCode(false)
                 .build();
     }
+
+    // =========================================================
+    // CHECKOUT Y PROMOCIONES
+    // =========================================================
 
     @Override
     public CheckoutSummaryDTO processCheckout(ProcessCheckoutDTO checkoutDTO) {
-        // Validar datos de checkout
-        validateCheckoutData(checkoutDTO);
-        
-        // Obtener carrito
-        User user = userRepository.findById(checkoutDTO.getOrderData().getUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        ShoppingCart cart = shoppingCartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
-        
-        // Validar que el carrito no esté expirado
-        /*if (cart.isExpired()) {
-            throw new RuntimeException("El carrito ha expirado");
-        }*/
-        
-        // Calcular totales
-        double subtotal = cart.getTotal();
-        double totalDiscount = 0.0;
-        
-        // Aplicar códigos promocionales si se proporcionan
-        if (checkoutDTO.getOrderData().getPromoCodes() != null && !checkoutDTO.getOrderData().getPromoCodes().isEmpty()) {
-            totalDiscount = calculatePromoCodeDiscount(checkoutDTO.getOrderData().getPromoCodes(), subtotal);
+
+        if (!Boolean.TRUE.equals(checkoutDTO.getAcceptedTerms())) {
+            throw new IllegalStateException(
+                    "Debes aceptar los términos y condiciones"
+            );
         }
-        
-        double total = subtotal - totalDiscount;
-        
-        // Crear resumen de checkout
+
+        ShoppingCart cart = shoppingCartRepository.findById(
+                checkoutDTO.getCartId()
+        ).orElseThrow(() ->
+                new EntityNotFoundException("Carrito no encontrado")
+        );
+
+        if (cart.isExpired()) {
+            throw new IllegalStateException(
+                    "El carrito ha expirado"
+            );
+        }
+
+        if (cart.getCartItems().isEmpty()) {
+            throw new IllegalStateException(
+                    "El carrito está vacío"
+            );
+        }
+
+        BigDecimal subtotal = cart.getTotal();
+
+        BigDecimal discount = BigDecimal.ZERO;
+
+        if (checkoutDTO.getPromoCode() != null
+                && !checkoutDTO.getPromoCode().isBlank()) {
+
+            PromoCode promoCode = promoCodeRepository
+                    .findByCode(checkoutDTO.getPromoCode())
+                    .orElseThrow(() ->
+                            new EntityNotFoundException(
+                                    "Código promocional no encontrado"
+                            )
+                    );
+
+            if (!promoCode.isValid()) {
+                throw new IllegalStateException(
+                        "Código promocional inválido"
+                );
+            }
+
+            BigDecimal percentage =
+                    BigDecimal.valueOf(
+                            promoCode.getDiscountPercentage()
+                    );
+
+            discount = subtotal.multiply(
+                    percentage.divide(BigDecimal.valueOf(100))
+            );
+        }
+
+        BigDecimal total = subtotal.subtract(discount);
+
         return CheckoutSummaryDTO.builder()
                 .subtotal(subtotal)
-                .totalDiscount(totalDiscount)
+                .totalDiscount(discount)
                 .total(total)
-                .totalItems(cart.getCartItems().stream()
-                        .mapToInt(CartItem::getQuantity)
-                        .sum())
+                .totalItems(
+                        cart.getCartItems()
+                                .stream()
+                                .mapToInt(CartItem::getQuantity)
+                                .sum()
+                )
                 .build();
     }
 
     @Override
-    public PromoCodeValidationDTO validatePromoCode(String code) {
-        PromoCode promoCode = promoCodeRepository.findByCode(code)
+    public PromoCodeValidationResultDTO validatePromoCode(
+            PromoCodeValidationDTO validationDTO
+    ) {
+
+        PromoCode promoCode = promoCodeRepository
+                .findByCode(validationDTO.getPromoCode())
                 .orElse(null);
-        
-        if (promoCode == null) {
-            return PromoCodeValidationDTO.builder()
-                    .promoCode(code)
-                    .isValid(false)
-                    .validationMessage("Código promocional no encontrado")
-                    .discountPercentage(0.0)
-                    .estimatedDiscount(0.0)
-                    .build();
-        }
-        
-        // Validar que esté activo
-        if (!promoCode.getActive()) {
-            return PromoCodeValidationDTO.builder()
-                    .promoCode(code)
-                    .isValid(false)
-                    .validationMessage("Código promocional inactivo")
-                    .discountPercentage(0.0)
-                    .estimatedDiscount(0.0)
-                    .build();
-        }
-        
-        // Validar fecha de expiración
-        if (promoCode.getExpirationDate() != null && 
-            LocalDateTime.now().isAfter(promoCode.getExpirationDate())) {
-            return PromoCodeValidationDTO.builder()
-                    .promoCode(code)
-                    .isValid(false)
-                    .validationMessage("Código promocional expirado")
-                    .discountPercentage(0.0)
-                    .estimatedDiscount(0.0)
-                    .build();
-        }
-        
-        return PromoCodeValidationDTO.builder()
-                .promoCode(code)
-                .isValid(true)
-                .validationMessage("Código promocional válido")
-                .discountPercentage(promoCode.getDiscountPercentage())
-                .estimatedDiscount(0.0) // Se calculará cuando se aplique
-                .build();
-    }
 
-    @Override
-    public AppliedPromoCodeDTO applyPromoCode(ApplyPromoCodeDTO applyPromoCodeDTO) {
-        // Validar código promocional
-        PromoCodeValidationDTO validation = validatePromoCode(applyPromoCodeDTO.getPromoCode());
-        
-        if (!validation.getIsValid()) {
-            throw new RuntimeException(validation.getValidationMessage());
+        if (promoCode == null) {
+
+            return PromoCodeValidationResultDTO.builder()
+                    .valid(false)
+                    .applicable(false)
+                    .promoCode(validationDTO.getPromoCode())
+                    .validationMessages(
+                            List.of("Código promocional no encontrado")
+                    )
+                    .build();
         }
-        
-        PromoCode promoCode = promoCodeRepository.findByCode(applyPromoCodeDTO.getPromoCode())
-                .orElseThrow(() -> new RuntimeException("Código promocional no encontrado"));
-        
-        // Obtener el subtotal del carrito para calcular el descuento
-        double subtotal = 0.0;
-        if (applyPromoCodeDTO.getCartId() != null) {
-            ShoppingCart cart = shoppingCartRepository.findById(applyPromoCodeDTO.getCartId())
-                    .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
-            subtotal = cart.getTotal();
-        } else if (applyPromoCodeDTO.getUserId() != null) {
-            User user = userRepository.findById(applyPromoCodeDTO.getUserId())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            ShoppingCart cart = shoppingCartRepository.findByUser(user)
-                    .orElse(null);
-            if (cart != null) {
-                subtotal = cart.getTotal();
-            }
+
+        if (!promoCode.isValid()) {
+
+            return PromoCodeValidationResultDTO.builder()
+                    .valid(false)
+                    .applicable(false)
+                    .promoCode(promoCode.getCode())
+                    .validationMessages(
+                            List.of("Código promocional inválido")
+                    )
+                    .build();
         }
-        
-        // Calcular descuento
-        double discountAmount = (subtotal * promoCode.getDiscountPercentage()) / 100.0;
-        
-        return AppliedPromoCodeDTO.builder()
+
+        BigDecimal subtotal = validationDTO.getCartItems()
+                .stream()
+                .map(CartItemDTO::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal discount =
+                subtotal.multiply(
+                        BigDecimal.valueOf(
+                                promoCode.getDiscountPercentage()
+                        ).divide(BigDecimal.valueOf(100))
+                );
+
+        return PromoCodeValidationResultDTO.builder()
+                .valid(true)
+                .applicable(true)
                 .promoCode(promoCode.getCode())
-                .discountPercentage(promoCode.getDiscountPercentage())
-                .discountAmount(discountAmount)
-                .applicationDate(LocalDateTime.now())
+                .discountValue(promoCode.getDiscountPercentage())
+                .estimatedDiscountAmount(discount.doubleValue())
+                .remainingUses(promoCode.getRemainingUses())
+                .expirationDate(promoCode.getExpirationDate())
+                .validationMessages(
+                        List.of("Código promocional válido")
+                )
                 .build();
     }
 
     @Override
     public SalesStatsDTO getSalesStats() {
-        // Obtener estadísticas de órdenes por estado
         Long pendingOrders = orderRepository.countByStatus(OrderStatus.PENDING);
         Long shippedOrders = orderRepository.countByStatus(OrderStatus.SHIPPED);
         Long deliveredOrders = orderRepository.countByStatus(OrderStatus.DELIVERED);
         Long cancelledOrders = orderRepository.countByStatus(OrderStatus.CANCELLED);
-        
-        // Obtener todas las órdenes para calcular totales
+
         List<Order> allOrders = orderRepository.findAll(Pageable.unpaged()).getContent();
-        
         Long totalOrders = (long) allOrders.size();
+
         Double totalRevenue = allOrders.stream()
                 .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
                 .mapToDouble(Order::getTotal)
                 .sum();
-        
+
         Double averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0.0;
-        
-        // Contar clientes únicos
+
         Long totalCustomers = allOrders.stream()
-                .map(order -> order.getUser())
+                .map(Order::getUser)
                 .filter(Objects::nonNull)
                 .distinct()
                 .count();
-        
+
         return SalesStatsDTO.builder()
                 .totalOrders(totalOrders)
-                .pendingOrders(pendingOrders)
-                .shippedOrders(shippedOrders)
-                .deliveredOrders(deliveredOrders)
-                .cancelledOrders(cancelledOrders)
-                .totalRevenue(totalRevenue)
-                .averageOrderValue(averageOrderValue)
+                .ordersPending(pendingOrders)
+                .ordersShipped(shippedOrders)
+                .ordersDelivered(deliveredOrders)
+                .ordersCancelled(cancelledOrders)
+                .totalRevenue(BigDecimal.valueOf(totalRevenue)) // Conversión de Double a BigDecimal
+                .averageOrderValue(BigDecimal.valueOf(averageOrderValue)) // Asumiendo que averageOrderValue también es Double
                 .totalCustomers(totalCustomers)
                 .build();
     }
 
-    // Métodos auxiliares privados
+    // =========================================================
+    // MÉTODOS AUXILIARES PRIVADOS
+    // =========================================================
 
     private void validateCreateOrderData(CreateOrderDTO createOrderDTO) {
         if (createOrderDTO.getOrderItems() == null || createOrderDTO.getOrderItems().isEmpty()) {
             throw new RuntimeException("La orden debe tener al menos un item");
         }
-        
         if (createOrderDTO.getPaymentMethod() == null) {
             throw new RuntimeException("El método de pago es obligatorio");
         }
-        
-        if (createOrderDTO.getShippingAddressId() == null && createOrderDTO.getGuestShippingAddress() == null) {
+        if (createOrderDTO.getShippingAddressId() == null
+                && createOrderDTO.getGuestShippingAddress() == null) {
             throw new RuntimeException("Se requiere una dirección de envío");
         }
     }
 
-    private OrderItem createOrderItem(CreateOrderItemDTO createOrderItemDTO) {
-        Product product = productRepository.findById(createOrderItemDTO.getProductId())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+    private OrderItem createOrderItem(
+            CreateOrderItemDTO dto
+    ) {
 
-        int quantity = createOrderItemDTO.getQuantity();
-        double finalPrice = createOrderItemDTO.getFinalPrice();
-        double subtotal = finalPrice * quantity;
+        Product product = productRepository.findById(
+                dto.getProductId()
+        ).orElseThrow(() ->
+                new EntityNotFoundException("Producto no encontrado")
+        );
+
+        double finalPrice =
+                product.getEffectivePrice().doubleValue();
 
         return OrderItem.builder()
                 .product(product)
                 .productName(product.getName())
-                .quantity(quantity)
+                .quantity(dto.getQuantity())
                 .finalPrice(finalPrice)
-                .subtotal(subtotal)
+                .subtotal(finalPrice * dto.getQuantity())
                 .build();
     }
 
-    private ShippingAddress createGuestShippingAddress(CreateShippingAddressDTO guestAddressDTO) {
-        // Implementar creación de dirección temporal
-        // Por ahora retornamos null, se debe implementar según la estructura de ShippingAddress
-        return null;
-    }
-
-    private List<AppliedPromoCode> applyPromoCodesToOrder(List<String> promoCodes, double subtotal, User user) {
+    private List<AppliedPromoCode> applyPromoCodesToOrder(
+            List<String> promoCodes, double subtotal, User user) {
         List<AppliedPromoCode> appliedCodes = new ArrayList<>();
-        
+
         for (String code : promoCodes) {
-            PromoCode promoCode = promoCodeRepository.findByCode(code)
-                    .orElse(null);
-            
+            PromoCode promoCode = promoCodeRepository.findByCode(code).orElse(null);
             if (promoCode != null && promoCode.getActive()) {
-                // Crear AppliedPromoCode sin el campo discountAmount que no existe en la entidad
+
+                // 1. Crear la ID compuesta manualmente (no tiene @Builder)
+                AppliedPromoCodeId compositeId = new AppliedPromoCodeId(
+                        code,
+                        user != null ? user.getId() : null,
+                        null // orderId es null inicialmente
+                );
+
+                // 2. Construir la entidad con los nombres de campos correctos
                 AppliedPromoCode appliedCode = AppliedPromoCode.builder()
-                        .promoCode(code)
-                        .userId(user != null ? user.getId() : null)
-                        .orderId(null) // Se asignará después de crear la orden
-                        .promoCodeEntity(promoCode)
+                        .id(compositeId)
+                        .promoCodeRef(promoCode) // Corregido: antes era .promoCodeEntity
                         .user(user)
-                        .order(null) // Se asignará después de crear la orden
+                        .order(null)
                         .applicationDate(LocalDateTime.now())
                         .build();
-                
+
                 appliedCodes.add(appliedCode);
             }
         }
-        
         return appliedCodes;
     }
 
-    private double calculateTotalDiscountFromPromoCodes(List<AppliedPromoCode> appliedPromoCodes, double subtotal) {
+    private double calculateTotalDiscountFromPromoCodes(
+            List<AppliedPromoCode> appliedPromoCodes, double subtotal) {
         double totalDiscount = 0.0;
-        
-        for (AppliedPromoCode appliedPromoCode : appliedPromoCodes) {
-            // Calcular el descuento basado en el porcentaje del código promocional
-            double discountAmount = (subtotal * appliedPromoCode.getPromoCodeEntity().getDiscountPercentage()) / 100.0;
-            totalDiscount += discountAmount;
+        for (AppliedPromoCode apc : appliedPromoCodes) {
+            totalDiscount += (subtotal * apc.getPromoCodeEntity().getDiscountPercentage()) / 100.0;
         }
-        
         return totalDiscount;
     }
 
-    private Sort createSort(String sortBy, String sortDirection) {
-        if (sortBy == null) {
-            sortBy = "orderDate";
+    private ShoppingCart resolveGuestCart(String guestCartId) {
+        if (guestCartId == null || guestCartId.isBlank()) {
+            ShoppingCart guestCart = ShoppingCart.builder()
+                    .user(null)
+                    .expiration(LocalDateTime.now().plusHours(24))
+                    .build();
+            return shoppingCartRepository.save(guestCart);
         }
-        
-        Sort.Direction direction = "desc".equalsIgnoreCase(sortDirection) ? 
-                Sort.Direction.DESC : Sort.Direction.ASC;
-        
-        return Sort.by(direction, sortBy);
-    }
 
-    private boolean filterOrderByCriteria(Order order, OrderSearchDTO searchDTO) {
-        // Implementar filtros adicionales si es necesario
-        // Por ahora retornamos true (sin filtros adicionales)
-        return true;
-    }
-
-    private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
-        // Implementar validaciones de transición de estado
-        // Por ejemplo: PENDING -> SHIPPED -> DELIVERED
-        // O PENDING -> CANCELLED
-    }
-
-    private LocalDateTime calculateEstimatedDelivery(LocalDateTime orderDate) {
-        // Calcular fecha estimada de entrega (ejemplo: 5 días hábiles)
-        return orderDate.plusDays(5);
-    }
-
-    private String generateTrackingNumber(Long orderId) {
-        // Generar número de seguimiento único
-        return "TRK-" + orderId + "-" + System.currentTimeMillis();
+        try {
+            Long cartId = Long.parseLong(guestCartId);
+            return shoppingCartRepository.findById(cartId)
+                    .filter(cart -> !cart.isExpired())
+                    .orElseGet(() -> shoppingCartRepository.save(
+                            ShoppingCart.builder()
+                                    .user(null)
+                                    .expiration(LocalDateTime.now().plusHours(24))
+                                    .build()
+                    ));
+        } catch (NumberFormatException e) {
+            return shoppingCartRepository.save(
+                    ShoppingCart.builder()
+                            .user(null)
+                            .expiration(LocalDateTime.now().plusHours(24))
+                            .build()
+            );
+        }
     }
 
     private ShoppingCart createNewShoppingCart(User user) {
@@ -607,57 +613,109 @@ public class SalesServiceImpl implements SalesService {
                 .user(user)
                 .expiration(LocalDateTime.now().plusHours(24))
                 .build();
-        
         return shoppingCartRepository.save(cart);
     }
 
     private void validateCheckoutData(ProcessCheckoutDTO checkoutDTO) {
-        if (checkoutDTO.getOrderData().getUserId() == null) {
-            throw new RuntimeException("ID de usuario es obligatorio");
+        // En el nuevo DTO, el usuario se determina por la presencia de guestUser
+        // o se asume autenticado si no es invitado.
+        // Si necesitas validar que al menos exista un identificador de destino:
+        if (checkoutDTO.getGuestUser() == null && checkoutDTO.getShippingAddressId() == null) {
+            throw new RuntimeException("Debe proporcionar una dirección de envío o datos de invitado");
         }
-        
-        if (checkoutDTO.getOrderData().getPaymentMethod() == null) {
+
+        // El método de pago ahora está en la raíz
+        if (checkoutDTO.getPaymentMethod() == null) {
             throw new RuntimeException("Método de pago es obligatorio");
         }
     }
 
     private double calculatePromoCodeDiscount(List<String> promoCodes, double subtotal) {
         double totalDiscount = 0.0;
-        
         for (String code : promoCodes) {
-            PromoCode promoCode = promoCodeRepository.findByCode(code)
-                    .orElse(null);
-            
+            PromoCode promoCode = promoCodeRepository.findByCode(code).orElse(null);
             if (promoCode != null && promoCode.getActive()) {
                 totalDiscount += (subtotal * promoCode.getDiscountPercentage()) / 100.0;
             }
         }
-        
         return totalDiscount;
     }
 
-    // Métodos de conversión
+    private Sort createSort(OrderSearchDTO.OrderSortBy sortBy, OrderSearchDTO.SortDirection sortDirection) {
+        // Mapeo de Enum a nombre de campo real en la entidad Order
+        String field = switch (sortBy) {
+            case DATE -> "orderDate";
+            case TOTAL -> "total";
+            case STATUS -> "status";
+            case null -> "orderDate";
+        };
+
+        Sort.Direction direction = (sortDirection == OrderSearchDTO.SortDirection.DESC)
+                ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        return Sort.by(direction, field);
+    }
+
+    private boolean filterOrderByCriteria(Order order, OrderSearchDTO searchDTO) {
+        return true;
+    }
+
+    private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
+        // Pendiente de implementar validaciones de transición
+    }
+
+    private LocalDateTime calculateEstimatedDelivery(LocalDateTime orderDate) {
+        return orderDate.plusDays(5);
+    }
+
+    // =========================================================
+    // CONVERSORES
+    // =========================================================
 
     private OrderDTO convertToOrderDTO(Order order) {
         return OrderDTO.builder()
                 .id(order.getId())
-                .total(order.getTotal())
+                .subtotal(BigDecimal.valueOf(calculateSubtotal(order)))
+                .totalDiscount(BigDecimal.valueOf(calculateTotalDiscount(order)))
+                .total(BigDecimal.valueOf(order.getTotal()))
                 .orderDate(order.getOrderDate())
                 .status(order.getStatus())
                 .paymentMethod(order.getPaymentMethod())
                 .userId(order.getUser() != null ? order.getUser().getId() : null)
                 .userFullName(order.getUser() != null ? order.getUser().getFullName() : null)
                 .userEmail(order.getUser() != null ? order.getUser().getEmail() : null)
-                .shippingAddress(convertToShippingAddressDTO(order.getShippingAddress()))
                 .orderItems(order.getOrderItems().stream()
-                        .map(this::convertToOrderItemDTO)
+                        .map(this::convertToOrderItemResponseDTO) // Ahora sí coincide el tipo
                         .collect(Collectors.toList()))
-                .appliedPromoCodes(order.getAppliedPromoCodes().stream()
-                        .map(this::convertToAppliedPromoCodeDTO)
-                        .collect(Collectors.toList()))
-                .subtotal(calculateSubtotal(order))
-                .totalDiscount(calculateTotalDiscount(order))
                 .totalItems(calculateTotalItems(order))
+                .build();
+    }
+
+    private OrderItemResponseDTO convertToOrderItemResponseDTO(OrderItem orderItem) {
+        if (orderItem == null) return null;
+
+        return OrderItemResponseDTO.builder()
+                .id(orderItem.getId())
+                .productId(orderItem.getProduct().getId())
+                .productName(orderItem.getProductName())
+                .productImageUrl(orderItem.getProduct().getImageUrl())
+                .quantity(orderItem.getQuantity())
+                // En tu entidad el campo es finalPrice, no unitPrice
+                .unitPrice(BigDecimal.valueOf(orderItem.getFinalPrice()))
+                .originalSubtotal(BigDecimal.valueOf(orderItem.getSubtotal()))
+                .discountAmount(BigDecimal.ZERO)
+                .finalSubtotal(BigDecimal.valueOf(orderItem.getSubtotal()))
+                .available(orderItem.getProduct().getStock() > 0)
+                .hasExistingDiscount(false)
+                .build();
+    }
+
+    private AppliedPromoCodeDTO convertToAppliedPromoCodeDTO(AppliedPromoCode appliedPromoCode) {
+        if (appliedPromoCode == null) return null;
+
+        return AppliedPromoCodeDTO.builder()
+                .promoCode(appliedPromoCode.getPromoCode()) // Usa el getter que extrae el String del EmbeddedId
+                .applicationDate(appliedPromoCode.getApplicationDate())
                 .build();
     }
 
@@ -676,7 +734,7 @@ public class SalesServiceImpl implements SalesService {
     private OrderSummaryDTO convertToOrderSummaryDTO(Order order) {
         return OrderSummaryDTO.builder()
                 .id(order.getId())
-                .total(order.getTotal())
+                .total(BigDecimal.valueOf(order.getTotal())) // Conversión de Double a BigDecimal
                 .orderDate(order.getOrderDate())
                 .status(order.getStatus())
                 .totalItems(calculateTotalItems(order))
@@ -686,8 +744,8 @@ public class SalesServiceImpl implements SalesService {
     private ShoppingCartDTO convertToShoppingCartDTO(ShoppingCart cart) {
         return ShoppingCartDTO.builder()
                 .id(cart.getId())
-                .userId(cart.getUser().getId())
-                .expiration(cart.getExpiration())
+                .userId(cart.getUser() != null ? cart.getUser().getId() : null)
+                .guestCartId(cart.getUser() == null ? String.valueOf(cart.getId()) : null)
                 .cartItems(cart.getCartItems().stream()
                         .map(this::convertToCartItemDTO)
                         .collect(Collectors.toList()))
@@ -695,7 +753,9 @@ public class SalesServiceImpl implements SalesService {
                 .totalItems(cart.getCartItems().stream()
                         .mapToInt(CartItem::getQuantity)
                         .sum())
+                .distinctItems(cart.getCartItems().size())
                 .isExpired(cart.isExpired())
+                .expiration(cart.getExpiration())
                 .build();
     }
 
@@ -704,9 +764,11 @@ public class SalesServiceImpl implements SalesService {
                 .id(cartItem.getId())
                 .productId(cartItem.getProduct().getId())
                 .productName(cartItem.getProduct().getName())
+                .productImageUrl(cartItem.getProduct().getImageUrl())
                 .quantity(cartItem.getQuantity())
                 .unitPrice(cartItem.getUnitPrice())
                 .subtotal(cartItem.getSubtotal())
+                .available(cartItem.getProduct().getStock() > 0)
                 .build();
     }
 
@@ -716,38 +778,21 @@ public class SalesServiceImpl implements SalesService {
                 .productId(orderItem.getProduct().getId())
                 .productName(orderItem.getProductName())
                 .quantity(orderItem.getQuantity())
-                .finalPrice(orderItem.getFinalPrice())
-                .subtotal(orderItem.getSubtotal())
+                // Probablemente el campo en el DTO se llama unitPrice o price
+                .unitPrice(BigDecimal.valueOf(orderItem.getFinalPrice()))
                 .productImageUrl(orderItem.getProduct().getImageUrl())
                 .build();
     }
 
-    private AppliedPromoCodeDTO convertToAppliedPromoCodeDTO(AppliedPromoCode appliedPromoCode) {
-        // Calcular el descuento basado en el subtotal de la orden
-        double discountAmount = 0.0;
-        if (appliedPromoCode.getOrder() != null) {
-            double subtotal = calculateSubtotal(appliedPromoCode.getOrder());
-            discountAmount = (subtotal * appliedPromoCode.getPromoCodeEntity().getDiscountPercentage()) / 100.0;
-        }
-        
-        return AppliedPromoCodeDTO.builder()
-                .promoCode(appliedPromoCode.getPromoCode())
-                .discountPercentage(appliedPromoCode.getPromoCodeEntity().getDiscountPercentage())
-                .discountAmount(discountAmount)
-                .applicationDate(appliedPromoCode.getApplicationDate())
-                .build();
-    }
 
     private ShippingAddressDTO convertToShippingAddressDTO(ShippingAddress shippingAddress) {
-        if (shippingAddress == null) {
-            return null;
-        }
-        
+        if (shippingAddress == null) return null;
         return ShippingAddressDTO.builder()
                 .id(shippingAddress.getId())
-                .address(shippingAddress.getAddress())
+                .addressLine1(shippingAddress.getAddressLine1())
                 .cityName(shippingAddress.getCity().getName())
-                .postalCode(shippingAddress.getPostalCode() != null ? shippingAddress.getPostalCode().getCode() : null)
+                .postalCode(shippingAddress.getPostalCode() != null
+                        ? shippingAddress.getPostalCode().getCode() : null)
                 .build();
     }
 
@@ -760,13 +805,11 @@ public class SalesServiceImpl implements SalesService {
     private double calculateTotalDiscount(Order order) {
         double subtotal = calculateSubtotal(order);
         double totalDiscount = 0.0;
-        
-        for (AppliedPromoCode appliedPromoCode : order.getAppliedPromoCodes()) {
-            // Calcular el descuento basado en el porcentaje del código promocional
-            double discountAmount = (subtotal * appliedPromoCode.getPromoCodeEntity().getDiscountPercentage()) / 100.0;
-            totalDiscount += discountAmount;
+        for (AppliedPromoCode apc : order.getAppliedPromoCodes()) {
+            // Cambiado de getPromoCodeEntity() a getPromoCodeRef()
+            // para coincidir con tu entidad AppliedPromoCode
+            totalDiscount += (subtotal * apc.getPromoCodeRef().getDiscountPercentage()) / 100.0;
         }
-        
         return totalDiscount;
     }
 

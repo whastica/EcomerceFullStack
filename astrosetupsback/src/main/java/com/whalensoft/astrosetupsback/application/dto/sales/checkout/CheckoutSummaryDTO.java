@@ -1,7 +1,7 @@
 package com.whalensoft.astrosetupsback.application.dto.sales.checkout;
 
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.UserShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemResponseDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.payment.PaymentMethodDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +21,7 @@ public class CheckoutSummaryDTO {
     /**
      * Items del carrito con precios, disponibilidad y descuentos ya calculados.
      */
-    private List<CartItemResponseDTO> items;
+    private List<CartItemDTO> items;
 
     /**
      * Subtotal antes de descuentos, envío e impuestos.

@@ -25,12 +25,8 @@ public interface ShippingService {
     void deleteShippingAddress(Long id);
     
     // Gestión de Ciudades y Códigos Postales
-    CityDTO createCity(CreateCityDTO createCityDTO);
-    CityDTO updateCity(Long id, UpdateCityDTO updateCityDTO);
     List<CitySummaryDTO> getAllCities();
-    
-    PostalCodeDTO createPostalCode(CreatePostalCodeDTO createPostalCodeDTO);
-    PostalCodeDTO updatePostalCode(Long id, UpdatePostalCodeDTO updatePostalCodeDTO);
+
     List<PostalCodeSummaryDTO> getPostalCodesByCity(Long cityId);
     
     // Cálculo de Costos de Envío

@@ -1,5 +1,6 @@
 package com.whalensoft.astrosetupsback.infra.adapters;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,8 +87,16 @@ public class ProductRepositoryAdapter implements ProductRepository {
     }
 
     @Override
-    public Page<Product> findByFilters(Long categoryId, Double minPrice, Double maxPrice, String brand, Pageable pageable) {
-        return jpaProductRepository.findByFilters(categoryId, minPrice, maxPrice, brand, pageable);
+    public Page<Product> findByFilters(
+            Long categoryId,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            String brand,
+            Pageable pageable
+    ) {
+        return jpaProductRepository.findByFilters(
+                categoryId, minPrice, maxPrice, brand, pageable
+        );
     }
 
     @Override

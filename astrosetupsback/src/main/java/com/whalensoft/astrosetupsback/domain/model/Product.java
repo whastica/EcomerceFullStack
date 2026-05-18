@@ -9,17 +9,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 @ToString(exclude = {"warranties", "cartItems", "orderItems"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -53,6 +50,12 @@ public class Product {
     @Column(length = 100)
     private String brand;
 
+    // Agregar el campo stock después de brand
+    @NotNull
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer stock = 0;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -80,6 +83,12 @@ public class Product {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    // Agregar al final de la clase, antes del último }
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public boolean hasDiscount() {
         return discountPrice != null && discountPrice.compareTo(price) < 0;

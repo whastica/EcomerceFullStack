@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,16 +20,17 @@ public class ProductDetailDTO {
     private String name;
     private String description;
 
-    private Double price;
-    private Double discountPrice;
-    private Double effectivePrice;
+    private BigDecimal price;
+    private BigDecimal discountPrice;
+    private BigDecimal effectivePrice;
+    private Double discountPercentage;
     private Boolean hasDiscount;
 
     private String brand;
+    private Integer stock;
 
     private String mainImageUrl;
 
-    /** Galería de imágenes (futuro flexible) */
     @Builder.Default
     private List<String> galleryImages = new ArrayList<>();
 

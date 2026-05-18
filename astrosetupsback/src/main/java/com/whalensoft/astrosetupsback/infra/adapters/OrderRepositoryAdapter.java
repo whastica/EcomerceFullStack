@@ -46,6 +46,11 @@ public class OrderRepositoryAdapter implements OrderRepository {
     }
 
     @Override
+    public Page<Order> findAll(Pageable pageable) {
+        return jpaOrderRepository.findAll(pageable);
+    }
+
+    @Override
     public List<Order> findByUserAndStatus(User user, OrderStatus status) {
         return jpaOrderRepository.findByUserAndStatus(user, status);
     }

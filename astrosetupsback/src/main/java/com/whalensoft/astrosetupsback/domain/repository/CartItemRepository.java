@@ -21,6 +21,6 @@ public interface CartItemRepository {
     // --- Métodos opcionales añadidos ---
     void deleteByProduct(Product product);
     List<CartItem> findByProduct(Product product);
-    List<CartItem> findByUser(User user);
     List<CartItem> findActiveCartItemsByUser(Long userId);
+    List<CartItem> findByUserId(Long userId);
 }

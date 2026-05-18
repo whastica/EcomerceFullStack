@@ -6,13 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.math.BigDecimal;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,10 +26,10 @@ public class CreateProductDTO {
 
     @NotNull(message = "El precio es obligatorio")
     @DecimalMin(value = "0.01")
-    private Double price;
+    private BigDecimal price;
 
     @DecimalMin(value = "0.01", message = "El precio de descuento debe ser mayor a 0")
-    private Double discountPrice; // opcional
+    private BigDecimal discountPrice; // opcional
 
     @Size(max = 100)
     private String brand;

@@ -17,6 +17,7 @@ import { Toaster } from 'sonner';
 
 import { queryClient } from './lib/react-query';
 
+
 createRoot(
   document.getElementById('root')!
 ).render(

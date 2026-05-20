@@ -1,3 +1,5 @@
+import { Category } from '@/interfaces/category/category.interface';
+
 export type SortOption = 'newest' | 'oldest' | 'price-asc' | 'price-desc';
 
 export interface FilterState {
@@ -6,19 +8,10 @@ export interface FilterState {
   sortBy: SortOption;
   categories: number[]; // Filtro por categorías seleccionadas
 }
-// Define la estructura de una categoría individual
-export interface CategoryItem {
-  id: number;
-  name: string;
-  slug: string;
-  productCount?: number;
-}
-
-// Define las props aceptadas por el Sidebar
 export interface SidebarProps {
   isOpen: boolean;
   type?: 'catalog' | 'admin';
-  categories?: CategoryItem[];
+  categories?: Category[];  // ← Category directamente, CategoryItem eliminado
   filters?: FilterState;
   onFilterChange?: (filters: FilterState) => void;
 }

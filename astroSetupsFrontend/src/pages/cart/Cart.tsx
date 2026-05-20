@@ -1,8 +1,11 @@
 import { createContext, useContext, useReducer, ReactNode } from 'react';
-import { Product } from '../../components/products/ProductCard';
 
 // 📦 Tipo de ítem en el carrito
-export interface CartItem extends Product {
+export interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl?: string;
   quantity: number;
 }
 

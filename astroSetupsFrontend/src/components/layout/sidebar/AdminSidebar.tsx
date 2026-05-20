@@ -19,9 +19,6 @@ export default function AdminSidebar({ isOpen }: { isOpen: boolean }) {
           <Link to="/admin/users" className="block text-dark-muted hover:text-[#FB5607] transition-colors py-2">
             👥 Usuarios
           </Link>
-          <Link to="/admin/promotions" className="block text-dark-muted hover:text-[#FB5607] transition-colors py-2">
-            🎉 Promociones
-          </Link>
           <Link to="/admin/reports" className="block text-dark-muted hover:text-[#FB5607] transition-colors py-2">
             📈 Reportes
           </Link>

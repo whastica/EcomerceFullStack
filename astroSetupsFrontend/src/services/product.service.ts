@@ -1,5 +1,11 @@
 import { apiClient } from '@/api/client';
 
+import { ProductSearchRequest }
+  from '@/interfaces/product/product-search-request.interface';
+
+import { ProductSearchResult }
+  from '@/interfaces/product/product-search-result.interface';
+
 import { ProductSummary }
   from '@/interfaces/product/product-summary.interface';
 
@@ -56,7 +62,21 @@ export const productService = {
     return response.data;
   },
 
+  /**
+   * Búsqueda avanzada con filtros
+   */
+  async searchProducts(
+    searchRequest: ProductSearchRequest
+  ): Promise<ProductSearchResult> {
 
+    const response =
+      await apiClient.post<ProductSearchResult>(
+        `${BASE_URL}/_search`,
+        searchRequest
+      );
+
+    return response.data;
+  },
 
   /**
    * Obtener productos por categoría

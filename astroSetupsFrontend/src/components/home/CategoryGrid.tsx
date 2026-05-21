@@ -3,7 +3,6 @@ import CategoryCard from '../home/CategoryCard';
 interface Category {
   id: number;
   name: string;
-  slug: string;
   imageUrl: string;
 }
 
@@ -20,15 +19,15 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
         const isFirst = index === 0;
         const isLast = index === categories.length - 1;
         const shouldSpanFullWidth = isFirst || isLast;
-        
+
         return (
           <div
             key={category.id}
             className={`${shouldSpanFullWidth ? 'col-span-2' : 'col-span-1'} rounded-xl overflow-hidden`}
           >
-            <CategoryCard 
+            <CategoryCard
+              id={category.id}
               name={category.name}
-              slug={category.slug}
               imageUrl={category.imageUrl}
             />
           </div>

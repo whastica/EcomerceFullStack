@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Sidebar from '../../components/layout/sidebar/Sidebar';
 import Container from '../../components/layout/container/Container';
 import ProductGrid from '../../components/products/ProductGrid';
@@ -12,17 +13,28 @@ import { useProducts } from '../../hooks/useProducts';
 import { useCategories } from '../../hooks/useCategories';
 
 export default function ProductsPage() {
-  // 1. Definición de todos los Hooks de estado
+  const [searchParams] = useSearchParams();
+  const categoryIdFromUrl = searchParams.get('categoryId');
+
   const [isSidebarOpen] = useState(true);
   const [page, setPage] = useState(0);
   const [filters, setFilters] = useState<FilterState>({
     priceRange: [0, 5000000],
     searchTerm: '',
     sortBy: 'newest',
-    categories: [],
+    // Pre-seleccionar categoría si viene desde el Home
+    categories: categoryIdFromUrl ? [Number(categoryIdFromUrl)] : [],
   });
 
-  // 2. Custom Hooks de Data Fetching
+  // Si cambia el parámetro de URL, actualizar el filtro de categoría
+  useEffect(() => {
+    if (categoryIdFromUrl) {
+      setFilters(prev => ({ ...prev, categories: [Number(categoryIdFromUrl)] }));
+      setPage(0);
+    }
+  }, [categoryIdFromUrl]);
+
+  // Data fetching
   const {
     data,
     isLoading: isProductsLoading,
@@ -35,27 +47,30 @@ export default function ProductsPage() {
     isError: isCategoriesError,
   } = useCategories();
 
-  // 3. Variables derivadas (fuera de useMemo para limpieza)
   const products = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
   const totalElements = data?.totalElements ?? 0;
 
-  // 4. useMemo (Debe ir antes de cualquier return)
+  // Handler de filtros — resetea página al cambiar filtros
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setPage(0);
+  };
+
+  // useMemo — antes de early returns
   const filteredProducts = useMemo(() => {
     let filtered = [...products] as ProductSummary[];
 
     filtered = filtered.filter((product) => {
-      // Filtro de Precio
+      // Precio
       const isDefaultPrice =
-        filters.priceRange[0] === 0 &&
-        filters.priceRange[1] === 5000000;
+        filters.priceRange[0] === 0 && filters.priceRange[1] === 5000000;
       const productPrice = product.effectivePrice ?? product.price;
       const matchesPrice =
         isDefaultPrice ||
-        (productPrice >= filters.priceRange[0] &&
-          productPrice <= filters.priceRange[1]);
+        (productPrice >= filters.priceRange[0] && productPrice <= filters.priceRange[1]);
 
-      // Filtro de Búsqueda
+      // Búsqueda
       const search = filters.searchTerm.toLowerCase();
       const matchesSearch =
         !filters.searchTerm.trim() ||
@@ -63,7 +78,7 @@ export default function ProductsPage() {
         (product.brand || '').toLowerCase().includes(search) ||
         (product.description || '').toLowerCase().includes(search);
 
-      // Filtro de Categorías
+      // Categorías
       const matchesCategory =
         filters.categories.length === 0 ||
         filters.categories.some((catId) => {
@@ -75,26 +90,18 @@ export default function ProductsPage() {
       return matchesPrice && matchesSearch && matchesCategory;
     });
 
-    // Ordenamiento local
+    // Ordenamiento
     switch (filters.sortBy) {
-      case 'newest':
-        filtered.sort((a, b) => b.id - a.id);
-        break;
-      case 'oldest':
-        filtered.sort((a, b) => a.id - b.id);
-        break;
-      case 'price-asc':
-        filtered.sort((a, b) => (a.effectivePrice ?? a.price) - (b.effectivePrice ?? b.price));
-        break;
-      case 'price-desc':
-        filtered.sort((a, b) => (b.effectivePrice ?? b.price) - (a.effectivePrice ?? a.price));
-        break;
+      case 'newest': filtered.sort((a, b) => b.id - a.id); break;
+      case 'oldest': filtered.sort((a, b) => a.id - b.id); break;
+      case 'price-asc': filtered.sort((a, b) => (a.effectivePrice ?? a.price) - (b.effectivePrice ?? b.price)); break;
+      case 'price-desc': filtered.sort((a, b) => (b.effectivePrice ?? b.price) - (a.effectivePrice ?? a.price)); break;
     }
 
     return filtered;
   }, [products, categories, filters]);
 
-  // 5. Early Returns (DESPUÉS de declarar todos los hooks)
+  // Early returns
   if (isProductsLoading || isCategoriesLoading) {
     return <LoadingState message="Cargando catálogo..." />;
   }
@@ -108,19 +115,15 @@ export default function ProductsPage() {
     );
   }
 
-  // 6. Renderizado Normal
   return (
     <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">
-      {/* Background Layer */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-dark-gradient"></div>
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
-        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
+        <div className="absolute inset-0 bg-dark-gradient" />
+        <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
+        <div className="absolute inset-0 bg-tech-grid opacity-20" />
         <div
           className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{
-            backgroundImage: 'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)',
-          }}
+          style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)' }}
         />
       </div>
 
@@ -130,14 +133,15 @@ export default function ProductsPage() {
           type="catalog"
           categories={categories}
           filters={filters}
-          onFilterChange={setFilters}
+          onFilterChange={handleFilterChange}
         />
         <main className="flex-1">
           <Container padding="large">
-            {/* Page Header */}
             <div className="rounded-xl p-6 mb-8 border border-[#666] bg-[#4D4D4D] max-w-6xl mx-auto">
               <h1 className="text-3xl font-bold text-dark-text mb-2 text-shadow-glow">
-                Todos los productos
+                {filters.categories.length === 1
+                  ? categories.find(c => c.id === filters.categories[0])?.name ?? 'Todos los productos'
+                  : 'Todos los productos'}
               </h1>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="text-dark-muted text-sm">
@@ -148,7 +152,7 @@ export default function ProductsPage() {
                   <select
                     value={filters.sortBy}
                     onChange={(e) =>
-                      setFilters({
+                      handleFilterChange({
                         ...filters,
                         sortBy: e.target.value as FilterState['sortBy'],
                       })
@@ -164,7 +168,6 @@ export default function ProductsPage() {
               </div>
             </div>
 
-            {/* Main Content Area */}
             <div className="glass-effect rounded-xl p-6 animate-slide-up">
               {filteredProducts.length === 0 ? (
                 <EmptyState

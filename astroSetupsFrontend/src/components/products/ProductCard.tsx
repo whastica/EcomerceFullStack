@@ -1,21 +1,15 @@
 import { Eye, ShoppingCart }
   from 'lucide-react';
-
 import { useState }
   from 'react';
-
 import { Link }
   from 'react-router-dom';
-
 import { toast }
   from 'sonner';
-
 import { useCart }
   from '../../pages/cart/Cart';
-
 import ProductModal
   from './ProductModal';
-
 import { ProductSummary }
   from '../../interfaces/product/product-summary.interface';
 
@@ -26,43 +20,31 @@ interface ProductCardProps {
 export default function ProductCard({
   product,
 }: ProductCardProps) {
-
   const [showModal, setShowModal] =
     useState(false);
-
   const { dispatch } = useCart();
 
-
-
   const handleAddToCart = () => {
-
     dispatch({
       type: 'ADD_ITEM',
       payload: {
-        id: product.id,       
-        name: product.name,   
-        price: product.effectivePrice ?? product.price, 
-        imageUrl: product.imageUrl, 
-        quantity: 1,         
+        id: product.id,
+        name: product.name,
+        price: product.effectivePrice ?? product.price,
+        imageUrl: product.imageUrl,
+        quantity: 1,
       },
     });
-
     toast.success(
       `"${product.name}" fue añadido al carrito 🛒`
     );
   };
 
-
-
   const finalPrice =
-    product.effectivePrice ??
-    product.price;
-
-
+    product.effectivePrice ?? product.price;
 
   return (
     <>
-
       <Link
         to={`/product/${product.id}`}
         className="
@@ -76,12 +58,9 @@ export default function ProductCard({
           hover:scale-105
         "
       >
-
         <div className="relative overflow-hidden rounded-b-lg bg-transparent">
-
           {/* Imagen */}
-          <div className="relative overflow-hidden">
-
+          <div className="relative overflow-hidden bg-dark-card rounded-t-lg">
             <img
               src={
                 product.imageUrl ||
@@ -90,16 +69,14 @@ export default function ProductCard({
               alt={product.name}
               className="
                 w-full
-                object-cover
+                object-contain
                 aspect-[4/5]
                 transition-transform
                 duration-300
                 group-hover:scale-110
+                p-2
               "
             />
-
-
-
             <div
               className="
                 absolute
@@ -114,9 +91,6 @@ export default function ProductCard({
                 duration-300
               "
             />
-
-
-
             {/* Badge descuento */}
             {product.hasDiscount && (
               <div
@@ -136,9 +110,6 @@ export default function ProductCard({
                 Oferta
               </div>
             )}
-
-
-
             {/* Acciones */}
             <div
               className="
@@ -154,8 +125,7 @@ export default function ProductCard({
                 duration-300
               "
             >
-
-              {/* Modal */}
+              {/* Vista previa */}
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -175,9 +145,6 @@ export default function ProductCard({
               >
                 <Eye size={18} />
               </button>
-
-
-
               {/* Carrito */}
               <button
                 onClick={(e) => {
@@ -198,25 +165,17 @@ export default function ProductCard({
               >
                 <ShoppingCart size={18} />
               </button>
-
             </div>
-
           </div>
-
-
 
           {/* Info */}
           <div className="p-4 text-center space-y-2">
-
             {/* Marca */}
             {product.brand && (
               <p className="text-xs text-dark-muted uppercase tracking-wide">
                 {product.brand}
               </p>
             )}
-
-
-
             {/* Nombre */}
             <h3
               className="
@@ -231,18 +190,13 @@ export default function ProductCard({
             >
               {product.name}
             </h3>
-
-
-
             {/* Precio */}
             <div className="flex flex-col items-center">
-
               {product.hasDiscount && (
                 <span className="text-sm text-gray-400 line-through">
                   ${product.price.toLocaleString()}
                 </span>
               )}
-
               <p
                 className="
                   text-lg
@@ -254,27 +208,18 @@ export default function ProductCard({
               >
                 ${finalPrice.toLocaleString()}
               </p>
-
             </div>
-
           </div>
-
         </div>
-
       </Link>
 
-
-
-      {/* Modal */}
+      {/* Modal vista previa */}
       {showModal && (
-
         <ProductModal
           product={product}
           onClose={() => setShowModal(false)}
         />
-
       )}
-
     </>
   );
 }

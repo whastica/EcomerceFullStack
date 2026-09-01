@@ -21,6 +21,12 @@ public class CreateShippingAddressDTO {
 
     private Long postalCodeId;
 
+    @NotBlank(message = "El nombre del destinatario es obligatorio")
+    private String recipientName;
+
+    @NotBlank(message = "El teléfono es obligatorio")
+    private String phone;
+
     // Opcional, útil para UX
     @Builder.Default
     private Boolean setAsDefault = false;

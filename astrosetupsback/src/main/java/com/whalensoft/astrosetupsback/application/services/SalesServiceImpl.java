@@ -14,11 +14,8 @@ import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchResultDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesStatsDTO;
-import com.whalensoft.astrosetupsback.application.dto.promotion.validation.ApplyPromoCodeDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.shipping.address.CreateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
 import com.whalensoft.astrosetupsback.domain.model.*;
 import com.whalensoft.astrosetupsback.domain.repository.*;
@@ -93,12 +90,14 @@ public class SalesServiceImpl implements SalesService {
                 .mapToDouble(OrderItem::getSubtotal)
                 .sum();
 
-        List<AppliedPromoCode> appliedPromoCodes = new ArrayList<>();
         double totalDiscount = 0.0;
-
         if (createOrderDTO.getPromoCodes() != null && !createOrderDTO.getPromoCodes().isEmpty()) {
-            appliedPromoCodes = applyPromoCodesToOrder(createOrderDTO.getPromoCodes(), subtotal, user);
-            totalDiscount = calculateTotalDiscountFromPromoCodes(appliedPromoCodes, subtotal);
+            for (String code : createOrderDTO.getPromoCodes()) {
+                PromoCode promoCode = promoCodeRepository.findByCode(code).orElse(null);
+                if (promoCode != null && promoCode.getActive()) {
+                    totalDiscount += (subtotal * promoCode.getDiscountPercentage()) / 100.0;
+                }
+            }
         }
 
         double total = subtotal - totalDiscount;
@@ -111,13 +110,44 @@ public class SalesServiceImpl implements SalesService {
                 .paymentMethod(createOrderDTO.getPaymentMethod())
                 .shippingAddress(shippingAddress)
                 .orderItems(orderItems)
-                .appliedPromoCodes(appliedPromoCodes)
+                .appliedPromoCodes(new ArrayList<>())
                 .build();
 
         orderItems.forEach(item -> item.setOrder(order));
-        appliedPromoCodes.forEach(apc -> apc.setOrder(order));
 
         Order savedOrder = orderRepository.save(order);
+
+        // Create AppliedPromoCodes AFTER saving the order so orderId is not null
+        if (createOrderDTO.getPromoCodes() != null && !createOrderDTO.getPromoCodes().isEmpty()) {
+            List<AppliedPromoCode> appliedPromoCodes = new ArrayList<>();
+            for (String code : createOrderDTO.getPromoCodes()) {
+                PromoCode promoCode = promoCodeRepository.findByCode(code).orElse(null);
+                if (promoCode != null && promoCode.getActive()) {
+                    AppliedPromoCodeId compositeId = new AppliedPromoCodeId(
+                            code,
+                            user != null ? user.getId() : null,
+                            savedOrder.getId()
+                    );
+                    AppliedPromoCode appliedCode = AppliedPromoCode.builder()
+                            .id(compositeId)
+                            .promoCodeRef(promoCode)
+                            .user(user)
+                            .order(savedOrder)
+                            .applicationDate(LocalDateTime.now())
+                            .build();
+                    appliedPromoCodes.add(appliedCode);
+
+                    // Decrement remaining uses
+                    if (promoCode.getRemainingUses() != null) {
+                        promoCode.setRemainingUses(promoCode.getRemainingUses() - 1);
+                        promoCodeRepository.save(promoCode);
+                    }
+                }
+            }
+            savedOrder.setAppliedPromoCodes(appliedPromoCodes);
+            orderRepository.save(savedOrder);
+        }
+
         return convertToOrderDTO(savedOrder);
     }
 
@@ -192,6 +222,14 @@ public class SalesServiceImpl implements SalesService {
         return orderRepository.findByUser(user).stream()
                 .map(this::convertToOrderSummaryDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getOrderUserId(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+        return order.getUser().getId();
     }
 
     // =========================================================
@@ -657,6 +695,61 @@ public class SalesServiceImpl implements SalesService {
     }
 
     private boolean filterOrderByCriteria(Order order, OrderSearchDTO searchDTO) {
+        // Filter by search term (match order ID, user name, or user email)
+        if (searchDTO.getSearchTerm() != null && !searchDTO.getSearchTerm().isEmpty()) {
+            String term = searchDTO.getSearchTerm().toLowerCase();
+            boolean matchesId = order.getId().toString().contains(term);
+            boolean matchesUser = order.getUser() != null && (
+                    (order.getUser().getFirstName() != null && order.getUser().getFirstName().toLowerCase().contains(term)) ||
+                    (order.getUser().getLastName() != null && order.getUser().getLastName().toLowerCase().contains(term)) ||
+                    (order.getUser().getEmail() != null && order.getUser().getEmail().toLowerCase().contains(term))
+            );
+            if (!matchesId && !matchesUser) return false;
+        }
+
+        // Filter by status
+        if (searchDTO.getStatus() != null && order.getStatus() != searchDTO.getStatus()) {
+            return false;
+        }
+
+        // Filter by start date
+        if (searchDTO.getStartDate() != null && order.getOrderDate() != null) {
+            if (order.getOrderDate().isBefore(searchDTO.getStartDate())) {
+                return false;
+            }
+        }
+
+        // Filter by end date
+        if (searchDTO.getEndDate() != null && order.getOrderDate() != null) {
+            if (order.getOrderDate().isAfter(searchDTO.getEndDate())) {
+                return false;
+            }
+        }
+
+        // Filter by min total
+        if (searchDTO.getMinTotal() != null &&
+                BigDecimal.valueOf(order.getTotal()).compareTo(searchDTO.getMinTotal()) < 0) {
+            return false;
+        }
+
+        // Filter by max total
+        if (searchDTO.getMaxTotal() != null &&
+                BigDecimal.valueOf(order.getTotal()).compareTo(searchDTO.getMaxTotal()) > 0) {
+            return false;
+        }
+
+        // Filter by payment method
+        if (searchDTO.getPaymentMethod() != null && order.getPaymentMethod() != searchDTO.getPaymentMethod()) {
+            return false;
+        }
+
+        // Filter by user ID
+        if (searchDTO.getUserId() != null) {
+            if (order.getUser() == null || !order.getUser().getId().equals(searchDTO.getUserId())) {
+                return false;
+            }
+        }
+
         return true;
     }
 

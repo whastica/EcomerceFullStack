@@ -169,7 +169,14 @@ public class PromotionServiceImpl implements PromotionService {
                 subtotal * (promoCode.getDiscountPercentage() / 100.0);
 
         return PromoCodeValidationResultDTO.builder()
-                .valid(false)
+                .valid(true)
+                .applicable(true)
+                .promoCode(promoCode.getCode())
+                .discountType(PromoDiscountType.PERCENTAGE)
+                .discountValue(promoCode.getDiscountPercentage())
+                .estimatedDiscountAmount(estimatedDiscount)
+                .remainingUses(promoCode.getRemainingUses())
+                .expirationDate(promoCode.getExpirationDate())
                 .build();
     }
 

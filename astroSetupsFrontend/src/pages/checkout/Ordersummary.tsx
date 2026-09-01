@@ -55,8 +55,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onQtyChange, onRemov
 
           {/* Thumbnail */}
           <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-            {item.image
-              ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+            {item.imageUrl
+              ? <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
               : (
                 <div className="w-full h-full flex items-center justify-center text-2xl bg-gray-100">
                   📦

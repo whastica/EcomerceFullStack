@@ -18,5 +18,9 @@ public class UpdateShippingAddressDTO {
     private Long cityId;
     private Long postalCodeId;
 
+    private String recipientName;
+
+    private String phone;
+
     private Boolean setAsDefault;
 }

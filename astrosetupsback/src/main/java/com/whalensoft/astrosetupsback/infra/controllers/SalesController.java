@@ -2,6 +2,9 @@ package com.whalensoft.astrosetupsback.infra.controllers;
 
 import java.util.List;
 
+import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
+import com.whalensoft.astrosetupsback.infra.exceptions.AccessDeniedException;
+import com.whalensoft.astrosetupsback.infra.security.SecurityUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +47,7 @@ public class SalesController {
 
     @GetMapping("/orders/{id}")
     public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+        checkOrderOwnership(id);
         return ResponseEntity.ok(salesService.getOrderById(id));
     }
 
@@ -59,16 +63,19 @@ public class SalesController {
 
     @GetMapping("/orders/{id}/status-history")
     public ResponseEntity<List<OrderStatusHistoryDTO>> getOrderStatusHistory(@PathVariable Long id) {
+        checkOrderOwnership(id);
         return ResponseEntity.ok(salesService.getOrderStatusHistory(id));
     }
 
     @GetMapping("/orders/{id}/tracking")
     public ResponseEntity<OrderTrackingDTO> getOrderTracking(@PathVariable Long id) {
+        checkOrderOwnership(id);
         return ResponseEntity.ok(salesService.getOrderTracking(id));
     }
 
     @GetMapping("/orders/customer/{customerId}")
     public ResponseEntity<List<OrderSummaryDTO>> getCustomerOrders(@PathVariable Long customerId) {
+        checkOwnership(customerId);
         return ResponseEntity.ok(salesService.getCustomerOrders(customerId));
     }
 
@@ -82,5 +89,20 @@ public class SalesController {
     @GetMapping("/stats")
     public ResponseEntity<SalesStatsDTO> getSalesStats() {
         return ResponseEntity.ok(salesService.getSalesStats());
+    }
+
+    private void checkOrderOwnership(Long orderId) {
+        if (!SecurityUtils.isAdmin()) {
+            Long orderUserId = salesService.getOrderUserId(orderId);
+            if (!orderUserId.equals(SecurityUtils.getCurrentUserId())) {
+                throw new AccessDeniedException(ErrorMessages.FORBIDDEN);
+            }
+        }
+    }
+
+    private void checkOwnership(Long resourceUserId) {
+        if (!SecurityUtils.isAdmin() && !resourceUserId.equals(SecurityUtils.getCurrentUserId())) {
+            throw new AccessDeniedException(ErrorMessages.FORBIDDEN);
+        }
     }
 }

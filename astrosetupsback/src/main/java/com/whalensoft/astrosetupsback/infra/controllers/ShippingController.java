@@ -2,6 +2,9 @@ package com.whalensoft.astrosetupsback.infra.controllers;
 
 import java.util.List;
 
+import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
+import com.whalensoft.astrosetupsback.infra.exceptions.AccessDeniedException;
+import com.whalensoft.astrosetupsback.infra.security.SecurityUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.whalensoft.astrosetupsback.application.dto.shipping.location.CityDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.location.CitySummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.CreateShippingAddressDTO;
 
@@ -46,11 +48,13 @@ public class ShippingController {
 
     @PutMapping("/addresses/{id}")
     public ResponseEntity<ShippingAddressDTO> updateShippingAddress(@PathVariable Long id, @Valid @RequestBody UpdateShippingAddressDTO dto) {
+        checkAddressOwnership(id);
         return ResponseEntity.ok(shippingService.updateShippingAddress(id, dto));
     }
 
     @GetMapping("/addresses/{id}")
     public ResponseEntity<ShippingAddressDTO> getShippingAddressById(@PathVariable Long id) {
+        checkAddressOwnership(id);
         return ResponseEntity.ok(shippingService.getShippingAddressById(id));
     }
 
@@ -59,9 +63,9 @@ public class ShippingController {
         return ResponseEntity.ok(shippingService.getAllShippingAddresses());
     }
 
-    // Hay que hablar de este delete
     @DeleteMapping("/addresses/{id}")
     public ResponseEntity<Void> deleteShippingAddress(@PathVariable Long id) {
+        checkAddressOwnership(id);
         shippingService.deleteShippingAddress(id);
         return ResponseEntity.noContent().build();
     }
@@ -91,11 +95,13 @@ public class ShippingController {
     // --- Preferencias de Usuario ---
     @GetMapping("/preferences/{userId}")
     public ResponseEntity<UserShippingPreferencesDTO> getUserShippingPreferences(@PathVariable Long userId) {
+        checkOwnership(userId);
         return ResponseEntity.ok(shippingService.getUserShippingPreferences(userId));
     }
 
     @PutMapping("/preferences/{userId}")
     public ResponseEntity<Void> updateUserShippingPreferences(@PathVariable Long userId, @RequestBody UserShippingPreferencesDTO dto) {
+        checkOwnership(userId);
         shippingService.updateUserShippingPreferences(userId, dto);
         return ResponseEntity.noContent().build();
     }
@@ -104,5 +110,20 @@ public class ShippingController {
     @GetMapping("/stats")
     public ResponseEntity<ShippingStatsDTO> getShippingStats() {
         return ResponseEntity.ok(shippingService.getShippingStats());
+    }
+
+    private void checkAddressOwnership(Long addressId) {
+        if (!SecurityUtils.isAdmin()) {
+            Long addressUserId = shippingService.getShippingAddressUserId(addressId);
+            if (!addressUserId.equals(SecurityUtils.getCurrentUserId())) {
+                throw new AccessDeniedException(ErrorMessages.FORBIDDEN);
+            }
+        }
+    }
+
+    private void checkOwnership(Long resourceUserId) {
+        if (!SecurityUtils.isAdmin() && !resourceUserId.equals(SecurityUtils.getCurrentUserId())) {
+            throw new AccessDeniedException(ErrorMessages.FORBIDDEN);
+        }
     }
 }

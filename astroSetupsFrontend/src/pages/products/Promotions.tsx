@@ -1,15 +1,10 @@
 import Container from '../../components/layout/container/Container';
 import ProductGrid from '../../components/products/ProductGrid';
-import { Product } from '../../interfaces/product/product.interface';
+import { ProductSummary } from '../../interfaces/product/product-summary.interface';
 
 export default function PromotionsPage() {
   // TODO: Reemplazar con endpoint real
-  const promotions: Product[] = [];
-
-  const promotionsWithDescription = promotions.map((product) => ({
-    ...product,
-    description: product.description || "Descripción no disponible",
-  }));
+  const promotions: ProductSummary[] = [];
 
   return (
     <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">
@@ -52,8 +47,11 @@ export default function PromotionsPage() {
               style={{ animationDelay: '0.3s' }}
             >
               <ProductGrid
-                products={promotionsWithDescription}
-                productsPerPage={8}
+                products={promotions}
+                currentPage={0}
+                totalPages={1}
+                totalElements={promotions.length}
+                onPageChange={() => {}}
               />
             </div>
           </Container>

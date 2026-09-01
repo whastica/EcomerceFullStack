@@ -23,7 +23,7 @@ export default function ErrorState({
         "
       >
         {title}
-      </h2>s
+      </h2>
 
       <p className="text-dark-muted">
         {message}

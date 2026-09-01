@@ -48,5 +48,6 @@ public final class ErrorMessages {
     // ======================= AUTENTICACIÓN =======================
     public static final String UNAUTHORIZED = "No autorizado.";
     public static final String FORBIDDEN = "Acceso denegado.";
+    public static final String ACCOUNT_DISABLED = "Tu cuenta no está disponible. Contacta al soporte.";
 
 }

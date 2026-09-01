@@ -44,9 +44,8 @@ public class ShippingServiceImpl implements ShippingService {
 
     @Override
     public ShippingAddressDTO createShippingAddress(CreateShippingAddressDTO dto) {
-        throw new UnsupportedOperationException(
-                "Usa CustomerService.createShippingAddress(userId, dto) " +
-                        "para crear direcciones con usuario autenticado.");
+        throw new RuntimeException(
+                "Este endpoint no está disponible. Use POST /api/customers/{userId}/shipping-addresses para crear direcciones.");
     }
 
     @Override
@@ -295,6 +294,14 @@ public class ShippingServiceImpl implements ShippingService {
                 .ordersWithShipping(ordersWithShipping)
                 .averageShippingCost(BigDecimal.valueOf(25.0))
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getShippingAddressUserId(Long addressId) {
+        ShippingAddress address = shippingAddressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Dirección de envío no encontrada"));
+        return address.getUser().getId();
     }
 
     // =========================================================

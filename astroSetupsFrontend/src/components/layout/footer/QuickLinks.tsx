@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 export default function QuickLinks() {
   const links = [
     { to: '/', label: '🏠 Inicio' },
-    { to: '/products', label: '📦 Catálogo' },
+    { to: '/catalog', label: '📦 Catálogo' },
     { to: '/promotions', label: '🎉 Promociones' },
-    { to: '/customPc', label: '🖥️ Personaliza tu PC' },
+    { to: '/catalog', label: '🖥️ Personaliza tu PC' },
     { to: '/contact', label: '❓ Contacto' },
     { to: '/privacy-policies', label: '❓ Políticas de privacidad' },
     { to: '/conditions', label: '📜 Condiciones de Uso y Garantías' },

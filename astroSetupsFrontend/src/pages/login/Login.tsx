@@ -1,25 +1,17 @@
 import Container from '../../components/layout/container/Container';
 import ProductGrid from '../../components/products/ProductGrid';
-import { Product } from '../../components/products/ProductCard';
+import { ProductSummary } from '../../interfaces/product/product-summary.interface';
 
-export interface ProductDetail extends Product {
-  description: string;
-  specifications: { [key: string]: string };
-  images: string[];
-  category: string;
-  stock: number;
-  rating?: number;
-  reviewCount?: number;
-  features?: string[];
-}
 export default function LoginPage() {
-    const relatedProducts: Product[] = [
+    const relatedProducts: ProductSummary[] = [
         {
           id: 2,
           name: 'NVIDIA RTX 4060 Ti',
           price: 2100000,
           imageUrl: '/assets/relacionados/rtx-4060-ti.webp',
-          isAvailable: true,
+          hasDiscount: false,
+          stock: 10,
+          categoryName: 'Tarjetas de Video',
           brand: 'NVIDIA',
         },
         {
@@ -27,7 +19,9 @@ export default function LoginPage() {
           name: 'AMD Radeon RX 7800 XT',
           price: 2800000,
           imageUrl: '/assets/relacionados/RX-7800XT.webp',
-          isAvailable: true,
+          hasDiscount: false,
+          stock: 10,
+          categoryName: 'Tarjetas de Video',
           brand: 'AMD',
         },
         {
@@ -35,7 +29,9 @@ export default function LoginPage() {
           name: 'NVIDIA RTX 4080 Super',
           price: 4200000,
           imageUrl: '/assets/relacionados/x1-925-600x600.webp',
-          isAvailable: false,
+          hasDiscount: false,
+          stock: 0,
+          categoryName: 'Tarjetas de Video',
           brand: 'NVIDIA',
         },
         {
@@ -43,7 +39,9 @@ export default function LoginPage() {
           name: 'AMD Radeon RX 7900 XTX',
           price: 3800000,
           imageUrl: '/assets/relacionados/amd7900.webp',
-          isAvailable: true,
+          hasDiscount: false,
+          stock: 10,
+          categoryName: 'Tarjetas de Video',
           brand: 'AMD',
         },
       ];
@@ -143,7 +141,7 @@ export default function LoginPage() {
 
               {/* Olvidaste tu contraseña */}
               <p className="text-sm text-center">
-                <a href="/forgot-password" className="text-[#c5ec29] hover:underline font-medium">
+                <a href="/login" className="text-[#c5ec29] hover:underline font-medium">
                   ¿Olvidaste tu contraseña?
                 </a>
               </p>
@@ -156,7 +154,7 @@ export default function LoginPage() {
         <h2 className="text-6xl sm:text-4xl font-bold mb-6 text-dark-text text-shadow-dark">
             Explora Nuestros Productos
         </h2>
-        <ProductGrid products={relatedProducts} productsPerPage={4} />
+        <ProductGrid products={relatedProducts} currentPage={0} totalPages={1} totalElements={relatedProducts.length} onPageChange={() => {}} />
         </div>
     </Container>
     </div>

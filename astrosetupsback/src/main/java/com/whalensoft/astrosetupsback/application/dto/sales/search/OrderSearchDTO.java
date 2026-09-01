@@ -17,6 +17,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderSearchDTO {
 
+    /** Búsqueda genérica (ID, nombre, email) */
+    private String searchTerm;
+
     /** Filtros de cliente */
     private String customerEmail;
     private String customerName;

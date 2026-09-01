@@ -60,7 +60,7 @@ export function Navbar({
               </button>
               
               <Link
-                to="/customSetup"
+                to="/catalog"
                 className="ml-2 px-3 py-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold text-[11px] shadow-md hover:scale-105 transition-all whitespace-nowrap border border-orange-300"
               >
                 <span className="hidden xl:inline">🖥️ PERSONALIZA TU PC</span>

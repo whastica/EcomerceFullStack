@@ -3,7 +3,6 @@ package com.whalensoft.astrosetupsback.application.services;
 import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.UpdateShippingAddressDTO;
-import com.whalensoft.astrosetupsback.application.dto.customer.Address.UserShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.ChangePasswordDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.CreateUserDTO;
@@ -29,14 +28,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final UserRepository userRepository;
     private final ShippingAddressRepository shippingAddressRepository;
+    private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
 
     public CustomerServiceImpl(
             UserRepository userRepository,
             ShippingAddressRepository shippingAddressRepository,
+            CityRepository cityRepository,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.shippingAddressRepository = shippingAddressRepository;
+        this.cityRepository = cityRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -47,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public UserAdminDTO createUser(CreateUserDTO createUserDTO) {
         if (userRepository.existsByEmail(createUserDTO.getEmail())) {
-            throw new RuntimeException(ErrorMessages.USER_NOT_FOUND);
+            throw new RuntimeException(ErrorMessages.EMAIL_ALREADY_EXISTS);
         }
 
         User user = User.builder()
@@ -158,10 +160,26 @@ public class CustomerServiceImpl implements CustomerService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
 
+        City city = cityRepository.findById(createAddressDTO.getCityId())
+                .orElseThrow(() -> new RuntimeException("Ciudad no encontrada"));
+
+        State state = city.getState();
+        Country country = state.getCountry();
+
         ShippingAddress shippingAddress = ShippingAddress.builder()
                 .user(user)
-                .isDefault(false)
+                .country(country)
+                .state(state)
+                .city(city)
+                .addressLine1(createAddressDTO.getAddress())
+                .recipientName(createAddressDTO.getRecipientName())
+                .phone(createAddressDTO.getPhone())
+                .isDefault(Boolean.TRUE.equals(createAddressDTO.getSetAsDefault()))
                 .build();
+
+        if (createAddressDTO.getPostalCodeId() != null) {
+            // PostalCode lookup would need a repository; for now skip if not provided
+        }
 
         ShippingAddress savedAddress = shippingAddressRepository.save(shippingAddress);
         return convertToShippingAddressDTO(savedAddress);
@@ -175,6 +193,26 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (!shippingAddress.getUser().getId().equals(userId)) {
             throw new RuntimeException(ErrorMessages.ADDRESS_DOES_NOT_BELONG_TO_USER);
+        }
+
+        if (updateAddressDTO.getAddress() != null) {
+            shippingAddress.setAddressLine1(updateAddressDTO.getAddress());
+        }
+        if (updateAddressDTO.getRecipientName() != null) {
+            shippingAddress.setRecipientName(updateAddressDTO.getRecipientName());
+        }
+        if (updateAddressDTO.getPhone() != null) {
+            shippingAddress.setPhone(updateAddressDTO.getPhone());
+        }
+        if (updateAddressDTO.getCityId() != null) {
+            City city = cityRepository.findById(updateAddressDTO.getCityId())
+                    .orElseThrow(() -> new RuntimeException("Ciudad no encontrada"));
+            shippingAddress.setCity(city);
+            shippingAddress.setState(city.getState());
+            shippingAddress.setCountry(city.getState().getCountry());
+        }
+        if (updateAddressDTO.getSetAsDefault() != null) {
+            shippingAddress.setIsDefault(updateAddressDTO.getSetAsDefault());
         }
 
         ShippingAddress updatedAddress = shippingAddressRepository.save(shippingAddress);

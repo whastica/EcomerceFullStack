@@ -17,10 +17,10 @@ export default function Footer() {
             © {new Date().getFullYear()}  Todos los derechos reservados.
           </span>
           <div className="flex flex-wrap justify-center md:justify-end gap-4">
-            <a href="/privacy" className="text-dark-muted hover:text-purple-500 transition-colors">Política de Privacidad</a>
-            <a href="/terms" className="text-dark-muted hover:text-purple-500 transition-colors">Términos y Condiciones</a>
-            <a href="/shipping" className="text-dark-muted hover:text-purple-500 transition-colors">Política de Envíos</a>
-            <a href="/warranty" className="text-dark-muted hover:text-purple-500 transition-colors">Garantías</a>
+            <a href="/privacy-policies" className="text-dark-muted hover:text-purple-500 transition-colors">Política de Privacidad</a>
+            <a href="/conditions" className="text-dark-muted hover:text-purple-500 transition-colors">Términos y Condiciones</a>
+            <a href="/contact" className="text-dark-muted hover:text-purple-500 transition-colors">Política de Envíos</a>
+            <a href="/contact" className="text-dark-muted hover:text-purple-500 transition-colors">Garantías</a>
           </div>
         </div>
       </div>

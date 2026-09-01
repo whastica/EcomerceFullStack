@@ -38,6 +38,8 @@ public interface SalesService {
 
     List<OrderSummaryDTO> getCustomerOrders(Long customerId);
 
+    Long getOrderUserId(Long orderId);
+
     // =====================================================
     // CART
     // =====================================================

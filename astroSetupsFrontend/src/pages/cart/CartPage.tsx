@@ -90,7 +90,7 @@ export default function CartPage() {
                           />
                           <div className="flex-1 space-y-1">
                             <h3 className="font-semibold">{item.name}</h3>
-                            <p className="text-sm text-gray-300">{item.brand}</p>
+                            <p className="text-sm text-gray-300">Cantidad: {item.quantity}</p>
                             <div className="flex justify-between items-center mt-2">
                               <div className="flex items-center gap-2">
                                 <label htmlFor={`qty-${item.id}`} className="text-sm" style={{ color: '#C5EC29' }}>

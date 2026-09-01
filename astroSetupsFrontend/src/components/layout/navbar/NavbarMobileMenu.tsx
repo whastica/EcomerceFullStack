@@ -99,7 +99,7 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
           </Link>
           
           <Link
-            to="/customSetup"
+            to="/catalog"
             className="block mx-4 my-4 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold text-base text-center
                        shadow-lg transform transition-all duration-200 hover:from-orange-600 hover:to-orange-700 hover:scale-105 hover:shadow-xl
                        active:scale-95 active:shadow-md border-2 border-orange-300"

@@ -41,4 +41,6 @@ public interface ShippingService {
     
     // Estadísticas de Envíos
     ShippingStatsDTO getShippingStats();
+
+    Long getShippingAddressUserId(Long addressId);
 } 

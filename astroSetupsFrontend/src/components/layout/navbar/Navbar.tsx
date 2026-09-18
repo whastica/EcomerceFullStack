@@ -1,10 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, User } from 'lucide-react'; // Replace CartIcon with ShoppingBag
+import { ShoppingBag, User, LogOut, Shield, ChevronDown } from 'lucide-react';
 import { NavbarMobileMenu } from './NavbarMobileMenu';
 import { MobileToggleButton } from './MobileToggleButton';
-import { SearchBar } from './SearchBar'; // New component for product search
+import { SearchBar } from './SearchBar';
+import { useAuth } from '@/hooks/useAuth';
 
 interface NavbarProps {
   cartItemCount?: number;
@@ -16,8 +17,10 @@ export function Navbar({
   onFAQClick,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, user, isAdmin, logout } = useAuth();
 
   const handleFAQClick = () => {
     if (location.pathname !== '/') {
@@ -32,11 +35,9 @@ export function Navbar({
 
   return (
     <nav className="bg-[#4D4D4D] shadow-lg sticky top-0 z-50 font-montserrat font-medium">
-      {/* Reducimos de 7xl a 6xl para centrar más el contenido visualmente */}
-      {/* Contenedor con max-w-6xl para centrar más el contenido en pantalla */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-2">
-          
+
           {/* 1. Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
@@ -48,7 +49,7 @@ export function Navbar({
             </Link>
           </div>
 
-          {/* 2. Links Centrales (Compactos) */}
+          {/* 2. Links Centrales */}
           <div className="hidden lg:flex items-center justify-center flex-1">
             <div className="flex items-center space-x-1 xl:space-x-2">
               <Link to="/" className={linkHoverClasses}>INICIO<span className={underlineClasses}/></Link>
@@ -58,7 +59,7 @@ export function Navbar({
                 PREGUNTAS FRECUENTES
                 <span className={underlineClasses}/>
               </button>
-              
+
               <Link
                 to="/catalog"
                 className="ml-2 px-3 py-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold text-[11px] shadow-md hover:scale-105 transition-all whitespace-nowrap border border-orange-300"
@@ -68,41 +69,86 @@ export function Navbar({
             </div>
           </div>
 
-          {/* 3. Acciones Derecha (Ajuste de SearchBar y espaciado) */}
+          {/* 3. Acciones Derecha */}
           <div className="flex items-center space-x-1 sm:space-x-2">
-            
-            {/* Grupo de Carrito y Login */}
             <div className="flex items-center mr-1">
               <Link to="/cart" className="p-2 text-white hover:text-[#D7FE3B] transition-all">
                 <ShoppingBag className="w-5 h-5" />
               </Link>
-              
-              <Link 
-                to="/login" 
-                className="flex items-center text-white text-[11px] hover:text-[#D7FE3B] transition-all whitespace-nowrap px-1"
-              >
-                <User className="w-4 h-4 mr-1 flex-shrink-0" />
-                <span className="font-medium">Iniciar Sesión</span>
-              </Link>
+
+              {isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-1.5 text-white text-[11px] hover:text-[#D7FE3B] transition-all whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/10"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/30 flex items-center justify-center text-[10px] font-bold text-[#8B5CF6]">
+                      {user?.firstName?.[0]}{user?.lastName?.[0]}
+                    </div>
+                    <span className="font-medium hidden sm:inline">{user?.firstName}</span>
+                    <ChevronDown size={12} />
+                  </button>
+
+                  {userMenuOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setUserMenuOpen(false)}
+                      />
+                      <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-dark-border bg-dark-surface shadow-glass z-50 py-1 animate-scale-in">
+                        <div className="px-3 py-2 border-b border-dark-border">
+                          <p className="text-xs font-medium text-dark-text truncate">
+                            {user?.firstName} {user?.lastName}
+                          </p>
+                          <p className="text-[10px] text-dark-muted truncate">
+                            {user?.email}
+                          </p>
+                        </div>
+                        {isAdmin && (
+                          <Link
+                            to="/admin/dashboard"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-dark-muted hover:text-[#8B5CF6] hover:bg-dark-surface transition-colors"
+                          >
+                            <Shield size={14} />
+                            Panel Admin
+                          </Link>
+                        )}
+                        <button
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            logout();
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-dark-muted hover:text-red-400 hover:bg-dark-surface transition-colors"
+                        >
+                          <LogOut size={14} />
+                          Cerrar Sesión
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="flex items-center text-white text-[11px] hover:text-[#D7FE3B] transition-all whitespace-nowrap px-1"
+                >
+                  <User className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span className="font-medium">Iniciar Sesión</span>
+                </Link>
+              )}
             </div>
 
-            {/* SearchBar con fondo personalizado */}
             <div className="relative flex items-center bg-[#3a3a3a] rounded-md border border-gray-500/30">
-              {/* 
-                  IMPORTANTE: Si tu componente SearchBar ya trae la lupa, 
-                  asegúrate de que el input tenga un background: transparent 
-                  y el contenedor sea el que tenga el color #3a3a3a (un poco más oscuro que #4D4D4D)
-              */}
               <SearchBar />
             </div>
-            
+
             <MobileToggleButton isOpen={menuOpen} onClick={() => setMenuOpen(!menuOpen)} />
           </div>
 
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <NavbarMobileMenu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}

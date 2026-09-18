@@ -1,6 +1,5 @@
-import { createContext, useContext, useReducer, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 
-// 📦 Tipo de ítem en el carrito
 export interface CartItem {
   id: number;
   name: string;
@@ -9,23 +8,41 @@ export interface CartItem {
   quantity: number;
 }
 
-// 🎯 Estado inicial del carrito
 interface CartState {
   items: CartItem[];
 }
 
-const initialState: CartState = {
-  items: []
-};
+const CART_STORAGE_KEY = 'astro_cart';
 
-// 🎬 Acciones permitidas
+function loadCart(): CartState {
+  try {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed.items)) {
+        return parsed;
+      }
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return { items: [] };
+}
+
+function saveCart(state: CartState) {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 type Action =
   | { type: 'ADD_ITEM'; payload: CartItem }
   | { type: 'REMOVE_ITEM'; payload: number }
   | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
   | { type: 'CLEAR_CART' };
 
-// 🧠 Lógica de cambio de estado
 function cartReducer(state: CartState, action: Action): CartState {
   switch (action.type) {
     case 'ADD_ITEM': {
@@ -57,29 +74,31 @@ function cartReducer(state: CartState, action: Action): CartState {
         )
       };
     case 'CLEAR_CART':
-      return initialState;
+      return { items: [] };
     default:
       return state;
   }
 }
 
-// 🧩 Crear contexto
 const CartContext = createContext<{
   state: CartState;
   dispatch: React.Dispatch<Action>;
 }>({
-  state: initialState,
+  state: { items: [] },
   dispatch: () => null
 });
 
-// 📦 Hook para usar el carrito
 export function useCart() {
   return useContext(CartContext);
 }
 
-// 🌐 Proveedor global del carrito
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [state, dispatch] = useReducer(cartReducer, undefined, loadCart);
+
+  useEffect(() => {
+    saveCart(state);
+  }, [state]);
+
   return (
     <CartContext.Provider value={{ state, dispatch }}>
       {children}

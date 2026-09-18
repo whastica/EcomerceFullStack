@@ -9,19 +9,22 @@ import CartPage from './pages/cart/CartPage';
 import Footer from './components/layout/footer/footer';
 import Login from './pages/login/Login';
 import Register from './pages/login/Register';
-import Contact from './pages/login/Contact'; // Nueva importación
+import Contact from './pages/login/Contact';
 import CheckoutPage from './pages/checkout/CheckoutPage';
 import PrivacyPolicies from './pages/privacyPolicies';
 import Conditions from './pages/conditions';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import AdminLayout from './components/admin/AdminLayout';
 
 export default function App() {
   const faqRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
-  
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   const scrollToFAQ = () => {
     faqRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  
+
   useEffect(() => {
     document.documentElement.classList.add('dark');
     document.body.classList.add('dark');
@@ -29,7 +32,7 @@ export default function App() {
     document.body.style.color = '#FFFFFF';
     document.documentElement.style.backgroundColor = '#010101';
     document.documentElement.style.color = '#FFFFFF';
-    
+
     const observer = new MutationObserver(() => {
       if (!document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.add('dark');
@@ -42,7 +45,7 @@ export default function App() {
         document.body.style.color = '#FFFFFF';
       }
     });
-    
+
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class', 'style'],
@@ -51,19 +54,26 @@ export default function App() {
       attributes: true,
       attributeFilter: ['class', 'style'],
     });
-    
+
     return () => observer.disconnect();
   }, []);
-  
+
   useEffect(() => {
-    // Si llegamos a la página con /#faq, hacer scroll al elemento
     if (location.pathname === '/' && location.hash === '#faq') {
       setTimeout(() => {
         faqRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100); // Pequeño delay para esperar al render del DOM
+      }, 100);
     }
   }, [location]);
-  
+
+  if (isAdminRoute) {
+    return (
+      <ProtectedRoute requiredRole="ADMIN">
+        <AdminLayout />
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <>
       <Navbar onFAQClick={scrollToFAQ} />

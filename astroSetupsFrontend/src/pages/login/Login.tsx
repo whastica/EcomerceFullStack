@@ -1,162 +1,121 @@
-import Container from '../../components/layout/container/Container';
-import ProductGrid from '../../components/products/ProductGrid';
-import { ProductSummary } from '../../interfaces/product/product-summary.interface';
+import { useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { Mail, Lock, LogIn } from 'lucide-react';
 
-export default function LoginPage() {
-    const relatedProducts: ProductSummary[] = [
-        {
-          id: 2,
-          name: 'NVIDIA RTX 4060 Ti',
-          price: 2100000,
-          imageUrl: '/assets/relacionados/rtx-4060-ti.webp',
-          hasDiscount: false,
-          stock: 10,
-          categoryName: 'Tarjetas de Video',
-          brand: 'NVIDIA',
-        },
-        {
-          id: 3,
-          name: 'AMD Radeon RX 7800 XT',
-          price: 2800000,
-          imageUrl: '/assets/relacionados/RX-7800XT.webp',
-          hasDiscount: false,
-          stock: 10,
-          categoryName: 'Tarjetas de Video',
-          brand: 'AMD',
-        },
-        {
-          id: 4,
-          name: 'NVIDIA RTX 4080 Super',
-          price: 4200000,
-          imageUrl: '/assets/relacionados/x1-925-600x600.webp',
-          hasDiscount: false,
-          stock: 0,
-          categoryName: 'Tarjetas de Video',
-          brand: 'NVIDIA',
-        },
-        {
-          id: 5,
-          name: 'AMD Radeon RX 7900 XTX',
-          price: 3800000,
-          imageUrl: '/assets/relacionados/amd7900.webp',
-          hasDiscount: false,
-          stock: 10,
-          categoryName: 'Tarjetas de Video',
-          brand: 'AMD',
-        },
-      ];
+export default function Login() {
+  const { login, isAuthenticated } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    await login({ email, password });
+    setLoading(false);
+  }
 
   return (
-
-    <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">
-      {/* Fondo decorativo animado */}
+    <div className="min-h-screen bg-dark-background text-dark-text flex flex-col relative">
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Capas base */}
-        <div className="absolute inset-0 bg-dark-gradient"></div>
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
-        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
-
-        {/* Degradado gris claro en diagonal hacia la parte superior derecha */}
-        <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{
-            backgroundImage: `linear-gradient(45deg, transparent 0%, #f3f4f6 200%)`,
-          }}
-        />
+        <div className="absolute inset-0 bg-dark-gradient" />
+        <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
+        <div className="absolute inset-0 bg-tech-grid opacity-20" />
       </div>
 
-      <main className="flex-grow flex items-center justify-center z-10 relative py-16">
-        <Container className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl bg-transparent p-4 md:p-10 rounded-lg">
-          {/* Lado izquierdo: Beneficios */}
-          <div className="flex flex-col justify-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              Esto es todo lo que vas a poder hacer:
-            </h2>
-            <ul className="space-y-3 text-lg text-gray-300 list-disc list-inside">
-              <li>Agilizar el proceso de compra</li>
-              <li>Guardar direcciones de envío</li>
-              <li>Seguimiento de tus compras</li>
-              <li>Seguimiento de tus envíos</li>
-              <li>Acceder a descuentos y promociones</li>
-            </ul>
-          </div>
+      <main className="flex-grow flex items-center justify-center z-10 relative py-16 px-4">
+        <div className="w-full max-w-md">
+          <div className="rounded-xl border border-dark-border bg-dark-surface/80 backdrop-blur-sm shadow-glass p-8">
+            <div className="text-center mb-8">
+              <div className="w-14 h-14 rounded-full bg-[#8B5CF6]/15 flex items-center justify-center mx-auto mb-4">
+                <LogIn className="text-[#8B5CF6]" size={24} />
+              </div>
+              <h1 className="text-2xl font-bold text-dark-text">
+                Iniciar Sesión
+              </h1>
+              <p className="text-sm text-dark-muted mt-1">
+                Ingresa a tu cuenta para continuar
+              </p>
+            </div>
 
-          {/* Lado derecho: Formulario de Login */}
-          <div
-            className="rounded-xl shadow-lg p-8 w-full max-w-md mx-auto"
-            style={{ backgroundColor: '#4D4D4D' }}
-          >
-            <h3 className="text-2xl font-bold text-white mb-6 text-center">
-              Inicia sesión
-            </h3>
-
-            {/* Registro */}
-            <p className="text-sm text-center text-gray-300 mb-6">
-              ¿No tienes una cuenta?{' '}
-              <a
-                href="/register"
-                className="text-[#FB5607] hover:underline font-medium"
-              >
-                Regístrate aquí
-              </a>
-            </p>
-
-            <form className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
-                  className="block text-gray-300 mb-1"
                   htmlFor="email"
+                  className="block text-sm font-medium text-dark-muted mb-1.5"
                 >
                   Correo electrónico
                 </label>
-                <input
-                  type="email"
-                  id="email"
-                  className="w-full px-4 py-2 rounded-md bg-white -background border border-dark-border text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="ejemplo@email.com"
-                />
+                <div className="relative">
+                  <Mail
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted"
+                  />
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    placeholder="ejemplo@email.com"
+                    required
+                  />
+                </div>
               </div>
 
               <div>
                 <label
-                  className="block text-gray-300 mb-1"
                   htmlFor="password"
+                  className="block text-sm font-medium text-dark-muted mb-1.5"
                 >
                   Contraseña
                 </label>
-                <input
-                  type="password"
-                  id="password"
-                  className="w-full px-4 py-2 rounded-md bg-white -background border border-dark-border text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="********"
-                />
+                <div className="relative">
+                  <Lock
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted"
+                  />
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    placeholder="••••••••"
+                    required
+                    minLength={8}
+                  />
+                </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2 px-4 rounded-md bg-[#FB5607] hover:bg-[#e44e06] text-white font-semibold transition duration-300"
+                disabled={loading}
+                className="w-full py-2.5 px-4 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Iniciar sesión
+                {loading ? 'Ingresando...' : 'Iniciar Sesión'}
               </button>
-
-              {/* Olvidaste tu contraseña */}
-              <p className="text-sm text-center">
-                <a href="/login" className="text-[#c5ec29] hover:underline font-medium">
-                  ¿Olvidaste tu contraseña?
-                </a>
-              </p>
             </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-dark-muted">
+                ¿No tienes una cuenta?{' '}
+                <Link
+                  to="/register"
+                  className="text-[#FB5607] hover:underline font-medium"
+                >
+                  Regístrate aquí
+                </Link>
+              </p>
+            </div>
           </div>
-        </Container>
-      </main>
-    <Container padding="large" className="pt-0">
-        <div className="glass-effect rounded-lg p-6 border-dark-border">
-        <h2 className="text-6xl sm:text-4xl font-bold mb-6 text-dark-text text-shadow-dark">
-            Explora Nuestros Productos
-        </h2>
-        <ProductGrid products={relatedProducts} currentPage={0} totalPages={1} totalElements={relatedProducts.length} onPageChange={() => {}} />
         </div>
-    </Container>
+      </main>
     </div>
   );
 }

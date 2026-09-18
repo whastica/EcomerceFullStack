@@ -29,13 +29,11 @@ export const apiClient = axios.create({
  */
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem('access_token');
 
-    // FUTURO:
-    // const token = localStorage.getItem('access_token');
-
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
     return config;
   },
@@ -63,13 +61,12 @@ apiClient.interceptors.response.use(
      */
 
     if (error.response?.status === 401) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('auth_user');
 
-      console.warn('Unauthorized request');
-
-      // Aquí luego:
-      // refresh token
-      // logout automático
-      // retry request
+      if (window.location.pathname.startsWith('/admin')) {
+        window.location.href = '/login';
+      }
     }
 
     if (error.response?.status === 403) {

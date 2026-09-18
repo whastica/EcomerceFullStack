@@ -1,314 +1,284 @@
-import Container from '../../components/layout/container/Container';
-import ProductGrid from '../../components/products/ProductGrid';
-import { ProductSummary } from '../../interfaces/product/product-summary.interface';
 import { useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { Mail, Lock, User, Phone, UserPlus } from 'lucide-react';
 
-export default function RegisterPage() {
-  const [isRobotVerified, setIsRobotVerified] = useState(false);
-  const [formData, setFormData] = useState({
+export default function Register() {
+  const { register, isAuthenticated } = useAuth();
+  const [form, setForm] = useState({
     firstName: '',
     lastName: '',
-    username: '',
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
 
-  const relatedProducts: ProductSummary[] = [
-    {
-      id: 2,
-      name: 'NVIDIA RTX 4060 Ti',
-      price: 2100000,
-      imageUrl: '/assets/relacionados/rtx-4060-ti.webp',
-      hasDiscount: false,
-      stock: 10,
-      categoryName: 'Tarjetas de Video',
-      brand: 'NVIDIA',
-    },
-    {
-      id: 3,
-      name: 'AMD Radeon RX 7800 XT',
-      price: 2800000,
-      imageUrl: '/assets/relacionados/RX-7800XT.webp',
-      hasDiscount: false,
-      stock: 10,
-      categoryName: 'Tarjetas de Video',
-      brand: 'AMD',
-    },
-    {
-      id: 4,
-      name: 'NVIDIA RTX 4080 Super',
-      price: 4200000,
-      imageUrl: '/assets/relacionados/x1-925-600x600.webp',
-      hasDiscount: false,
-      stock: 0,
-      categoryName: 'Tarjetas de Video',
-      brand: 'NVIDIA',
-    },
-    {
-      id: 5,
-      name: 'AMD Radeon RX 7900 XTX',
-      price: 3800000,
-      imageUrl: '/assets/relacionados/amd7900.webp',
-      hasDiscount: false,
-      stock: 10,
-      categoryName: 'Tarjetas de Video',
-      brand: 'AMD',
-    },
-  ];
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  function validate(): string[] {
+    const errs: string[] = [];
+    if (!form.firstName.trim()) errs.push('El nombre es obligatorio');
+    if (!form.lastName.trim()) errs.push('El apellido es obligatorio');
+    if (!form.email.trim()) errs.push('El email es obligatorio');
+    if (!form.phone.trim()) errs.push('El teléfono es obligatorio');
+    if (form.password.length < 8)
+      errs.push('La contraseña debe tener al menos 8 caracteres');
+    if (form.password !== form.confirmPassword)
+      errs.push('Las contraseñas no coinciden');
+    return errs;
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
-    // Validaciones básicas
-    if (formData.password !== formData.confirmPassword) {
-      alert('Las contraseñas no coinciden');
+    setErrors([]);
+
+    const validationErrors = validate();
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
       return;
     }
-    
-    if (!isRobotVerified) {
-      alert('Por favor verifica que no eres un robot');
-      return;
+
+    setLoading(true);
+    const success = await register({
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      phone: form.phone,
+      password: form.password,
+    });
+    setLoading(false);
+
+    if (!success) {
+      setErrors(['Error al crear la cuenta. Intenta con otro email.']);
     }
-    
-    // Aquí iría la lógica de registro
-    console.log('Datos del registro:', formData);
-  };
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
 
   return (
-    <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">
-      {/* Fondo decorativo animado */}
+    <div className="min-h-screen bg-dark-background text-dark-text flex flex-col relative">
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Capas base */}
-        <div className="absolute inset-0 bg-dark-gradient"></div>
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
-        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
-        {/* Degradado gris claro en diagonal hacia la parte superior derecha */}
-        <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{
-            backgroundImage: `linear-gradient(45deg, transparent 0%, #f3f4f6 200%)`,
-          }}
-        />
+        <div className="absolute inset-0 bg-dark-gradient" />
+        <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
+        <div className="absolute inset-0 bg-tech-grid opacity-20" />
       </div>
-      
-      <main className="flex-grow flex items-center justify-center z-10 relative py-16">
-        <Container className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl bg-transparent p-4 md:p-10 rounded-lg">
-          {/* Lado izquierdo: Beneficios */}
-          <div className="flex flex-col justify-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              Únete a nuestra comunidad:
-            </h2>
-            <ul className="space-y-3 text-lg text-gray-300 list-disc list-inside">
-              <li>Agilizar el proceso de compra</li>
-              <li>Guardar direcciones de envío</li>
-              <li>Seguimiento de tus compras</li>
-              <li>Seguimiento de tus envíos</li>
-              <li>Acceder a descuentos y promociones exclusivas</li>
-              <li>Historial completo de compras</li>
-            </ul>
-          </div>
 
-          {/* Lado derecho: Formulario de Registro */}
-          <div
-            className="rounded-xl shadow-lg p-8 w-full max-w-md mx-auto"
-            style={{ backgroundColor: '#4D4D4D' }}
-          >
-            <h3 className="text-2xl font-bold text-white mb-6 text-center">
-              Crear cuenta
-            </h3>
-            
-            {/* Login */}
-            <p className="text-sm text-center text-gray-300 mb-6">
-              ¿Ya tienes una cuenta?{' '}
-              <a
-                href="/login"
-                className="text-[#FB5607] hover:underline font-medium"
-              >
-                Inicia sesión aquí
-              </a>
-            </p>
+      <main className="flex-grow flex items-center justify-center z-10 relative py-16 px-4">
+        <div className="w-full max-w-md">
+          <div className="rounded-xl border border-dark-border bg-dark-surface/80 backdrop-blur-sm shadow-glass p-8">
+            <div className="text-center mb-8">
+              <div className="w-14 h-14 rounded-full bg-[#FB5607]/15 flex items-center justify-center mx-auto mb-4">
+                <UserPlus className="text-[#FB5607]" size={24} />
+              </div>
+              <h1 className="text-2xl font-bold text-dark-text">
+                Crear Cuenta
+              </h1>
+              <p className="text-sm text-dark-muted mt-1">
+                Únete a nuestra comunidad
+              </p>
+            </div>
+
+            {errors.length > 0 && (
+              <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30">
+                {errors.map((err, i) => (
+                  <p key={i} className="text-xs text-red-400">
+                    {err}
+                  </p>
+                ))}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Nombre y Apellidos */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-gray-300 mb-1" htmlFor="firstName">
+                  <label
+                    htmlFor="firstName"
+                    className="block text-sm font-medium text-dark-muted mb-1.5"
+                  >
                     Nombre
                   </label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Tu nombre"
-                    required
-                  />
+                  <div className="relative">
+                    <User
+                      size={16}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted"
+                    />
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={form.firstName}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                      placeholder="Tu nombre"
+                      required
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-gray-300 mb-1" htmlFor="lastName">
-                    Apellidos
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm font-medium text-dark-muted mb-1.5"
+                  >
+                    Apellido
                   </label>
                   <input
                     type="text"
                     id="lastName"
                     name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Tus apellidos"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    placeholder="Tu apellido"
                     required
                   />
                 </div>
               </div>
 
-              {/* Nombre de usuario */}
               <div>
-                <label className="block text-gray-300 mb-1" htmlFor="username">
-                  Nombre de usuario
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Usuario único"
-                  required
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-gray-300 mb-1" htmlFor="email">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-dark-muted mb-1.5"
+                >
                   Correo electrónico
                 </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="ejemplo@email.com"
-                  required
-                />
+                <div className="relative">
+                  <Mail
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted"
+                  />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    placeholder="ejemplo@email.com"
+                    required
+                  />
+                </div>
               </div>
 
-              {/* Teléfono */}
               <div>
-                <label className="block text-gray-300 mb-1" htmlFor="phone">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-dark-muted mb-1.5"
+                >
                   Teléfono
                 </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="+57 300 123 4567"
-                  required
-                />
+                <div className="relative">
+                  <Phone
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted"
+                  />
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    placeholder="300 123 4567"
+                    required
+                  />
+                </div>
               </div>
 
-              {/* Contraseña */}
               <div>
-                <label className="block text-gray-300 mb-1" htmlFor="password">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-dark-muted mb-1.5"
+                >
                   Contraseña
                 </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="********"
-                  required
-                />
+                <div className="relative">
+                  <Lock
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted"
+                  />
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    placeholder="Mínimo 8 caracteres"
+                    required
+                    minLength={8}
+                  />
+                </div>
               </div>
 
-              {/* Confirmar contraseña */}
               <div>
-                <label className="block text-gray-300 mb-1" htmlFor="confirmPassword">
-                  Confirmar contraseña
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-dark-muted mb-1.5"
+                >
+                  Confirmar Contraseña
                 </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="********"
-                  required
-                />
-              </div>
-
-              {/* Verificación de robot */}
-              <div className="flex items-center space-x-3 bg-gray-100 p-3 rounded-md">
-                <input
-                  type="checkbox"
-                  id="robotCheck"
-                  checked={isRobotVerified}
-                  onChange={(e) => setIsRobotVerified(e.target.checked)}
-                  className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  required
-                />
-                <label htmlFor="robotCheck" className="text-gray-700 text-sm">
-                  No soy un robot
-                </label>
-                <div className="ml-auto">
-                  <div className="text-xs text-gray-500 border border-gray-300 px-2 py-1 rounded">
-                    reCAPTCHA
-                  </div>
+                <div className="relative">
+                  <Lock
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted"
+                  />
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    placeholder="Repite tu contraseña"
+                    required
+                    minLength={8}
+                  />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2 px-4 rounded-md bg-[#FB5607] hover:bg-[#e44e06] text-white font-semibold transition duration-300"
+                disabled={loading}
+                className="w-full py-2.5 px-4 rounded-lg bg-[#FB5607] hover:bg-[#e44e06] text-white font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Crear cuenta
+                {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
               </button>
-
-              {/* Términos y condiciones */}
-              <p className="text-xs text-center text-gray-400">
-                Al registrarte, aceptas nuestros{' '}
-                <a href="/conditions" className="text-[#c5ec29] hover:underline">
-                  Términos y Condiciones
-                </a>{' '}
-                y{' '}
-                <a href="/privacy-policies" className="text-[#c5ec29] hover:underline">
-                  Política de Privacidad
-                </a>
-              </p>
             </form>
-          </div>
-        </Container>
-      </main>
 
-      <Container padding="large" className="pt-0">
-        <div className="glass-effect rounded-lg p-6 border-dark-border">
-          <h2 className="text-6xl sm:text-4xl font-bold mb-6 text-dark-text text-shadow-dark">
-            Explora Nuestros Productos
-          </h2>
-          <ProductGrid products={relatedProducts} currentPage={0} totalPages={1} totalElements={relatedProducts.length} onPageChange={() => {}} />
+            <div className="mt-6 text-center space-y-2">
+              <p className="text-sm text-dark-muted">
+                ¿Ya tienes una cuenta?{' '}
+                <Link
+                  to="/login"
+                  className="text-[#FB5607] hover:underline font-medium"
+                >
+                  Inicia sesión
+                </Link>
+              </p>
+              <p className="text-xs text-dark-muted">
+                Al registrarte aceptas nuestros{' '}
+                <Link to="/conditions" className="text-[#8B5CF6] hover:underline">
+                  Términos
+                </Link>{' '}
+                y{' '}
+                <Link
+                  to="/privacy-policies"
+                  className="text-[#8B5CF6] hover:underline"
+                >
+                  Política de Privacidad
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
-      </Container>
+      </main>
     </div>
   );
 }

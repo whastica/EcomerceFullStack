@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { X, LogOut, Shield } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface NavbarMobileMenuProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface NavbarMobileMenuProps {
 
 export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated, user, isAdmin, logout } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -20,7 +22,7 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+      document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -40,25 +42,27 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
     onClose();
   };
 
+  const handleLogout = () => {
+    logout();
+    onClose();
+  };
+
   const linkClasses = "block px-4 py-3 text-gray-300 hover:text-[#D7FE3B] hover:bg-[#5A5A5A] transition-all duration-300 font-medium text-base border-b border-gray-600 last:border-b-0";
 
   return (
     <>
-      {/* Overlay */}
-      <div 
+      <div
         className={`lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       />
-      
-      {/* Menu */}
+
       <div
         ref={menuRef}
         className={`lg:hidden fixed top-0 right-0 w-80 h-full bg-[#4D4D4D] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        {/* Header con botón de cerrar */}
         <div className="flex items-center justify-between p-4 border-b border-gray-600">
           <div className="flex items-center">
             <img
@@ -77,27 +81,26 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
           </button>
         </div>
 
-        {/* Navigation Links */}
         <nav className="py-4">
           <Link to="/" className={linkClasses} onClick={handleLinkClick}>
             🏠 INICIO
           </Link>
-          
+
           <Link to="/catalog" className={linkClasses} onClick={handleLinkClick}>
             📦 PRODUCTOS
           </Link>
-          
+
           <button
             onClick={handleFAQClick}
             className={`${linkClasses} w-full text-left bg-transparent border-none cursor-pointer`}
           >
             ❓ PREGUNTAS FRECUENTES
           </button>
-          
+
           <Link to="/promotions" className={linkClasses} onClick={handleLinkClick}>
             🎉 PROMOCIONES
           </Link>
-          
+
           <Link
             to="/catalog"
             className="block mx-4 my-4 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold text-base text-center
@@ -116,22 +119,55 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
 
         {/* Auth Section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-600 bg-[#434343]">
-          <div className="space-y-3">
-            <Link 
-              to="/login" 
-              className="block w-full px-4 py-2 text-center text-gray-300 hover:text-[#D7FE3B] border border-gray-500 rounded-md transition-all duration-300 hover:border-[#D7FE3B]"
-              onClick={handleLinkClick}
-            >
-              Iniciar Sesión
-            </Link>
-            <Link 
-              to="/register" 
-              className="block w-full px-4 py-2 text-center bg-[#D7FE3B] text-gray-900 hover:bg-[#c5ec29] rounded-md font-medium transition-all duration-300 hover:shadow-lg"
-              onClick={handleLinkClick}
-            >
-              Registrarse
-            </Link>
-          </div>
+          {isAuthenticated ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 px-2">
+                <div className="w-10 h-10 rounded-full bg-[#8B5CF6]/30 flex items-center justify-center text-sm font-bold text-[#8B5CF6]">
+                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-white truncate">
+                    {user?.firstName} {user?.lastName}
+                  </p>
+                  <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                </div>
+              </div>
+              {isAdmin && (
+                <Link
+                  to="/admin/dashboard"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2 text-[#8B5CF6] border border-[#8B5CF6]/50 rounded-md hover:bg-[#8B5CF6]/10 transition-all"
+                  onClick={handleLinkClick}
+                >
+                  <Shield size={16} />
+                  Panel Admin
+                </Link>
+              )}
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-2 w-full px-4 py-2 text-red-400 border border-red-400/50 rounded-md hover:bg-red-400/10 transition-all"
+              >
+                <LogOut size={16} />
+                Cerrar Sesión
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <Link
+                to="/login"
+                className="block w-full px-4 py-2 text-center text-gray-300 hover:text-[#D7FE3B] border border-gray-500 rounded-md transition-all duration-300 hover:border-[#D7FE3B]"
+                onClick={handleLinkClick}
+              >
+                Iniciar Sesión
+              </Link>
+              <Link
+                to="/register"
+                className="block w-full px-4 py-2 text-center bg-[#D7FE3B] text-gray-900 hover:bg-[#c5ec29] rounded-md font-medium transition-all duration-300 hover:shadow-lg"
+                onClick={handleLinkClick}
+              >
+                Registrarse
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </>

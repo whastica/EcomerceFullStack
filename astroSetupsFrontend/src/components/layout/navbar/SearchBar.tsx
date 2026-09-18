@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
 export function SearchBar() {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(`Searching for: ${query}`); // Placeholder for future implementation
+    if (query.trim()) {
+      navigate(`/catalog?q=${encodeURIComponent(query.trim())}`);
+    }
   };
 
   return (

@@ -15,24 +15,30 @@ import { useCategories } from '../../hooks/useCategories';
 export default function ProductsPage() {
   const [searchParams] = useSearchParams();
   const categoryIdFromUrl = searchParams.get('categoryId');
+  const queryFromUrl = searchParams.get('q');
 
   const [isSidebarOpen] = useState(true);
   const [page, setPage] = useState(0);
   const [filters, setFilters] = useState<FilterState>({
     priceRange: [0, 5000000],
-    searchTerm: '',
+    searchTerm: queryFromUrl || '',
     sortBy: 'newest',
-    // Pre-seleccionar categoría si viene desde el Home
     categories: categoryIdFromUrl ? [Number(categoryIdFromUrl)] : [],
   });
 
-  // Si cambia el parámetro de URL, actualizar el filtro de categoría
   useEffect(() => {
     if (categoryIdFromUrl) {
       setFilters(prev => ({ ...prev, categories: [Number(categoryIdFromUrl)] }));
       setPage(0);
     }
   }, [categoryIdFromUrl]);
+
+  useEffect(() => {
+    if (queryFromUrl) {
+      setFilters(prev => ({ ...prev, searchTerm: queryFromUrl }));
+      setPage(0);
+    }
+  }, [queryFromUrl]);
 
   // Data fetching
   const {

@@ -112,7 +112,7 @@ export default function ProductDetailPage() {
               <div className="lg:col-span-6 flex justify-center">
 
                 <img
-                  src={product.mainImageUrl}
+                  src={product.imageUrl || ''}
                   alt={product.name}
                   className="w-full max-w-md h-auto rounded-xl shadow-lg object-contain"
                 />
@@ -136,7 +136,7 @@ export default function ProductDetailPage() {
                 <ProductDescription
                   product={{
                     description:
-                      product.description,
+                      product.description || '',
 
                     specifications: {},
 

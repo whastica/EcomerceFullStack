@@ -5,7 +5,5 @@ export interface ProductDetail extends ProductSummary {
 
   features?: string[];
 
-  stock?: number;
-
   createdAt?: string;
 }

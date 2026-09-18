@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut, User } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Props {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface Props {
 
 export function UserMenu({ isOpen, onClose }: Props) {
   const menuRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated, user, logout } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -22,19 +24,42 @@ export function UserMenu({ isOpen, onClose }: Props) {
 
   if (!isOpen) return null;
 
+  if (!isAuthenticated) {
+    return (
+      <div
+        ref={menuRef}
+        className="absolute top-full right-0 z-20 mt-2 w-44 bg-dark-surface border border-dark-border shadow-glass rounded-lg py-1"
+      >
+        <Link
+          to="/login"
+          onClick={onClose}
+          className="flex items-center gap-2 px-4 py-2 text-sm text-dark-text hover:bg-dark-background transition-colors"
+        >
+          <User className="w-4 h-4" /> Iniciar Sesión
+        </Link>
+        <Link
+          to="/register"
+          onClick={onClose}
+          className="flex items-center gap-2 px-4 py-2 text-sm text-dark-text hover:bg-dark-background transition-colors"
+        >
+          <User className="w-4 h-4" /> Registrarse
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={menuRef}
-      className="absolute top-full right-0 z-20 mt-2 w-40 bg-white dark:bg-dark-surface shadow-md rounded-md py-1"
+      className="absolute top-full right-0 z-20 mt-2 w-44 bg-dark-surface border border-dark-border shadow-glass rounded-lg py-1"
     >
-      <Link
-        to="/profile"
-        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-background"
-      >
-        <User className="w-4 h-4" /> Perfil
-      </Link>
+      <div className="px-4 py-2 border-b border-dark-border">
+        <p className="text-sm font-medium text-dark-text">{user?.firstName} {user?.lastName}</p>
+        <p className="text-xs text-dark-muted truncate">{user?.email}</p>
+      </div>
       <button
-        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-dark-text hover:bg-gray-100 dark:hover:bg-dark-background"
+        onClick={() => { logout(); onClose(); }}
+        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-dark-muted hover:text-red-400 hover:bg-dark-background transition-colors"
       >
         <LogOut className="w-4 h-4" /> Cerrar sesión
       </button>

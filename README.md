@@ -1,308 +1,186 @@
-# 🎮 GamerStore
+# Astro Setups - E-commerce Full Stack
 
-> Plataforma e-commerce personalizada para tienda de productos gaming
+> Plataforma e-commerce para tienda de productos de hardware/componentes de PC
 
-[![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)]()
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)]()
-[![React](https://img.shields.io/badge/React-18-blue)]()
-[![Proyecto](https://img.shields.io/badge/tipo-freelance-orange)]()
+## Stack Tecnologico
 
----
+| Capa | Tecnologia | Version |
+|------|-----------|---------|
+| Backend | Spring Boot + Java | 3.4.5 / 21 |
+| Frontend | React + TypeScript | 19.1 / 5.8 |
+| Build | Vite | 6.3 |
+| Estilos | Tailwind CSS | 4.1 |
+| Base de datos | MySQL | 8.0 |
+| Seguridad | Spring Security + JWT | jjwt 0.12.6 |
+| State Mgmt | Zustand + React Query | 5.x |
 
-## 📖 Sobre el Proyecto
+## Arquitectura
 
-### Contexto del Cliente
-
-**Cliente:** Tienda de productos gaming en Colombia  
-**Necesidad:** Migración de plataforma CMS (Shopify/WooCommerce) a solución custom  
-**Objetivo:** Control total de funcionalidades y reducción de costos operativos
-
-**Problema del CMS:**
-- Costo: $150 USD/mes ($1,800/año)
-- Limitaciones en personalización
-- Features bloqueadas tras paywall
-- Dependencia de plataforma tercera
-
-**Solución Propuesta:**
-- Plataforma custom con control total
-- Costo reducido a ~$40/mes (hosting + servicios)
-- Ahorro anual: ~$1,300 USD
-- Features específicas para el negocio
-
----
-
-## 🎯 Alcance del Proyecto
-
-### Fase 1: MVP (En Desarrollo) 🚧
-
-**Backend:**
-- ✅ API REST con Spring Boot
-- ✅ Modelos de datos (Productos, Categorías, Órdenes)
-- ✅ Autenticación de administradores
-- ✅ CRUD completo de productos
-- 🚧 Gestión de inventario en tiempo real
-- 🚧 Sistema de órdenes y checkout
-
-**Frontend:**
-- ✅ Catálogo de productos con filtros
-- ✅ Carrito de compras (localStorage)
-- ✅ Página de detalles de producto
-- ✅ Diseño responsive
-- 🚧 Checkout con pasarela de pagos
-- 🚧 Panel de administración
-
-### Fase 2: Producción (Planeada)
-- Integración con Wompi/PayU (pagos Colombia)
-- Sistema de envíos (Servientrega/Coordinadora)
-- Panel admin completo
-- Analytics y reportes
-- Email marketing integrado
-
----
-
-## 🛠️ Stack Tecnológico
-
-### Backend
-- **Framework:** Spring Boot 3.2.x
-- **Lenguaje:** Java 17
-- **Base de Datos:** MySQL 8.0
-- **ORM:** Spring Data JPA
-- **Seguridad:** Spring Security + JWT
-- **Documentación:** Swagger/OpenAPI
-
-### Frontend
-- **Framework:** React 18
-- **Lenguaje:** TypeScript
-- **Estilos:** Tailwind CSS
-- **State Management:** Context API + useReducer
-- **Routing:** React Router v6
-- **Forms:** React Hook Form
-
-### Infraestructura
-- **Hosting Backend:** Railway
-- **Hosting Frontend:** Vercel
-- **CDN:** Cloudflare (imágenes)
-- **Email:** SendGrid
-
----
-
-## 📊 Arquitectura del Sistema
 ```
-┌──────────────┐
-│   Cloudflare │  ← CDN (Imágenes de productos)
-└──────────────┘
-        │
-        ▼
-┌──────────────┐      HTTPS/REST     ┌──────────────┐
-│    React     │ ←─────────────────→ │ Spring Boot  │
-│   (Vercel)   │                     │  (Railway)   │
-└──────────────┘                     └──────────────┘
-                                             │
-                                             ▼
-                                     ┌──────────────┐
-                                     │    MySQL     │
-                                     │  (Railway)   │
-                                     └──────────────┘
+Frontend (React/Vercel) <--HTTPS/REST--> Backend (Spring Boot/Railway) --> MySQL (Railway)
 ```
 
+## Auditoria del Proyecto (Estado: Septiembre 2025)
+
 ---
 
-## 🗄️ Modelo de Datos
+### FUNCIONALIDADES LISTAS PARA PROBAR (10)
 
-### Entidades Principales
-```sql
-Producto
-  ├── id (PK)
-  ├── nombre
-  ├── descripcion
-  ├── precio
-  ├── stock
-  ├── categoria_id (FK)
-  ├── imagenes (JSON array)
-  └── timestamps
+| # | Funcionalidad | Backend | Frontend | Estado |
+|---|--------------|---------|----------|--------|
+| 1 | Auth (Login/Register) | AuthController + AuthServiceImpl + JWT | Login.tsx, Register.tsx, authStore | LISTO |
+| 2 | Catalogo de Productos | CatalogController + CatalogServiceImpl | Products.tsx, ProductDetailPage.tsx | LISTO |
+| 3 | Categorias | GET /api/catalog/categories | CategoryGrid, Sidebar filtros | LISTO |
+| 4 | Busqueda y Filtros | POST /api/catalog/products/_search | useProductSearch, Sidebar | LISTO |
+| 5 | Home Page | GET /api/catalog/products/featured | Home.tsx, Carousel, FAQ | LISTO |
+| 6 | Admin Dashboard | GET /api/sales/stats, /customers/stats | DashboardPage.tsx (KPIs, graficas) | LISTO |
+| 7 | Admin Productos | CRUD completo en CatalogController | AdminProductsPage.tsx | LISTO |
+| 8 | Admin Pedidos | searchOrders, getOrderById, updateStatus | AdminOrdersPage.tsx | LISTO |
+| 9 | Admin Clientes | searchUsers, getUserProfile, stats | AdminUsersPage.tsx | LISTO |
+| 10 | Seguridad JWT | SecurityConfig + JWT Filter + roles | ProtectedRoute + rutas admin | LISTO |
 
-Categoria
-  ├── id (PK)
-  ├── nombre
-  ├── descripcion
-  └── imagen_url
+---
 
-Orden
-  ├── id (PK)
-  ├── usuario_id (FK - opcional para guest checkout)
-  ├── estado (PENDIENTE | PAGADO | ENVIADO | ENTREGADO)
-  ├── total
-  ├── metodo_pago
-  ├── direccion_envio (JSON)
-  └── timestamps
+### FUNCIONALIDADES POR AJUSTAR (6)
 
-OrdenItem
-  ├── id (PK)
-  ├── orden_id (FK)
-  ├── producto_id (FK)
-  ├── cantidad
-  ├── precio_unitario
-  └── subtotal
+| # | Funcionalidad | Problema | Ubicacion | Ajuste |
+|---|--------------|----------|-----------|--------|
+| 1 | Checkout sin conexion | Solo muestra toast, no llama al backend | CheckoutPage.tsx:43-51 | Conectar con POST /api/sales/orders |
+| 2 | Carrito desincronizado | Frontend=localStorage, backend=endpoints propios | Cart.tsx vs CartController | Decidir estrategia (localStorage OK para MVP) |
+| 3 | Descuento es stub | Solo toast.info, no valida con backend | CartPage.tsx:31-38 | Conectar con POST /api/promotions/codes/validate |
+| 4 | Tipo FormData incompleto | Interfaz tiene 5 campos, form tiene 15+ | Checkoutform.tsx:267-272 | Actualizar interfaz TypeScript |
+| 5 | Productos relacionados vacios | Array vacio con TODO | ProductDetailPage.tsx:50-51 | Crear endpoint backend o filtrar por categoria |
+| 6 | Promociones sin contenido | Promotions.tsx existe pero no muestra datos | Promotions.tsx | Conectar con backend de promociones |
+
+---
+
+### FUNCIONALIDADES POR IMPLEMENTAR (Para Fase Beta)
+
+#### Fase 1: FUNCIONALIDAD CORE
+
+| # | Funcionalidad | Que hacer |
+|---|--------------|-----------|
+| 1 | Seed data productos/categorias | Crear INSERTs iniciales en data.sql para que el catalogo no venga vacio |
+| 2 | Conectar Checkout con backend | Llamar a POST /api/sales/orders en CheckoutPage.tsx. Solo metodo "Contra entrega" |
+| 3 | Corregir tipo FormData | Actualizar interfaz en Checkoutform.tsx (5 campos vs 15+ del form) |
+| 4 | Conectar validacion de descuento | Llamar a POST /api/promotions/codes/validate en CartPage.tsx |
+| 5 | Endpoint productos relacionados | Crear GET /api/catalog/products/{id}/related en backend |
+
+#### Fase 2: FUNCIONALIDADES PENDIENTES
+
+| # | Funcionalidad | Que hacer |
+|---|--------------|-----------|
+| 6 | Pagina Promociones | Mostrar promociones activas desde backend en Promotions.tsx |
+| 7 | Paginacion real en searchOrders | Filtrar en query JPA, no en memoria |
+| 8 | Validar transiciones de estado | Implementar validateStatusTransition() en SalesServiceImpl |
+| 9 | Historial de estado ordenes | Crear entidad OrderStatusHistory o usar JSON |
+| 10 | Descuento de stock al comprar | Decrementar stock al crear orden |
+| 11 | Admin Promociones | CRUD de codigos promocionales en admin |
+| 12 | Admin Reportes | Pagina de reportes de ventas |
+| 13 | Admin Configuracion | Pagina de configuracion general |
+
+#### Fase 3: MEJORAS - Post-Beta
+
+| # | Funcionalidad | Que hacer |
+|---|--------------|-----------|
+| 14 | Perfil de usuario | Pagina /profile para clientes |
+| 15 | Seguimiento de pedidos | Pagina de tracking para clientes |
+| 16 | Pagina 404 | Pagina de ruta no encontrada |
+| 17 | Tests | Tests unitarios e integracion (backend y frontend) |
+| 18 | Swagger/OpenAPI | Documentacion de API |
+| 19 | Refresh Token | Sesion larga con refresh automatico |
+| 20 | Pasarela de pagos | Wompi/PayU para pagos Colombia |
+
+#### Fase 4: DEPLOY - Configuracion Produccion
+
+| # | Funcionalidad | Que hacer |
+|---|--------------|-----------|
+| 21 | Variables de entorno produccion | Mover config de application.properties a variables de entorno (DB_URL, JWT_SECRET, etc.) |
+| 22 | CORS para produccion | Agregar dominio de Vercel a SecurityConfig.java |
+| 23 | JWT Secret seguro | Eliminar fallback hardcoded, usar solo variable de entorno |
+
+---
+
+## Estructura del Proyecto
+
+```
+EcomerceFullStack/
++-- astrosetupsback/           # Backend Spring Boot
+�   +-- src/main/java/.../
+�   �   +-- application/       # DTOs, interfaces, services
+�   �   +-- domain/            # Modelos y repositorios
+�   �   +-- infra/             # Controllers, config, security, exceptions
+�   +-- src/main/resources/
+�   �   +-- application.properties
+�   �   +-- data.sql           # Seed de usuarios
+�   +-- CONTEXT.md             # Contexto y backlog del backend
+�   +-- pom.xml
+�
++-- astroSetupsFrontend/       # Frontend React
+�   +-- src/
+�   �   +-- api/               # API client
+�   �   +-- components/        # Componentes UI
+�   �   +-- hooks/             # Custom hooks
+�   �   +-- interfaces/        # TypeScript types
+�   �   +-- pages/             # Paginas/rutas
+�   �   +-- services/          # Servicios API
+�   �   +-- stores/            # Zustand stores
+�   �   +-- styles/            # CSS
+�   +-- README.md              # Contexto y backlog del frontend
+�   +-- package.json
+�
++-- README.md                  # Este archivo - Auditoria general
 ```
 
----
+## Credenciales de Prueba
 
-## 📸 Screenshots
+| Rol | Email | Password |
+|-----|-------|----------|
+| ADMIN | admin@astrosetups.com | Admin123* |
+| SUPER_ADMIN | superadmin@astrosetups.com | SuperAdmin123* |
+| CLIENT | cliente@astrosetups.com | Cliente123* |
 
-> **Nota:** Por privacidad del cliente, se muestran screenshots con datos de ejemplo
-
-### Catálogo de Productos
-![Catalog](docs/images/catalog-demo.png)
-
-### Carrito de Compras
-![Cart](docs/images/cart-demo.png)
-
-### Panel de Administración
-![Admin](docs/images/admin-demo.png)
-
----
-
-## 🔐 Seguridad Implementada
-
-- ✅ Contraseñas hasheadas (BCrypt)
-- ✅ JWT para autenticación
-- ✅ Validación de inputs (backend + frontend)
-- ✅ CORS configurado correctamente
-- ✅ HTTPS en producción
-- ✅ Rate limiting en endpoints críticos
-- 🚧 PCI compliance para pagos (en progreso)
-
----
-
-## 🚀 Instalación (Para Desarrollo)
-
-> **Nota:** El código completo no es público por ser proyecto de cliente. Se muestra proceso general.
+## Como Ejecutar en Desarrollo
 
 ### Backend
 ```bash
-# Prerrequisitos: Java 17, MySQL 8
+# Requisitos: Java 21, MySQL 8
+# 1. Crear base de datos
+mysql -u root -p -e "CREATE DATABASE astrosetupsdb"
 
-# 1. Configurar base de datos
-mysql -u root -p
-CREATE DATABASE gamerstore;
+# 2. Configurar variables (o usar application.properties con credenciales root/root)
 
-# 2. Configurar variables de entorno
-cp .env.example .env
-# Editar .env con credenciales
-
-# 3. Ejecutar migraciones
-mvn flyway:migrate
-
-# 4. Iniciar servidor
-mvn spring-boot:run
+# 3. Ejecutar
+cd astrosetupsback
+./mvnw spring-boot:run
+# Backend disponible en http://localhost:8081
 ```
 
 ### Frontend
 ```bash
-# Prerrequisitos: Node.js 18+
-
-# 1. Instalar dependencias
+# Requisitos: Node.js 18+
+cd astroSetupsFrontend
 npm install
-
-# 2. Configurar variables
-cp .env.example .env
-# VITE_API_URL=http://localhost:8080
-
-# 3. Iniciar desarrollo
 npm run dev
+# Frontend disponible en http://localhost:5173
 ```
 
----
+## Documentacion por Componente
 
-## 📈 Métricas del Proyecto
+- **Backend**: Ver `astrosetupsback/CONTEXT.md` para contexto detallado y backlog de implementacion
+- **Frontend**: Ver `astroSetupsFrontend/README.md` para contexto detallado y backlog de implementacion
 
-**Tiempo de Desarrollo:** 8 semanas (estimado)  
-**Líneas de Código:** ~15,000 (backend + frontend)  
-**Endpoints API:** 25+  
-**Componentes React:** 40+  
-**Cobertura de Tests:** 55% (objetivo: 70%)
+## Orden Recomendado para Despliegue Beta
 
----
-
-## 💼 Valor Entregado al Cliente
-
-### Beneficios Técnicos
-- ✅ Control total de la plataforma
-- ✅ Customización ilimitada
-- ✅ Integración con herramientas locales
-- ✅ Datos propios (no en plataforma tercera)
-
-### Beneficios Económicos
-- ✅ Ahorro: $1,300 USD/año
-- ✅ Escalabilidad sin costos ocultos
-- ✅ Sin límites de productos o transacciones
-
-### Beneficios de Negocio
-- ✅ Features específicas para gaming (ej: pre-órdenes)
-- ✅ Programa de puntos personalizado
-- ✅ Analytics detallados del negocio
-
----
-
-## 🎓 Aprendizajes Técnicos
-
-### Desafíos Superados
-
-1. **Gestión de Inventario en Tiempo Real**
-   - Problema: Race conditions en stock
-   - Solución: Transacciones ACID + locking optimista
-
-2. **Optimización de Imágenes**
-   - Problema: Catálogo lento (imágenes pesadas)
-   - Solución: CDN + lazy loading + WebP format
-
-3. **Checkout Sin Fricciones**
-   - Problema: Alto abandono de carrito
-   - Solución: Guest checkout + progreso visual claro
-
-4. **SEO para E-commerce**
-   - Server-side rendering para rutas clave
-   - Meta tags dinámicos
-   - Sitemap XML generado automáticamente
-
----
-
-## 🗺️ Roadmap
-
-### Q1 2025
-- [x] MVP backend
-- [x] Catálogo frontend
-- [ ] Integración de pagos
-- [ ] Launch versión 1.0
-
-### Q2 2025
-- [ ] App móvil (React Native)
-- [ ] Sistema de fidelización
-- [ ] Integración WhatsApp Business
-
----
-
-## 📝 Notas sobre Privacidad
-
-- Código fuente completo no publicado (proyecto de cliente)
-- Screenshots usan datos de ejemplo, no reales
-- Funcionalidad core documentada para fines de portfolio
-
----
-
-## 📬 Contacto
-
-**Tu Nombre**  
-Desarrollador Fullstack
-
-- Email: tu@email.com  
-- LinkedIn: [linkedin.com/in/tuusuario](https://linkedin.com/in/tuusuario)  
-- Portfolio: [tuportfolio.com](https://tuportfolio.com)
-
-*¿Interesado en un proyecto similar? Contáctame.*
-
----
-
-<p align="center">
-  Desarrollado con 💻 y ☕ para [Cliente]
-</p>
+1. Crear seed data de productos/categorias en data.sql
+2. Conectar checkout con backend (solo contra entrega)
+3. Corregir tipo FormData en CheckoutForm
+4. Conectar validacion de descuentos
+5. Crear endpoint de productos relacionados
+6. Crear pagina de promociones
+7. Implementar funcionalidades pendientes (paginacion, transiciones, stock)
+8. Crear paginas admin faltantes (Promociones, Reportes, Config)
+9. Configurar variables de entorno en backend (Railway)
+10. Configurar CORS para produccion
+11. Configurar variables de entorno en frontend (Vercel)
+12. Desplegar y probar flujo completo: registro -> catalogo -> carrito -> checkout

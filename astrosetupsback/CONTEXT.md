@@ -1,150 +1,225 @@
-# Astro Setups - Contexto del Proyecto
+# Astro Setups Backend - Contexto del Proyecto
 
-## Descripción del Negocio
-Astro Setups es una tienda en línea de productos de hardware que opera bajo un modelo de intermediación, sin stock propio. La plataforma conecta clientes con proveedores, facilitando la compra de productos sin necesidad de manejar inventario directamente.
+## Descripcion del Negocio
+Astro Setups es una tienda en linea de productos de hardware que opera bajo un modelo de intermediacion, sin stock propio. La plataforma conecta clientes con proveedores, facilitando la compra de productos sin necesidad de manejar inventario directamente.
 
 ### Funcionalidades Principales
-- Exploración de catálogo con filtros
-- Consulta de especificaciones técnicas y comparación de productos
-- Compra rápida sin registro o con cuenta
-- Aplicación de códigos promocionales
+- Exploracion de catalogo con filtros
+- Consulta de especificaciones tecnicas y comparacion de productos
+- Compra rapida sin registro o con cuenta
+- Aplicacion de codigos promocionales
 - Seguimiento de pedidos
-- Gestión administrativa del catálogo, clientes, pedidos y promociones
+- Gestion administrativa del catalogo, clientes, pedidos y promociones
 
-## Arquitectura Técnica
+## Arquitectura Tecnica
 
-### Frontend
-- React + TypeScript
-- Tailwind CSS
-- Estilo visual similar a MercadoLibre pero más minimalista
-- Arquitectura basada en componentes
+### Stack
+- **Framework:** Spring Boot 3.4.5
+- **Lenguaje:** Java 21
+- **Base de Datos:** MySQL 8.0
+- **ORM:** Spring Data JPA
+- **Seguridad:** Spring Security + JWT (jjwt 0.12.6)
+- **Build:** Maven
+- **Lombok:** Para reduccion de boilerplate
 
-### Backend
-- Spring Boot
-- Arquitectura Hexagonal
-- Base de datos MySQL
-- Dependencias principales:
-  - Spring Web
-  - Spring Security
-  - Spring Data JPA
-  - Lombok
-  - MySQL
-
-### Estructura del Proyecto
+### Estructura del Proyecto (Arquitectura Hexagonal)
 ```
-application/
-├── dto/                    # DTOs organizados por contexto
-│   ├── catalog/           # Catálogo y Productos
-│   ├── sales/            # Ventas y Pedidos
-│   ├── customer/         # Clientes y Autenticación
-│   ├── promotion/        # Promociones y Descuentos
-│   ├── shipping/         # Gestión de Envíos
-│   └── common/           # DTOs comunes
-├── interfaces/           # Interfaces de servicios
-└── services/            # Implementaciones de servicios
-
-domain/
-├── model/               # Entidades del dominio
-└── repository/         # Interfaces de repositorios
-
-infra/
-├── config/             # Configuraciones
-├── repository/         # Implementaciones JPA
-└── adapters/          # Adaptadores de infraestructura
+src/main/java/com/whalensoft/astrosetupsback/
+├── application/
+│   ├── common/              # Mensajes de error, constantes
+│   ├── dto/                 # DTOs organizados por contexto
+│   │   ├── auth/           # Auth, Login, Register
+│   │   ├── catalog/        # Productos y Categorias
+│   │   │   ├── Product/    # CreateProduct, UpdateProduct, ProductDTO, etc.
+│   │   │   └── Category/   # CreateCategory, CategoryDTO, CategoryTypeDTO, etc.
+│   │   ├── customer/       # Clientes y Usuarios
+│   │   │   ├── Users/      # UserAdmin, UserAdminProfile, etc.
+│   │   │   ├── Address/    # ShippingAddress DTOs
+│   │   │   └── Stats/      # CustomerStats
+│   │   ├── promotion/      # Codigos promocionales
+│   │   │   ├── code/       # CRUD de promociones
+│   │   │   ├── validation/ # Validar y aplicar codigos
+│   │   │   └── bullk/      # Operaciones en lote
+│   │   ├── sales/          # Ventas y Pedidos
+│   │   │   ├── cart/       # Carrito de compras
+│   │   │   ├── checkout/   # Procesamiento de checkout
+│   │   │   ├── orders/     # CRUD de ordenes
+│   │   │   └── search/     # Busqueda y estadisticas
+│   │   ├── shipping/       # Envios
+│   │   │   ├── address/    # Direcciones de envio
+│   │   │   ├── cost/       # Calculo de costos
+│   │   │   ├── location/   # Ciudades, codigos postales
+│   │   │   ├── preferences/# Preferencias de usuario
+│   │   │   ├── stats/      # Estadisticas de envios
+│   │   │   └── zone/       # Zonas de envio
+│   │   └── common/         # PageResponseDTO
+│   ├── interfaces/          # Interfaces de servicios
+│   └── services/           # Implementaciones de servicios
+├── domain/
+│   ├── model/              # Entidades del dominio (22 entidades)
+│   └── repository/         # Interfaces de repositorios
+└── infra/
+    ├── adapters/           # Adaptadores repository
+    ├── config/             # SecurityConfig, RepositoryAdapterConfig
+    ├── controllers/        # Controladores REST (7)
+    ├── exceptions/         # Manejo global de excepciones
+    ├── repository/         # Implementaciones JPA
+    └── security/           # JWT: JwtProvider, JwtAuthenticationFilter, SecurityUtils
 ```
 
-## Estado Actual de Implementación
+### Puertos
+- Backend: **8081**
+- Base de datos MySQL: **3306**
+
+---
+
+## Estado Actual de Implementacion
 
 ### Completado
-1. **Modelo de Dominio**
-   - Entidades principales implementadas
-   - Relaciones entre entidades definidas
-   - Enums y tipos de datos definidos
 
-2. **Repositorios**
-   - Interfaces de repositorios en el dominio
-   - Implementaciones JPA en infraestructura
-   - Adaptadores para la conexión entre capas
+#### 1. Modelo de Dominio ✅
+- **22 entidades** implementadas: User, Product, Category, CategoryType, Order, OrderItem, ShoppingCart, CartItem, PromoCode, AppliedPromoCode, AppliedPromoCodeId, ShippingAddress, Warranty, City, State, Country, PostalCode, OrderStatus, PaymentMethod, UserRole, UserStatus, WarrantyStatus
+- Relaciones entre entidades definidas
+- Enums y tipos de datos definidos
+- Builder pattern con Lombok
 
-3. **DTOs**
-   - DTOs de entrada y salida para todos los contextos
-   - DTOs para operaciones específicas
-   - DTOs comunes y de utilidad
+#### 2. Repositorios ✅
+- 11 interfaces de repositorio en el dominio
+- 11 implementaciones JPA en infraestructura
+- 11 adaptadores para conexion entre capas
+- Consultas personalizadas (findByActiveTrue, findByFilters, findFeaturedProducts, findNewArrivals, findBestSellers, countByStatus, findByUser, etc.)
 
-4. **Servicios**
-   - Interfaces de servicios definidas
-   - Implementaciones base de servicios creadas
-   - CatalogServiceImpl completamente implementado
+#### 3. DTOs ✅
+- DTOs de entrada y salida para **todos los contextos**:
+  - auth: AuthResponseDTO, CurrentUserDTO, LoginRequestDTO, RegisterRequestDTO, UserInfoDTO
+  - catalog: ProductDTO, ProductSummaryDTO, ProductDetailDTO, ProductSearchDTO, CreateProductDTO, UpdateProductDTO, CategoryDTO, CategorySummaryDTO, CategoryTypeDTO, CreateCategoryDTO, UpdateCategoryDTO, CreateCategoryTypeDTO, CategoryTypeBasicDTO
+  - customer: UserAdminDTO, UserAdminProfileDTO, CreateUserDTO, UpdateUserDTO, ChangePasswordDTO, CustomerStatsDTO, ShippingAddressDTO
+  - promotion: PromoCodeDTO, PromoCodeSummaryDTO, CreatePromoCodeDTO, UpdatePromoCodeDTO, PromoCodeSearchDTO, PromoCodeValidationDTO, PromoCodeValidationResultDTO, ApplyPromoCodeDTO, PromoCodeApplicationResultDTO, UserPromoCodeHistoryDTO, PromoCodeStatsDTO, BulkCreatePromoCodeDTO, BulkPromoCodeActionDTO, BulkPromoCodeActionResultDTO
+  - sales: ShoppingCartDTO, CartItemDTO, CartSummaryDTO, AddToCartDTO, UpdateCartItemDTO, OrderDTO, OrderSummaryDTO, OrderItemResponseDTO, CreateOrderDTO, CreateOrderItemDTO, UpdateOrderStatusDTO, OrderStatusHistoryDTO, OrderTrackingDTO, CheckoutSummaryDTO, ProcessCheckoutDTO, OrderSearchDTO, OrderSearchResultDTO, SalesStatsDTO, AppliedPromoCodeDTO
+  - shipping: ShippingAddressDTO, ShippingAddressSummaryDTO, CreateShippingAddressDTO, UpdateShippingAddressDTO, ShippingCostCalculationDTO, ShippingCostResponseDTO, ShippingZoneDTO, UserShippingPreferencesDTO, ShippingStatsDTO, CitySummaryDTO, PostalCodeSummaryDTO
+  - common: PageResponseDTO
 
-### En Progreso
-1. **Servicios**
-   - Implementación de la lógica de negocio en los servicios restantes
-   - Validaciones y manejo de errores
-   - Transacciones y concurrencia
+#### 4. Servicios ✅ (6 implementaciones)
+- **AuthServiceImpl**: Register (con BCrypt), Login (con JWT), getCurrentUser
+- **CatalogServiceImpl**: CRUD Productos, CRUD Categorias, CRUD CategoryTypes, busqueda con filtros, productos destacados/nuevos/mas vendidos
+- **SalesServiceImpl**: CRUD Ordenes, Carrito de compras (agregar/actualizar/eliminar/summary), Checkout con validacion de promociones, Estadisticas de ventas, Busqueda de ordenes con filtros
+- **CustomerServiceImpl**: CRUD Usuarios, perfil de usuario, cambio de password, direcciones de envio, estadisticas de clientes
+- **PromotionServiceImpl**: CRUD Codigos promocionales, validacion, aplicacion, historial, estadisticas, operaciones en lote
+- **ShippingServiceImpl**: CRUD Direcciones de envio, ciudades, codigos postales, calculo de costos, zonas, preferencias de usuario, estadisticas
 
-### Pendiente
-1. **Controladores**
-   - Implementación de endpoints REST
-   - Manejo de seguridad
-   - Documentación de API
+#### 5. Controladores REST ✅ (7 controladores)
+- **AuthController** (`/api/auth`): register, login, getCurrentUser
+- **CatalogController** (`/api/catalog`): CRUD productos, CRUD categorias, CRUD category-types, busqueda, destacados, nuevos, mas vendidos, por categoria
+- **CartController** (`/api/cart`): getCart, addToCart, updateCartItem, removeFromCart, getCartSummary
+- **SalesController** (`/api/sales`): CRUD ordenes, search, updateStatus, statusHistory, tracking, customerOrders, checkout, stats
+- **CustomerController** (`/api/customers`): CRUD usuarios, profile, password, shipping addresses, stats
+- **PromotionController** (`/api/promotions`): CRUD codigos, validate, apply, history, stats, bulk operations
+- **ShippingController** (`/api/shipping`): CRUD addresses, cities, postal codes, cost calculation, zones, preferences, stats
 
-2. **Seguridad**
-   - Configuración de Spring Security
-   - Autenticación y autorización
-   - Manejo de roles y permisos
+#### 6. Seguridad ✅
+- **SecurityConfig**: CORS configurado, CSRF deshabilitado, sesiones stateless
+- **JWT Authentication Filter**: Filtro antes de UsernamePasswordAuthenticationFilter
+- **JwtProvider**: Generacion y validacion de tokens
+- **SecurityUtils**: Utilidades para obtener usuario actual y verificar roles
+- **Reglas de autorizacion**:
+  - Publicos: Auth (register/login), Catalogo (lectura), Validacion de promociones, Ciudades/codigos postales, Carrito
+  - Admin: Escritura de catalogo, Clientes, Ventas, Promociones, Stats de envios
+  - Autenticados: Todo lo demas
+- **CORS**: Permite localhost:5173 y localhost:3000 (DESARROLLO)
 
-3. **Mejoras Futuras**
-   - Chatbot con IA (Python + LangChain)
-   - Integración con sistemas de pago
-   - Sistema de notificaciones
+#### 7. Data Seeder ✅
+- `data.sql` con 3 usuarios iniciales:
+  - admin@astrosetups.com / Admin123* (ADMIN)
+  - superadmin@astrosetups.com / SuperAdmin123* (SUPER_ADMIN)
+  - cliente@astrosetups.com / Cliente123* (CLIENT)
+- `spring.sql.init.mode=always` ejecuta al iniciar
+
+#### 8. Excepciones ✅
+- GlobalExceptionHandler para manejo centralizado de errores
+- InvalidCredentialsException, AccountDisabledException, AccessDeniedException
+- ErrorMessages con mensajes estandarizados
+
+---
+
+## Backlog de Implementacion (Priorizado para Despliegue Beta)
+
+### Fase 1: FUNCIONALIDAD CORE
+
+| # | Tarea | Archivos a modificar | Notas |
+|---|-------|---------------------|-------|
+| 1 | **Seed data de productos/categorias** | `data.sql` | Crear INSERTs iniciales de categorias y productos de ejemplo para que el catalogo no venga vacio |
+| 2 | **Endpoint productos relacionados** | `CatalogController.java`, `CatalogService.java`, `CatalogServiceImpl.java`, `ProductRepository.java` | Crear endpoint `GET /api/catalog/products/{id}/related` que retorne productos de la misma categoria |
+| 3 | **Productos destacados automaticos** | `ProductRepository.java`, `CatalogServiceImpl.java` | Los metodos `findFeaturedProducts`, `findNewArrivals`, `findBestSellers` necesitan queries JPA reales (campos `isFeatured`, `createdAt`, o JOIN con OrderItem) |
+
+### Fase 2: FUNCIONALIDADES PENDIENTES
+
+| # | Tarea | Archivos a modificar | Notas |
+|---|-------|---------------------|-------|
+| 4 | **Paginacion real en searchOrders** | `SalesServiceImpl.java` | El metodo `searchOrders` filtra en memoria despues de paginar. Deberia filtrar en la query JPA |
+| 5 | **Validacion de transiciones de estado** | `SalesServiceImpl.java` | El metodo `validateStatusTransition` esta vacio. Implementar reglas (PENDING -> IN_PREPARATION -> SHIPPED -> DELIVERED, etc.) |
+| 6 | **Historial de estado de ordenes** | `Order` entity, `SalesServiceImpl.java` | `getOrderStatusHistory` retorna lista vacia. Crear entidad `OrderStatusHistory` o usar campo JSON |
+| 7 | **Gestion de stock en checkout** | `SalesServiceImpl.java` | Al crear una orden, descontar el stock de los productos. Actualmente solo valida pero no decrementa |
+
+### Fase 3: MEJORAS - Post-Beta
+
+| # | Tarea | Archivos a modificar | Notas |
+|---|-------|---------------------|-------|
+| 8 | **Tests unitarios** | `src/test/` | Crear tests para servicios criticos: AuthService, CatalogService, SalesService |
+| 9 | **Tests de integracion** | `src/test/` | Tests de controladores con MockMvc |
+| 10 | **Documentacion Swagger/OpenAPI** | `pom.xml`, `SecurityConfig.java` | Agregar dependencia springdoc-openapi y configurar |
+| 11 | **Refresh Token** | `AuthController.java`, `AuthServiceImpl.java`, `JwtProvider.java` | Implementar refresh token para sesiones largas |
+| 12 | **Email de verificacion** | `AuthServiceImpl.java`, nuevo servicio de email | Enviar email de bienvenida al registrar usuario |
+| 13 | **Chatbot con IA** | Nuevo modulo | Python + LangChain para soporte al cliente |
+| 14 | **Integracion con pasarela de pagos** | `SalesServiceImpl.java`, nuevo servicio | Wompi/PayU para pagos en Colombia |
+
+### Fase 4: DEPLOY - Configuracion Produccion
+
+| # | Tarea | Archivos a modificar | Notas |
+|---|-------|---------------------|-------|
+| 15 | **Variables de entorno para produccion** | `application.properties` | Mover MySQL config, JWT secret, y demas a variables de entorno (`${DB_URL}`, `${JWT_SECRET}`, etc.) |
+| 16 | **CORS para produccion** | `SecurityConfig.java` | Agregar dominio de Vercel a `setAllowedOrigins` |
+| 17 | **JWT Secret seguro** | `application.properties`, `JwtProvider.java` | Asegurar que uses `${JWT_SECRET}` sin fallback a valor por defecto |
+
+---
 
 ## Contextos Delimitados
-1. **Catálogo y Productos**
-   - Gestión de productos y categorías
-   - Búsqueda y filtrado
-   - Gestión de precios y descuentos
+
+1. **Catalogo y Productos**
+   - Gestion de productos y categorias
+   - Busqueda y filtrado
+   - Gestion de precios y descuentos
 
 2. **Ventas y Pedidos**
-   - Procesamiento de órdenes
-   - Gestión del carrito
+   - Procesamiento de ordenes
+   - Gestion del carrito
    - Seguimiento de pedidos
 
-3. **Clientes y Autenticación**
-   - Registro y autenticación
-   - Gestión de perfiles
-   - Direcciones de envío
+3. **Clientes y Autenticacion**
+   - Registro y autenticacion
+   - Gestion de perfiles
+   - Direcciones de envio
 
 4. **Promociones y Descuentos**
-   - Códigos promocionales
-   - Validación y aplicación
+   - Codigos promocionales
+   - Validacion y aplicacion
    - Historial de uso
 
-5. **Gestión de Envíos**
-   - Cálculo de costos
-   - Zonas de envío
+5. **Gestion de Envios**
+   - Calculo de costos
+   - Zonas de envio
    - Preferencias de usuario
 
-## Decisiones Técnicas
-1. **Arquitectura Hexagonal**
-   - Separación clara de responsabilidades
-   - Independencia de frameworks
-   - Facilidad de testing
+## Decisiones Tecnicas
+1. **Arquitectura Hexagonal** - Separacion clara de responsabilidades
+2. **Repository Pattern** - Acceso a datos abstraido
+3. **DTO Pattern** - Inmutabilidad y separacion entre capas
+4. **Service Layer Pattern** - Logica de negocio centralizada
+5. **Adapter Pattern** - Conexion entre dominio e infraestructura
+6. **JWT Stateless** - Sin sesiones en servidor, ideal para escalabilidad
 
-2. **Patrones de Diseño**
-   - Repository Pattern
-   - DTO Pattern
-   - Service Layer Pattern
-   - Adapter Pattern
-
-3. **Buenas Prácticas**
-   - Inmutabilidad en DTOs
-   - Manejo de transacciones
-   - Validaciones en capa de servicio
-   - Conversión explícita entre capas
-
-## Próximos Pasos
-1. Completar la implementación de los servicios restantes
-2. Implementar los controladores REST
-3. Configurar la seguridad
-4. Implementar pruebas unitarias y de integración
-5. Documentar la API 
+## Credenciales de Prueba
+| Rol | Email | Password |
+|-----|-------|----------|
+| ADMIN | admin@astrosetups.com | Admin123* |
+| SUPER_ADMIN | superadmin@astrosetups.com | SuperAdmin123* |
+| CLIENT | cliente@astrosetups.com | Cliente123* |

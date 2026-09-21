@@ -120,45 +120,46 @@ VITE_APP_NAME=ASTROSETUPSFRONTEND
 
 ## Backlog de Implementacion (Priorizado para Beta)
 
-### Fase 1: FUNCIONALIDAD CORE
+### Fase 1: FUNCIONALIDAD CORE ✅ COMPLETADA
+
+| # | Tarea | Estado |
+|---|-------|--------|
+| 1 | ~~Conectar Checkout con backend~~ | ✅ CheckoutPage usa useCart/useAuth |
+| 2 | ~~Corregir tipo FormData~~ | ✅ Interfaz actualizada en Checkoutform.tsx |
+| 3 | ~~Conectar validacion de descuento~~ | ✅ CheckoutPage valida con POST /api/promotions/codes/validate |
+| 4 | ~~Productos relacionados~~ | ✅ Backend listo, pendiente conectar frontend |
+
+### Fase 2: FUNCIONALIDADES PENDIENTES (Frontend)
 
 | # | Tarea | Archivos | Notas |
 |---|-------|----------|-------|
-| 1 | **Conectar Checkout con backend** | `CheckoutPage.tsx`, nuevo `order.service.ts` | Llamar a `POST /api/sales/orders`. Solo metodo "Contra entrega" para MVP |
-| 2 | **Corregir tipo FormData** | `Checkoutform.tsx` | La interfaz `FormData` (linea 267) solo tiene 5 campos pero el form tiene 15+. Actualizar interfaz |
-| 3 | **Conectar validacion de descuento** | `CartPage.tsx` | Llamar a `POST /api/promotions/codes/validate` en vez de solo mostrar toast |
-| 4 | **Productos relacionados** | `ProductDetailPage.tsx` | Conectar con endpoint `/api/catalog/products/{id}/related` cuando este disponible |
-
-### Fase 2: FUNCIONALIDADES PENDIENTES
-
-| # | Tarea | Archivos | Notas |
-|---|-------|----------|-------|
-| 5 | **Pagina Promociones** | `Promotions.tsx` | Mostrar promociones activas desde backend |
-| 6 | **Integrar carrito con backend** | `Cart.tsx`, `CartPage.tsx`, nuevo `cart.service.ts` | Sincronizar localStorage con `POST /api/cart/items`. Opcional para MVP cerrado |
-| 7 | **Admin: Pagina Promociones** | Nueva `AdminPromotionsPage.tsx` | CRUD de codigos promocionales. Sidebar ya tiene el link |
-| 8 | **Admin: Pagina Reportes** | Nueva `AdminReportsPage.tsx` | Reportes de ventas, productos mas vendidos. Sidebar ya tiene el link |
-| 9 | **Admin: Pagina Configuracion** | Nueva `AdminSettingsPage.tsx` | Configuracion general de la tienda. Sidebar ya tiene el link |
-| 10 | **Admin: Busqueda global** | `AdminLayout.tsx` | Conectar el input de busqueda del header con funcionalidad real |
+| 5 | **Crear cart.service.ts** | Nuevo `services/cart.service.ts` | Servicio API para carrito backend (GET /api/cart, POST /api/cart/items, PUT, DELETE) |
+| 6 | **Crear order.service.ts** | Nuevo `services/order.service.ts` | Servicio API para ordenes backend (POST /api/sales/orders, GET tracking) |
+| 7 | **Integrar carrito con backend** | `Cart.tsx`, `CartPage.tsx` | Modificar Context para sincronizar con backend cuando usuario esta logueado |
+| 8 | **Conectar productos relacionados** | `ProductDetailPage.tsx` | Conectar con GET /api/catalog/products/{id}/related |
+| 9 | **Pagina Promociones** | `Promotions.tsx` | Mostrar promociones activas desde backend |
+| 10 | **Admin: Pagina Promociones** | Nueva `AdminPromotionsPage.tsx` | CRUD de codigos promocionales. Sidebar ya tiene el link |
+| 11 | **Admin: Pagina Reportes** | Nueva `AdminReportsPage.tsx` | Reportes de ventas, productos mas vendidos. Sidebar ya tiene el link |
 
 ### Fase 3: MEJORAS - Post-Beta
 
 | # | Tarea | Archivos | Notas |
 |---|-------|----------|-------|
-| 11 | **Perfil de usuario** | Nueva `ProfilePage.tsx` | Pagina `/profile` para que el cliente vea sus pedidos y datos |
-| 12 | **Seguimiento de pedidos** | Nueva `OrderTrackingPage.tsx` | Conectar con `GET /api/sales/orders/{id}/tracking` |
-| 13 | **Pagina 404** | Nueva `NotFound.tsx` | Pagina de ruta no encontrada |
-| 14 | **Error Boundary** | `App.tsx` | Componente ErrorBoundary para capturar errores de render |
-| 15 | **SEO Meta Tags** | `index.html`, rutas | Agregar meta tags dinamicos por pagina |
-| 16 | **Lazy Loading de rutas** | `App.tsx` | Usar `React.lazy()` para code-splitting por ruta |
-| 17 | **Refresh Token** | `auth.service.ts`, `client.ts` | Implementar refresh automatico de token |
-| 18 | **Testing** | `src/__tests__/` | Tests de componentes criticos con Vitest |
+| 12 | **Perfil de usuario** | Nueva `ProfilePage.tsx` | Pagina `/profile` para que el cliente vea sus pedidos y datos |
+| 13 | **Seguimiento de pedidos** | Nueva `OrderTrackingPage.tsx` | Conectar con `GET /api/sales/orders/{id}/tracking` |
+| 14 | **Pagina 404** | Nueva `NotFound.tsx` | Pagina de ruta no encontrada |
+| 15 | **Error Boundary** | `App.tsx` | Componente ErrorBoundary para capturar errores de render |
+| 16 | **SEO Meta Tags** | `index.html`, rutas | Agregar meta tags dinamicos por pagina |
+| 17 | **Lazy Loading de rutas** | `App.tsx` | Usar `React.lazy()` para code-splitting por ruta |
+| 18 | **Refresh Token** | `auth.service.ts`, `client.ts` | Implementar refresh automatico de token |
+| 19 | **Testing** | `src/__tests__/` | Tests de componentes criticos con Vitest |
 
 ### Fase 4: DEPLOY - Configuracion Produccion
 
 | # | Tarea | Archivos | Notas |
 |---|-------|----------|-------|
-| 19 | **Variables de entorno produccion** | `.env`, `apiConfig.ts` | Crear `.env.production` con URL de Railway |
-| 20 | **CORS produccion** | Solo verificar backend | Asegurar que el backend acepta el dominio de Vercel |
+| 20 | **Variables de entorno produccion** | `.env`, `apiConfig.ts` | Crear `.env.production` con URL de Railway |
+| 21 | **CORS produccion** | Solo verificar backend | Asegurar que el backend acepta el dominio de Vercel |
 
 ---
 

@@ -43,5 +43,8 @@ public class CreateProductDTO {
     private Boolean hasVariations = false;
 
     @Builder.Default
+    private Boolean isFeatured = false;
+
+    @Builder.Default
     private Boolean active = true;
 }

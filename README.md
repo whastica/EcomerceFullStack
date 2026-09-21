@@ -41,63 +41,67 @@ Frontend (React/Vercel) <--HTTPS/REST--> Backend (Spring Boot/Railway) --> MySQL
 
 ---
 
-### FUNCIONALIDADES POR AJUSTAR (6)
+### FUNCIONALIDADES POR AJUSTAR (3)
 
 | # | Funcionalidad | Problema | Ubicacion | Ajuste |
 |---|--------------|----------|-----------|--------|
-| 1 | Checkout sin conexion | Solo muestra toast, no llama al backend | CheckoutPage.tsx:43-51 | Conectar con POST /api/sales/orders |
-| 2 | Carrito desincronizado | Frontend=localStorage, backend=endpoints propios | Cart.tsx vs CartController | Decidir estrategia (localStorage OK para MVP) |
-| 3 | Descuento es stub | Solo toast.info, no valida con backend | CartPage.tsx:31-38 | Conectar con POST /api/promotions/codes/validate |
-| 4 | Tipo FormData incompleto | Interfaz tiene 5 campos, form tiene 15+ | Checkoutform.tsx:267-272 | Actualizar interfaz TypeScript |
-| 5 | Productos relacionados vacios | Array vacio con TODO | ProductDetailPage.tsx:50-51 | Crear endpoint backend o filtrar por categoria |
-| 6 | Promociones sin contenido | Promotions.tsx existe pero no muestra datos | Promotions.tsx | Conectar con backend de promociones |
+| 1 | Descuento es stub | Solo toast.info, no valida con backend | CartPage.tsx:31-38 | Conectar con POST /api/promotions/codes/validate |
+| 2 | Tipo FormData incompleto | Interfaz tiene 5 campos, form tiene 15+ | Checkoutform.tsx:267-272 | Actualizar interfaz TypeScript |
+| 3 | Promociones sin contenido | Promotions.tsx existe pero no muestra datos | Promotions.tsx | Conectar con backend de promociones |
 
 ---
 
 ### FUNCIONALIDADES POR IMPLEMENTAR (Para Fase Beta)
 
-#### Fase 1: FUNCIONALIDAD CORE
+#### Fase 1: FUNCIONALIDAD CORE ✅ COMPLETADA
+
+| # | Funcionalidad | Estado |
+|---|--------------|--------|
+| 1 | Seed data productos/categorias | ✅ 112 productos en data.sql |
+| 2 | Conectar Checkout con backend | ✅ CheckoutPage usa useCart/useAuth |
+| 3 | Corregir tipo FormData | ✅ Interfaz actualizada en Checkoutform.tsx |
+| 4 | Conectar validacion de descuento | ✅ CheckoutPage valida con POST /api/promotions/codes/validate |
+| 5 | Endpoint productos relacionados | ✅ GET /api/catalog/products/{id}/related |
+
+#### Fase 2: FUNCIONALIDADES PENDIENTES - Backend ✅ COMPLETADA
+
+| # | Funcionalidad | Estado |
+|---|--------------|--------|
+| 6 | Productos destacados con isFeatured | ✅ Campo isFeatured + query filtrada |
+| 7 | Validar transiciones de estado | ✅ validateStatusTransition() con state machine |
+| 8 | Historial de estado ordenes | ✅ OrderStatusHistory + getRealHistory |
+| 9 | Carrito guest + migracion | ✅ getGuestCart + migrateGuestCart + endpoints |
+
+#### Fase 2: FUNCIONALIDADES PENDIENTES - Frontend (PENDIENTE)
 
 | # | Funcionalidad | Que hacer |
 |---|--------------|-----------|
-| 1 | Seed data productos/categorias | Crear INSERTs iniciales en data.sql para que el catalogo no venga vacio |
-| 2 | Conectar Checkout con backend | Llamar a POST /api/sales/orders en CheckoutPage.tsx. Solo metodo "Contra entrega" |
-| 3 | Corregir tipo FormData | Actualizar interfaz en Checkoutform.tsx (5 campos vs 15+ del form) |
-| 4 | Conectar validacion de descuento | Llamar a POST /api/promotions/codes/validate en CartPage.tsx |
-| 5 | Endpoint productos relacionados | Crear GET /api/catalog/products/{id}/related en backend |
-
-#### Fase 2: FUNCIONALIDADES PENDIENTES
-
-| # | Funcionalidad | Que hacer |
-|---|--------------|-----------|
-| 6 | Pagina Promociones | Mostrar promociones activas desde backend en Promotions.tsx |
-| 7 | Paginacion real en searchOrders | Filtrar en query JPA, no en memoria |
-| 8 | Validar transiciones de estado | Implementar validateStatusTransition() en SalesServiceImpl |
-| 9 | Historial de estado ordenes | Crear entidad OrderStatusHistory o usar JSON |
-| 10 | Descuento de stock al comprar | Decrementar stock al crear orden |
-| 11 | Admin Promociones | CRUD de codigos promocionales en admin |
-| 12 | Admin Reportes | Pagina de reportes de ventas |
-| 13 | Admin Configuracion | Pagina de configuracion general |
+| 10 | Crear cart.service.ts | Servicio API para carrito backend |
+| 11 | Crear order.service.ts | Servicio API para ordenes backend |
+| 12 | Integrar carrito con backend | Modificar Cart.tsx para usar backend |
+| 13 | Pagina Promociones | Mostrar promociones activas desde backend |
+| 14 | Admin Promociones | CRUD de codigos promocionales en admin |
+| 15 | Admin Reportes | Pagina de reportes de ventas |
 
 #### Fase 3: MEJORAS - Post-Beta
 
 | # | Funcionalidad | Que hacer |
 |---|--------------|-----------|
-| 14 | Perfil de usuario | Pagina /profile para clientes |
-| 15 | Seguimiento de pedidos | Pagina de tracking para clientes |
-| 16 | Pagina 404 | Pagina de ruta no encontrada |
-| 17 | Tests | Tests unitarios e integracion (backend y frontend) |
-| 18 | Swagger/OpenAPI | Documentacion de API |
-| 19 | Refresh Token | Sesion larga con refresh automatico |
-| 20 | Pasarela de pagos | Wompi/PayU para pagos Colombia |
+| 16 | Perfil de usuario | Pagina /profile para clientes |
+| 17 | Seguimiento de pedidos | Pagina de tracking para clientes |
+| 18 | Pagina 404 | Pagina de ruta no encontrada |
+| 19 | Tests | Tests unitarios e integracion (backend y frontend) |
+| 20 | Swagger/OpenAPI | Documentacion de API |
+| 21 | Refresh Token | Sesion larga con refresh automatico |
+| 22 | Pasarela de pagos | Wompi/PayU para pagos Colombia |
 
 #### Fase 4: DEPLOY - Configuracion Produccion
 
 | # | Funcionalidad | Que hacer |
 |---|--------------|-----------|
-| 21 | Variables de entorno produccion | Mover config de application.properties a variables de entorno (DB_URL, JWT_SECRET, etc.) |
-| 22 | CORS para produccion | Agregar dominio de Vercel a SecurityConfig.java |
-| 23 | JWT Secret seguro | Eliminar fallback hardcoded, usar solo variable de entorno |
+| 23 | Variables de entorno produccion | Mover config de application.properties a variables de entorno (DB_URL, JWT_SECRET, etc.) |
+| 24 | CORS para produccion | Agregar dominio de Vercel a SecurityConfig.java |
+| 25 | JWT Secret seguro | Eliminar fallback hardcoded, usar solo variable de entorno |
 
 ---
 
@@ -172,15 +176,25 @@ npm run dev
 
 ## Orden Recomendado para Despliegue Beta
 
-1. Crear seed data de productos/categorias en data.sql
-2. Conectar checkout con backend (solo contra entrega)
-3. Corregir tipo FormData en CheckoutForm
-4. Conectar validacion de descuentos
-5. Crear endpoint de productos relacionados
-6. Crear pagina de promociones
-7. Implementar funcionalidades pendientes (paginacion, transiciones, stock)
-8. Crear paginas admin faltantes (Promociones, Reportes, Config)
-9. Configurar variables de entorno en backend (Railway)
-10. Configurar CORS para produccion
-11. Configurar variables de entorno en frontend (Vercel)
-12. Desplegar y probar flujo completo: registro -> catalogo -> carrito -> checkout
+### ✅ Completado
+1. ~~Crear seed data de productos/categorias en data.sql~~ → 112 productos cargados
+2. ~~Endpoint productos relacionados~~ → GET /api/catalog/products/{id}/related
+3. ~~Productos destacados con isFeatured~~ → Campo + query + 17 productos destacados
+4. ~~Validar transiciones de estado~~ → State machine en SalesServiceImpl
+5. ~~Historial de estado ordenes~~ → OrderStatusHistory + getRealHistory
+6. ~~Carrito guest + migracion~~ → getGuestCart + migrateGuestCart
+
+### Pendiente - Frontend
+7. Crear cart.service.ts (servicio API carrito)
+8. Crear order.service.ts (servicio API ordenes)
+9. Integrar carrito backend en Cart.tsx
+10. Conectar validacion de descuento en CartPage.tsx
+11. Crear pagina de promociones
+12. Crear pagina admin Promociones
+13. Crear pagina admin Reportes
+
+### Pendiente - Deploy
+14. Configurar variables de entorno en backend (Railway)
+15. Configurar CORS para produccion
+16. Configurar variables de entorno en frontend (Vercel)
+17. Desplegar y probar flujo completo: registro -> catalogo -> carrito -> checkout

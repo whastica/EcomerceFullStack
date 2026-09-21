@@ -38,5 +38,7 @@ public class UpdateProductDTO {
 
     private Boolean hasVariations;
 
+    private Boolean isFeatured;
+
     private Boolean active;
 }

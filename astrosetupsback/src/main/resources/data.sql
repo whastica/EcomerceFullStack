@@ -21,3 +21,6 @@ INSERT IGNORE INTO users (first_name, last_name, email, phone, role, status, ver
 VALUES ('Cliente', 'Test', 'cliente@astrosetups.com', '3000000003', 'CLIENT', 'ACTIVE', true,
         '$2b$10$x2SwgOhBEHC0m/PHKpC83eOopNYXIKkVXj8WU7EvGRuEh0MGTE6MK',
         NOW());
+
+-- Productos destacados por categoría (1-2 por categoría principal)
+UPDATE products SET is_featured = true WHERE product_id IN (58, 59, 93, 92, 71, 74, 18, 35, 9, 1, 13, 53, 86, 24, 100, 42, 51);

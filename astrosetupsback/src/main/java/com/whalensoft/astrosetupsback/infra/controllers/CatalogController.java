@@ -141,6 +141,18 @@ public class CatalogController {
     }
 
     /**
+     * Productos relacionados (misma categoría)
+     */
+    @GetMapping("/products/{id}/related")
+    public ResponseEntity<List<ProductSummaryDTO>>
+    getRelatedProducts(@PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                catalogService.getRelatedProducts(id)
+        );
+    }
+
+    /**
      * Productos por categoría
      */
     @GetMapping("/products/by-category")

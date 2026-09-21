@@ -63,6 +63,11 @@ public class CatalogServiceImpl implements CatalogService {
                 .hasVariations(
                         createProductDTO.getHasVariations()
                 )
+                .isFeatured(
+                        createProductDTO.getIsFeatured() != null
+                                ? createProductDTO.getIsFeatured()
+                                : false
+                )
                 .active(true)
                 .build();
 
@@ -139,6 +144,12 @@ public class CatalogServiceImpl implements CatalogService {
         if (updateProductDTO.getActive() != null) {
             product.setActive(
                     updateProductDTO.getActive()
+            );
+        }
+
+        if (updateProductDTO.getIsFeatured() != null) {
+            product.setIsFeatured(
+                    updateProductDTO.getIsFeatured()
             );
         }
 
@@ -325,6 +336,27 @@ public class CatalogServiceImpl implements CatalogService {
     getBestSellers() {
 
         return productRepository.findBestSellers()
+                .stream()
+                .map(this::convertToProductSummaryDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductSummaryDTO> getRelatedProducts(Long productId) {
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Producto no encontrado"
+                        )
+                );
+
+        return productRepository.findRelatedProducts(
+                        product.getCategory(),
+                        productId,
+                        org.springframework.data.domain.PageRequest.of(0, 8)
+                )
                 .stream()
                 .map(this::convertToProductSummaryDTO)
                 .toList();
@@ -559,6 +591,10 @@ public class CatalogServiceImpl implements CatalogService {
                         product.hasDiscount()
                 )
 
+                .isFeatured(
+                        product.getIsFeatured()
+                )
+
                 .category(
                         CategorySummaryDTO.builder()
                                 .id(product.getCategory().getId())
@@ -607,6 +643,10 @@ public class CatalogServiceImpl implements CatalogService {
                         product.getImageUrl()
                 )
 
+                .isFeatured(
+                        product.getIsFeatured()
+                )
+
                 .categoryName(
                         product.getCategory().getName()
                 )
@@ -632,6 +672,7 @@ public class CatalogServiceImpl implements CatalogService {
                                 : new ArrayList<>()
                 )
                 .hasVariations(product.getHasVariations())
+                .isFeatured(product.getIsFeatured())
                 .category(
                         CategorySummaryDTO.builder()
                                 .id(product.getCategory().getId())

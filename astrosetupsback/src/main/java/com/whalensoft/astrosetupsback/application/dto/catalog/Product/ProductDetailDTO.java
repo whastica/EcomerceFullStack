@@ -35,6 +35,7 @@ public class ProductDetailDTO {
     private List<String> galleryImages = new ArrayList<>();
 
     private Boolean hasVariations;
+    private Boolean isFeatured;
 
     private CategorySummaryDTO category;
 }

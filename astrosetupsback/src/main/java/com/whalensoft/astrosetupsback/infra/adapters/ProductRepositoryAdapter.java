@@ -113,4 +113,9 @@ public class ProductRepositoryAdapter implements ProductRepository {
     public List<Product> findBestSellers() {
         return jpaProductRepository.findBestSellers();
     }
+
+    @Override
+    public List<Product> findRelatedProducts(Category category, Long excludeId, Pageable pageable) {
+        return jpaProductRepository.findRelatedProducts(category, excludeId, pageable);
+    }
 }

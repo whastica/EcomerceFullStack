@@ -73,6 +73,11 @@ public class Product {
     @Column(nullable = false)
     private Boolean active = true;
 
+    @NotNull
+    @Builder.Default
+    @Column(name = "is_featured", nullable = false)
+    private Boolean isFeatured = false;
+
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Warranty> warranties = new ArrayList<>();

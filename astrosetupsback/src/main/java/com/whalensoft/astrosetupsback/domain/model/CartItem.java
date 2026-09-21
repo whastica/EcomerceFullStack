@@ -32,6 +32,9 @@ public class CartItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(name = "product_name", nullable = false, length = 150)
+    private String productName;
+
     @Column(nullable = false)
     @Min(value = 1, message = "La cantidad mínima es 1")
     private Integer quantity;

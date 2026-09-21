@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.AddToCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.MigrateCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.ShoppingCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.UpdateCartItemDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
@@ -25,6 +26,20 @@ public class CartController {
     @GetMapping("/{userId}")
     public ResponseEntity<ShoppingCartDTO> getCart(@PathVariable Long userId) {
         ShoppingCartDTO cart = salesService.getShoppingCart(userId);
+        return ResponseEntity.ok(cart);
+    }
+
+    // Obtener carrito de guest por guestCartId
+    @GetMapping("/guest/{guestCartId}")
+    public ResponseEntity<ShoppingCartDTO> getGuestCart(@PathVariable String guestCartId) {
+        ShoppingCartDTO cart = salesService.getGuestCart(guestCartId);
+        return ResponseEntity.ok(cart);
+    }
+
+    // Migrar carrito guest a usuario autenticado
+    @PostMapping("/migrate")
+    public ResponseEntity<ShoppingCartDTO> migrateGuestCart(@Valid @RequestBody MigrateCartDTO migrateCartDTO) {
+        ShoppingCartDTO cart = salesService.migrateGuestCart(migrateCartDTO);
         return ResponseEntity.ok(cart);
     }
 

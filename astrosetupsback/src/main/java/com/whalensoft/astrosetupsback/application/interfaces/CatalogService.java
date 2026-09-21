@@ -43,6 +43,8 @@ public interface CatalogService {
 
     List<ProductSummaryDTO> getBestSellers();
 
+    List<ProductSummaryDTO> getRelatedProducts(Long productId);
+
     CategoryDTO createCategory(CreateCategoryDTO dto);
 
     CategoryDTO updateCategory(

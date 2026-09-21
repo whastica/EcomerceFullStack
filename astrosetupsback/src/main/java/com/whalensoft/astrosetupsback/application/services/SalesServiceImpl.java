@@ -5,6 +5,7 @@ import com.whalensoft.astrosetupsback.application.dto.promotion.validation.Promo
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.AddToCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartSummaryDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.cart.MigrateCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.ShoppingCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.UpdateCartItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.checkout.CheckoutSummaryDTO;
@@ -43,6 +44,7 @@ public class SalesServiceImpl implements SalesService {
     private final UserRepository userRepository;
     private final PromoCodeRepository promoCodeRepository;
     private final ShippingAddressRepository shippingAddressRepository;
+    private final com.whalensoft.astrosetupsback.infra.repository.JpaOrderStatusHistoryRepository orderStatusHistoryRepository;
 
     public SalesServiceImpl(
             OrderRepository orderRepository,
@@ -51,7 +53,8 @@ public class SalesServiceImpl implements SalesService {
             ProductRepository productRepository,
             UserRepository userRepository,
             PromoCodeRepository promoCodeRepository,
-            ShippingAddressRepository shippingAddressRepository) {
+            ShippingAddressRepository shippingAddressRepository,
+            com.whalensoft.astrosetupsback.infra.repository.JpaOrderStatusHistoryRepository orderStatusHistoryRepository) {
         this.orderRepository = orderRepository;
         this.shoppingCartRepository = shoppingCartRepository;
         this.cartItemRepository = cartItemRepository;
@@ -59,6 +62,7 @@ public class SalesServiceImpl implements SalesService {
         this.userRepository = userRepository;
         this.promoCodeRepository = promoCodeRepository;
         this.shippingAddressRepository = shippingAddressRepository;
+        this.orderStatusHistoryRepository = orderStatusHistoryRepository;
     }
 
     // =========================================================
@@ -185,18 +189,36 @@ public class SalesServiceImpl implements SalesService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
-        validateStatusTransition(order.getStatus(), updateStatusDTO.getStatus());
+        OrderStatus previousStatus = order.getStatus();
+        validateStatusTransition(previousStatus, updateStatusDTO.getStatus());
         order.setStatus(updateStatusDTO.getStatus());
 
         Order updatedOrder = orderRepository.save(order);
+
+        OrderStatusHistory history = OrderStatusHistory.builder()
+                .order(updatedOrder)
+                .previousStatus(previousStatus)
+                .newStatus(updateStatusDTO.getStatus())
+                .observation(updateStatusDTO.getObservation())
+                .build();
+        orderStatusHistoryRepository.save(history);
+
         return convertToOrderDTO(updatedOrder);
     }
 
     @Override
     public List<OrderStatusHistoryDTO> getOrderStatusHistory(Long id) {
-        orderRepository.findById(id)
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
-        return new ArrayList<>();
+
+        return orderStatusHistoryRepository.findByOrderOrderByChangedAtAsc(order)
+                .stream()
+                .map(h -> OrderStatusHistoryDTO.builder()
+                        .status(h.getNewStatus())
+                        .timestamp(h.getChangedAt())
+                        .observation(h.getObservation() != null ? h.getObservation() : "")
+                        .build())
+                .toList();
     }
 
     @Override
@@ -204,12 +226,21 @@ public class SalesServiceImpl implements SalesService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
+        List<OrderStatusHistoryDTO> history = orderStatusHistoryRepository.findByOrderOrderByChangedAtAsc(order)
+                .stream()
+                .map(h -> OrderStatusHistoryDTO.builder()
+                        .status(h.getNewStatus())
+                        .timestamp(h.getChangedAt())
+                        .observation(h.getObservation() != null ? h.getObservation() : "")
+                        .build())
+                .toList();
+
         return OrderTrackingDTO.builder()
                 .orderId(order.getId())
                 .currentStatus(order.getStatus())
                 .orderDate(order.getOrderDate())
                 .estimatedDelivery(calculateEstimatedDelivery(order.getOrderDate()))
-                .statusHistory(new ArrayList<>())
+                .statusHistory(history)
                 .shippingAddress(convertToShippingAddressDTO(order.getShippingAddress()))
                 .build();
     }
@@ -293,6 +324,7 @@ public class SalesServiceImpl implements SalesService {
             cartItem = CartItem.builder()
                     .shoppingCart(cart)
                     .product(product)
+                    .productName(product.getName())
                     .quantity(addToCartDTO.getQuantity())
                     .unitPrice(product.getEffectivePrice())
                     .build();
@@ -366,6 +398,54 @@ public class SalesServiceImpl implements SalesService {
                 .expiresAt(cart.getExpiration())
                 .hasAppliedPromoCode(false)
                 .build();
+    }
+
+    @Override
+    public ShoppingCartDTO getGuestCart(String guestCartId) {
+        ShoppingCart cart = resolveGuestCart(guestCartId);
+        return convertToShoppingCartDTO(cart);
+    }
+
+    @Override
+    public ShoppingCartDTO migrateGuestCart(MigrateCartDTO migrateCartDTO) {
+        User user = userRepository.findById(migrateCartDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        ShoppingCart guestCart = resolveGuestCart(migrateCartDTO.getGuestCartId());
+
+        if (guestCart.isExpired() || guestCart.getCartItems().isEmpty()) {
+            ShoppingCart userCart = shoppingCartRepository.findByUser(user)
+                    .orElseGet(() -> createNewShoppingCart(user));
+            return convertToShoppingCartDTO(userCart);
+        }
+
+        ShoppingCart userCart = shoppingCartRepository.findByUser(user)
+                .orElseGet(() -> createNewShoppingCart(user));
+
+        for (CartItem guestItem : guestCart.getCartItems()) {
+            Optional<CartItem> existingItem = cartItemRepository
+                    .findByShoppingCartAndProduct(userCart, guestItem.getProduct());
+
+            if (existingItem.isPresent()) {
+                CartItem item = existingItem.get();
+                item.setQuantity(item.getQuantity() + guestItem.getQuantity());
+                cartItemRepository.save(item);
+            } else {
+                CartItem newItem = CartItem.builder()
+                        .shoppingCart(userCart)
+                        .product(guestItem.getProduct())
+                        .productName(guestItem.getProductName())
+                        .quantity(guestItem.getQuantity())
+                        .unitPrice(guestItem.getUnitPrice())
+                        .build();
+                cartItemRepository.save(newItem);
+            }
+        }
+
+        cartItemRepository.deleteByShoppingCart(guestCart);
+        shoppingCartRepository.deleteById(guestCart.getId());
+
+        return convertToShoppingCartDTO(userCart);
     }
 
     // =========================================================
@@ -754,7 +834,28 @@ public class SalesServiceImpl implements SalesService {
     }
 
     private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
-        // Pendiente de implementar validaciones de transición
+        if (currentStatus == newStatus) {
+            throw new IllegalStateException(
+                    "La orden ya está en estado " + currentStatus
+            );
+        }
+
+        boolean isValid = switch (currentStatus) {
+            case PENDING -> newStatus == OrderStatus.IN_PREPARATION
+                    || newStatus == OrderStatus.CANCELLED;
+            case IN_PREPARATION -> newStatus == OrderStatus.SHIPPED
+                    || newStatus == OrderStatus.CANCELLED;
+            case SHIPPED -> newStatus == OrderStatus.DELIVERED;
+            case DELIVERED -> false;
+            case CANCELLED -> false;
+        };
+
+        if (!isValid) {
+            throw new IllegalStateException(
+                    "Transición de estado no válida: "
+                            + currentStatus + " → " + newStatus
+            );
+        }
     }
 
     private LocalDateTime calculateEstimatedDelivery(LocalDateTime orderDate) {

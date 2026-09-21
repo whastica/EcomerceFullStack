@@ -39,4 +39,7 @@ public interface ProductRepository {
     List<Product> findFeaturedProducts();
     List<Product> findNewArrivals();
     List<Product> findBestSellers();
+
+    // Productos relacionados
+    List<Product> findRelatedProducts(Category category, Long excludeId, Pageable pageable);
 }

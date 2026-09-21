@@ -69,10 +69,24 @@ public interface JpaProductRepository extends JpaRepository<Product, Long> {
     @Query("""
        SELECT p FROM Product p
        WHERE p.active = true
-       AND p.discountPrice IS NOT NULL
-       ORDER BY p.discountPrice ASC
+       AND p.isFeatured = true
+       ORDER BY p.createdAt DESC
        """)
     List<Product> findFeaturedProducts();
+
+    @EntityGraph(attributePaths = {"category", "category.categoryType"})
+    @Query("""
+       SELECT p FROM Product p
+       WHERE p.active = true
+       AND p.category = :category
+       AND p.id <> :excludeId
+       ORDER BY p.createdAt DESC
+       """)
+    List<Product> findRelatedProducts(
+            @Param("category") Category category,
+            @Param("excludeId") Long excludeId,
+            Pageable pageable
+    );
 
     @EntityGraph(attributePaths = {"category", "category.categoryType"})
     @Query("""

@@ -57,6 +57,10 @@ public interface SalesService {
 
     CartSummaryDTO getCartSummary(Long userId);
 
+    ShoppingCartDTO getGuestCart(String guestCartId);
+
+    ShoppingCartDTO migrateGuestCart(MigrateCartDTO migrateCartDTO);
+
     // =====================================================
     // CHECKOUT
     // =====================================================

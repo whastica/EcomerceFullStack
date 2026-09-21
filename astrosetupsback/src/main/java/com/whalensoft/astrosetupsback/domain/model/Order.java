@@ -18,7 +18,8 @@ import java.util.List;
 @Setter
 @ToString(exclude = {
         "orderItems",
-        "appliedPromoCodes"
+        "appliedPromoCodes",
+        "statusHistory"
 })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Order {
@@ -86,6 +87,14 @@ public class Order {
     )
     @Builder.Default
     private List<AppliedPromoCode> appliedPromoCodes = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<OrderStatusHistory> statusHistory = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

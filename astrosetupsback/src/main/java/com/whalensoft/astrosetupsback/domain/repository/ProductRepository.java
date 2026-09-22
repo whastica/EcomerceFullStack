@@ -34,7 +34,7 @@ public interface ProductRepository {
     // Utilidades
     List<String> findDistinctBrands();
 
-    Page<Product> findByFilters(Long categoryId, BigDecimal minPrice, BigDecimal maxPrice, String brand, Pageable pageable);
+    Page<Product> findByFilters(String query, Long categoryId, Long categoryTypeId, BigDecimal minPrice, BigDecimal maxPrice, String brand, Pageable pageable);
     // Productos destacados
     List<Product> findFeaturedProducts();
     List<Product> findNewArrivals();

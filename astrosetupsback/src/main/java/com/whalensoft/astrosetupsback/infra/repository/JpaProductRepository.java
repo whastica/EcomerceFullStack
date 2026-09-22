@@ -51,14 +51,18 @@ public interface JpaProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = {"category", "category.categoryType"})
     @Query("""
        SELECT p FROM Product p
-       WHERE (:categoryId IS NULL OR p.category.id = :categoryId)
+       WHERE (:query IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')))
+       AND (:categoryId IS NULL OR p.category.id = :categoryId)
+       AND (:categoryTypeId IS NULL OR p.category.categoryType.id = :categoryTypeId)
        AND (:minPrice IS NULL OR p.price >= :minPrice)
        AND (:maxPrice IS NULL OR p.price <= :maxPrice)
        AND (:brand IS NULL OR p.brand = :brand)
        AND p.active = true
        """)
     Page<Product> findByFilters(
+            @Param("query") String query,
             @Param("categoryId") Long categoryId,
+            @Param("categoryTypeId") Long categoryTypeId,
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
             @Param("brand") String brand,

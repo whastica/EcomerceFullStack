@@ -1,26 +1,17 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useCart } from '../cart/Cart';
 import Container from '../../components/layout/container/Container';
 import CheckoutForm from './Checkoutform';
 import OrderSummary from './Ordersummary';
-import { CartItem as CartItemFromCart } from '../cart/Cart';
+import { orderService } from '../../services/order.service';
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart();
   const navigate = useNavigate();
   const { items } = state;
-
-  /* Fixed type issues */
-  type CartItem = CartItemFromCart;
-
-  interface FormData {
-    name: string;
-    email: string;
-    phone: string;
-    address1: string;
-    address2?: string;
-  }
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /* ── Cambio de cantidad ── */
   const handleQtyChange = (id: number, delta: number) => {
@@ -40,14 +31,42 @@ export default function CheckoutPage() {
   };
 
   /* ── Envío final del formulario ── */
-  const handleFormSubmit = (formData: FormData) => {
+  const handleFormSubmit = async (formData: {
+    name: string;
+    email: string;
+    phone: string;
+    country: string;
+    state: string;
+    city: string;
+    address1: string;
+    address2?: string;
+    zipCode: string;
+    paymentMethod: string;
+  }) => {
     if (!formData.name || !formData.email || !formData.address1) {
       toast.error('Por favor completa todos los campos obligatorios');
       return;
     }
-    toast.success('¡Pedido realizado con éxito! 🎉');
-    dispatch({ type: 'CLEAR_CART' });
-    setTimeout(() => navigate('/'), 2000);
+
+    if (items.length === 0) {
+      toast.error('El carrito está vacío');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await orderService.createOrder(items, formData);
+      toast.success('¡Pedido realizado con éxito! 🎉');
+      dispatch({ type: 'CLEAR_CART' });
+      setTimeout(() => navigate('/'), 2000);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Error al crear el pedido';
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   /* ── Carrito vacío ── */
@@ -76,7 +95,7 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 max-w-6xl mx-auto items-start">
 
           {/* Formulario multi-paso */}
-          <CheckoutForm onSubmit={handleFormSubmit} />
+          <CheckoutForm onSubmit={handleFormSubmit} isSubmitting={isSubmitting} />
 
           {/* Resumen del pedido */}
           <OrderSummary

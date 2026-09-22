@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useCart } from '../../pages/cart/Cart';
 import { ProductDetail }
@@ -10,6 +11,7 @@ interface ProductInfoProps {
 
 export default function ProductInfo({ product }: ProductInfoProps) {
   const { dispatch } = useCart();
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
 
   const finalPrice = product.effectivePrice ?? product.price;
@@ -26,6 +28,20 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       },
     });
     toast.success(`"${product.name}" fue añadido al carrito 🛒`);
+  };
+
+  const handleBuyNow = () => {
+    dispatch({
+      type: 'ADD_ITEM',
+      payload: {
+        id: product.id,
+        name: product.name,
+        price: finalPrice,
+        imageUrl: product.imageUrl,
+        quantity,
+      },
+    });
+    navigate('/checkout');
   };
 
   return (
@@ -117,8 +133,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           Añadir al carrito
         </button>
         <button
-          onClick={() => console.log(`Comprar ahora: ${product.name}`)}
-          className="flex-1 py-3 rounded-md font-bold text-sm uppercase tracking-wide transition-opacity hover:opacity-90 border border-[#D6FF3C] text-black"
+          onClick={handleBuyNow}
+          disabled={(product.stock ?? 0) === 0}
+          className="flex-1 py-3 rounded-md font-bold text-sm uppercase tracking-wide transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed border border-[#D6FF3C] text-black"
           style={{ backgroundColor: '#D6FF3C' }}
         >
           Comprar ahora

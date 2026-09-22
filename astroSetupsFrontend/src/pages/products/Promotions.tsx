@@ -18,7 +18,7 @@ export default function PromotionsPage() {
       }),
   });
 
-  const products = data?.products ?? [];
+  const products = data?.content ?? [];
 
   return (
     <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">

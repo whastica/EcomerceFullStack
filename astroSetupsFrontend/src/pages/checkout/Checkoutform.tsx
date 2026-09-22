@@ -22,12 +22,14 @@ const LockIcon = () => (
   </svg>
 );
 
-/* ── Clases reutilizables para inputs de fondo blanco ── */
+/* ── Clases reutilizables para inputs ── */
 const inputClass =
-  'w-full bg-white border border-light-border text-light-text placeholder-light-muted ' +
+  'w-full bg-white border border-light-border text-gray-900 placeholder-gray-400 ' +
   'rounded-lg px-4 py-3 text-sm outline-none ' +
   'focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 ' +
   'hover:border-gray-400 transition-all duration-200';
+
+const labelClass = 'text-sm font-medium text-gray-700 mb-1 block';
 
 const STEPS = [
   { id: 1, label: 'Información del Cliente' },
@@ -40,17 +42,29 @@ const INITIAL_FORM = {
   country: '', state: '', city: '',
   address1: '', address2: '', zipCode: '',
   billingAddress: false,
-  paymentMethod: 'credit-card',
+  paymentMethod: 'cash-on-delivery',
   cardNumber: '', cardHolder: '', cardExpiry: '', cardCVV: '',
 };
 
-/**
- * CheckoutForm
- *
- * Props:
- *   onSubmit(formData) — llamado cuando el usuario completa el paso 3
- */
-export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
+export interface CheckoutFormData {
+  name: string;
+  email: string;
+  phone: string;
+  country: string;
+  state: string;
+  city: string;
+  address1: string;
+  address2?: string;
+  zipCode: string;
+  paymentMethod: string;
+}
+
+interface CheckoutFormProps {
+  onSubmit: (formData: CheckoutFormData) => void;
+  isSubmitting?: boolean;
+}
+
+export default function CheckoutForm({ onSubmit, isSubmitting = false }: CheckoutFormProps) {
   const [activeStep, setActiveStep] = useState(1);
   const [formData, setFormData] = useState(INITIAL_FORM);
 
@@ -66,7 +80,18 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
       setActiveStep((s) => s + 1);
       return;
     }
-    onSubmit(formData);
+    onSubmit({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      country: formData.country,
+      state: formData.state,
+      city: formData.city,
+      address1: formData.address1,
+      address2: formData.address2,
+      zipCode: formData.zipCode,
+      paymentMethod: formData.paymentMethod,
+    });
   };
 
   return (
@@ -106,22 +131,31 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
             <h2 className="text-lg font-bold text-dark-text mb-2">Datos del cliente</h2>
             <div className="h-px bg-dark-border mb-6" />
 
-            <div className="flex flex-col gap-3 mb-5">
-              <input
-                type="text" name="name" placeholder="Nombre completo"
-                value={formData.name} onChange={handleChange}
-                className={inputClass} required
-              />
-              <input
-                type="email" name="email" placeholder="Correo electrónico"
-                value={formData.email} onChange={handleChange}
-                className={inputClass} required
-              />
-              <input
-                type="tel" name="phone" placeholder="Teléfono"
-                value={formData.phone} onChange={handleChange}
-                className={inputClass}
-              />
+            <div className="flex flex-col gap-4 mb-5">
+              <div>
+                <label className={labelClass}>Nombre completo *</label>
+                <input
+                  type="text" name="name" placeholder="Tu nombre completo"
+                  value={formData.name} onChange={handleChange}
+                  className={inputClass} required
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Correo electrónico *</label>
+                <input
+                  type="email" name="email" placeholder="correo@ejemplo.com"
+                  value={formData.email} onChange={handleChange}
+                  className={inputClass} required
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Teléfono</label>
+                <input
+                  type="tel" name="phone" placeholder="+57 300 123 4567"
+                  value={formData.phone} onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
             </div>
 
             <p className="text-sm text-dark-muted mb-3">
@@ -130,7 +164,6 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
                 Iniciar sesión
               </a>
             </p>
-            <p className="text-sm font-bold text-dark-text mb-6">Reembolsos</p>
           </div>
         )}
 
@@ -140,25 +173,43 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
             <h2 className="text-lg font-bold text-dark-text mb-2">Dirección de envío</h2>
             <div className="h-px bg-dark-border mb-6" />
 
-            <div className="flex flex-col gap-3 mb-5">
-              <input type="text" name="country" placeholder="País"
-                value={formData.country} onChange={handleChange}
-                className={inputClass} required />
-              <input type="text" name="state" placeholder="Departamento / Provincia"
-                value={formData.state} onChange={handleChange}
-                className={inputClass} required />
-              <input type="text" name="city" placeholder="Ciudad"
-                value={formData.city} onChange={handleChange}
-                className={inputClass} required />
-              <input type="text" name="address1" placeholder="Dirección línea 1"
-                value={formData.address1} onChange={handleChange}
-                className={inputClass} required />
-              <input type="text" name="address2" placeholder="Dirección línea 2 (opcional)"
-                value={formData.address2} onChange={handleChange}
-                className={inputClass} />
-              <input type="text" name="zipCode" placeholder="Código postal"
-                value={formData.zipCode} onChange={handleChange}
-                className={inputClass} />
+            <div className="flex flex-col gap-4 mb-5">
+              <div>
+                <label className={labelClass}>País *</label>
+                <input type="text" name="country" placeholder="Ej: Colombia"
+                  value={formData.country} onChange={handleChange}
+                  className={inputClass} required />
+              </div>
+              <div>
+                <label className={labelClass}>Departamento / Provincia *</label>
+                <input type="text" name="state" placeholder="Ej: Cundinamarca"
+                  value={formData.state} onChange={handleChange}
+                  className={inputClass} required />
+              </div>
+              <div>
+                <label className={labelClass}>Ciudad *</label>
+                <input type="text" name="city" placeholder="Ej: Bogotá"
+                  value={formData.city} onChange={handleChange}
+                  className={inputClass} required />
+              </div>
+              <div>
+                <label className={labelClass}>Dirección línea 1 *</label>
+                <input type="text" name="address1" placeholder="Calle, número, barrio"
+                  value={formData.address1} onChange={handleChange}
+                  className={inputClass} required />
+              </div>
+              <div>
+                <label className={labelClass}>Dirección línea 2 (opcional)</label>
+                <input type="text" name="address2" placeholder="Apartamento, torre, etc."
+                  value={formData.address2} onChange={handleChange}
+                  className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Código postal</label>
+                <input type="text" name="zipCode" placeholder="Ej: 110110"
+                  value={formData.zipCode} onChange={handleChange}
+                  className={inputClass} />
+              </div>
             </div>
           </div>
         )}
@@ -166,40 +217,79 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
         {/* PASO 3 — Facturación y pago */}
         {activeStep === 3 && (
           <div className="animate-fade-in">
-            <h2 className="text-lg font-bold text-dark-text mb-2">Detalles de Facturación</h2>
+            <h2 className="text-lg font-bold text-dark-text mb-2">Método de pago</h2>
             <div className="h-px bg-dark-border mb-6" />
 
-            <div className="flex flex-col gap-3 mb-5">
-              <select
-                name="paymentMethod" value={formData.paymentMethod}
-                onChange={handleChange}
-                className={`${inputClass} cursor-pointer`}
-                required
-              >
-                <option value="credit-card">Tarjeta de crédito / débito</option>
-                <option value="pse">PSE</option>
-                <option value="paypal">PayPal</option>
-                <option value="mercado-pago">Mercado Pago</option>
-                <option value="cash-on-delivery">Contra entrega</option>
-              </select>
+            <div className="flex flex-col gap-4 mb-5">
+              <div>
+                <label className={labelClass}>Selecciona tu método de pago *</label>
+                <select
+                  name="paymentMethod" value={formData.paymentMethod}
+                  onChange={handleChange}
+                  className={`${inputClass} cursor-pointer`}
+                  required
+                >
+                  <option value="cash-on-delivery">Contra entrega</option>
+                  <option value="credit-card">Tarjeta de crédito / débito</option>
+                  <option value="pse">PSE (Transferencia bancaria)</option>
+                  <option value="paypal">PayPal</option>
+                  <option value="mercado-pago">Mercado Pago</option>
+                </select>
+              </div>
 
               {formData.paymentMethod === 'credit-card' && (
                 <>
-                  <input type="text" name="cardNumber" placeholder="Número de tarjeta"
-                    value={formData.cardNumber} onChange={handleChange}
-                    className={inputClass} maxLength={19} />
-                  <input type="text" name="cardHolder" placeholder="Titular de la tarjeta"
-                    value={formData.cardHolder} onChange={handleChange}
-                    className={inputClass} />
+                  <div>
+                    <label className={labelClass}>Número de tarjeta</label>
+                    <input type="text" name="cardNumber" placeholder="0000 0000 0000 0000"
+                      value={formData.cardNumber} onChange={handleChange}
+                      className={inputClass} maxLength={19} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Titular de la tarjeta</label>
+                    <input type="text" name="cardHolder" placeholder="Nombre como aparece en la tarjeta"
+                      value={formData.cardHolder} onChange={handleChange}
+                      className={inputClass} />
+                  </div>
                   <div className="flex gap-3">
-                    <input type="text" name="cardExpiry" placeholder="MM / AA"
-                      value={formData.cardExpiry} onChange={handleChange}
-                      className={`${inputClass} flex-1`} maxLength={7} />
-                    <input type="text" name="cardCVV" placeholder="CVV"
-                      value={formData.cardCVV} onChange={handleChange}
-                      className={`${inputClass} flex-1`} maxLength={4} />
+                    <div className="flex-1">
+                      <label className={labelClass}>Vencimiento</label>
+                      <input type="text" name="cardExpiry" placeholder="MM / AA"
+                        value={formData.cardExpiry} onChange={handleChange}
+                        className={inputClass} maxLength={7} />
+                    </div>
+                    <div className="flex-1">
+                      <label className={labelClass}>CVV</label>
+                      <input type="text" name="cardCVV" placeholder="123"
+                        value={formData.cardCVV} onChange={handleChange}
+                        className={inputClass} maxLength={4} />
+                    </div>
                   </div>
                 </>
+              )}
+
+              {formData.paymentMethod === 'pse' && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                  Serás redirigido a tu banco para completar la transferencia después de confirmar el pedido.
+                </div>
+              )}
+
+              {formData.paymentMethod === 'paypal' && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                  Serás redirigido a PayPal para completar el pago después de confirmar el pedido.
+                </div>
+              )}
+
+              {formData.paymentMethod === 'mercado-pago' && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                  Serás redirigido a Mercado Pago para completar el pago después de confirmar el pedido.
+                </div>
+              )}
+
+              {formData.paymentMethod === 'cash-on-delivery' && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-800">
+                  Pagas en efectivo al recibir tu pedido. El monto a pagar es el total mostrado en el resumen.
+                </div>
               )}
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -222,20 +312,29 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
             <button
               type="button"
               onClick={() => setActiveStep(s => s - 1)}
+              disabled={isSubmitting}
               className="border border-dark-border text-dark-muted bg-transparent px-5 py-4
                          rounded-lg text-sm hover:border-dark-muted hover:text-dark-text
-                         transition-all duration-200 whitespace-nowrap cursor-pointer"
+                         transition-all duration-200 whitespace-nowrap cursor-pointer
+                         disabled:opacity-50 disabled:cursor-not-allowed"
             >
               ← Anterior
             </button>
           )}
           <button
             type="submit"
+            disabled={isSubmitting}
             className="flex-1 bg-[#CDFF00] text-dark-background font-bold text-base
                        py-4 rounded-lg hover:brightness-110 transition-all duration-200
-                       cursor-pointer tracking-wide"
+                       cursor-pointer tracking-wide
+                       disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {activeStep === 3 ? 'Realizar Pedido' : 'Continuar →'}
+            {isSubmitting
+              ? 'Procesando...'
+              : activeStep === 3
+                ? 'Realizar Pedido'
+                : 'Continuar →'
+            }
           </button>
         </div>
       </form>
@@ -257,17 +356,4 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
       </div>
     </div>
   );
-}
-
-/* Fixed type issues */
-interface CheckoutFormProps {
-  onSubmit: (formData: FormData) => void;
-}
-
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  address1: string;
-  address2?: string;
 }

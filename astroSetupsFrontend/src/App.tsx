@@ -13,6 +13,7 @@ import Contact from './pages/login/Contact';
 import CheckoutPage from './pages/checkout/CheckoutPage';
 import PrivacyPolicies from './pages/privacyPolicies';
 import Conditions from './pages/conditions';
+import CustomPCPage from './pages/products/CustomPCPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
 
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/custom-pc" element={<CustomPCPage />} />
           <Route path="/privacy-policies" element={<PrivacyPolicies />} />
           <Route path="/conditions" element={<Conditions />} />
         </Routes>

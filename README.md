@@ -174,27 +174,39 @@ npm run dev
 - **Backend**: Ver `astrosetupsback/CONTEXT.md` para contexto detallado y backlog de implementacion
 - **Frontend**: Ver `astroSetupsFrontend/README.md` para contexto detallado y backlog de implementacion
 
-## Orden Recomendado para Despliegue Beta
+## Plan de Accion - Ajustes Criticos Beta (Septiembre 2026)
 
-### ✅ Completado
-1. ~~Crear seed data de productos/categorias en data.sql~~ → 112 productos cargados
-2. ~~Endpoint productos relacionados~~ → GET /api/catalog/products/{id}/related
-3. ~~Productos destacados con isFeatured~~ → Campo + query + 17 productos destacados
-4. ~~Validar transiciones de estado~~ → State machine en SalesServiceImpl
-5. ~~Historial de estado ordenes~~ → OrderStatusHistory + getRealHistory
-6. ~~Carrito guest + migracion~~ → getGuestCart + migrateGuestCart
+> Objetivo: Corregir funcionalidades criticas para despliegue beta con grupo cerrado.
 
-### Pendiente - Frontend
-7. Crear cart.service.ts (servicio API carrito)
-8. Crear order.service.ts (servicio API ordenes)
-9. Integrar carrito backend en Cart.tsx
-10. Conectar validacion de descuento en CartPage.tsx
-11. Crear pagina de promociones
-12. Crear pagina admin Promociones
-13. Crear pagina admin Reportes
+### 🔴 Tareas Criticas (Flujo de compra)
 
-### Pendiente - Deploy
-14. Configurar variables de entorno en backend (Railway)
-15. Configurar CORS para produccion
-16. Configurar variables de entorno en frontend (Vercel)
-17. Desplegar y probar flujo completo: registro -> catalogo -> carrito -> checkout
+| # | Tarea | Estado | Descripcion |
+|---|-------|--------|-------------|
+| 1 | Backend: Busqueda por nombre y categoryTypeId | ✅ Completado | Habilitar campos `query` y `categoryTypeId` en `findByFilters` (JPQL) |
+| 2 | Backend: Endpoint CategoryTypes con categorías | ✅ Completado | Nuevo endpoint `/category-types/with-categories` para sidebar jerárquico |
+| 3 | Backend: Corregir imagen en ProductDetailDTO | ✅ Completado | Renombrar `mainImageUrl` → `imageUrl` para compatibilidad con frontend |
+| 4 | Frontend: Service y hook category types | ✅ Completado | Crear `categoryType.service.ts` y `useCategoryTypes.ts` |
+| 5 | Frontend: Sidebar jerárquico | ✅ Completado | Reemplazar lista plana por CategoryType → Category colapsable |
+| 6 | Frontend: Filtrado server-side en Products | ✅ Completado | Reemplazar client-side por `useProductSearch` |
+| 7 | Frontend: Productos relacionados | ✅ Completado | Conectar `GET /api/catalog/products/{id}/related` |
+| 8 | Frontend: Comprar ahora funcional | ✅ Completado | Agregar al carrito + navegar a `/checkout` |
+| 9 | Frontend: Checkout crea orden | ✅ Completado | Conectar `POST /api/sales/orders` |
+| 10 | Frontend: Checkout form UX | ✅ Completado | Labels claros, campos de pago condicionales |
+| 11 | Frontend: Home cards con categoryTypeId | ✅ Completado | Usar `categoryTypeId` en links del home |
+
+### ✅ Completado (Pre-existente)
+- Seed data: 112 productos, 3 usuarios
+- Productos relacionados endpoint backend
+- Productos destacados (isFeatured)
+- Transiciones de estado (state machine)
+- Historial de ordenes
+- Carrito guest + migracion
+
+### 📋 Pendiente Post-Beta
+- cart.service.ts / order.service.ts / Integrar carrito backend
+- Pagina Promociones conectada
+- Admin Promociones / Reportes
+- Variables de entorno produccion
+- CORS produccion
+- Pagina Personalizar PC (placeholder)
+- Pasarela de pagos (PayPal/PSE/Wompi)

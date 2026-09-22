@@ -9,6 +9,7 @@ import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CategoryD
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CategorySummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CategoryTypeBasicDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CategoryTypeDTO;
+import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CategoryTypeWithCategoriesDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CreateCategoryDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Category.CreateCategoryTypeDTO;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Product.CreateProductDTO;
@@ -253,6 +254,15 @@ public class CatalogController {
 
         return ResponseEntity.ok(
                 catalogService.getAllCategoryTypes()
+        );
+    }
+
+    @GetMapping("/category-types/with-categories")
+    public ResponseEntity<List<CategoryTypeWithCategoriesDTO>>
+    getCategoryTypesWithCategories() {
+
+        return ResponseEntity.ok(
+                catalogService.getCategoryTypesWithCategories()
         );
     }
 }

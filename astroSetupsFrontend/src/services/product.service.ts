@@ -3,9 +3,6 @@ import { apiClient } from '@/api/client';
 import { ProductSearchRequest }
   from '@/interfaces/product/product-search-request.interface';
 
-import { ProductSearchResult }
-  from '@/interfaces/product/product-search-result.interface';
-
 import { ProductSummary }
   from '@/interfaces/product/product-summary.interface';
 
@@ -67,10 +64,10 @@ export const productService = {
    */
   async searchProducts(
     searchRequest: ProductSearchRequest
-  ): Promise<ProductSearchResult> {
+  ): Promise<PaginatedResponse<ProductSummary>> {
 
     const response =
-      await apiClient.post<ProductSearchResult>(
+      await apiClient.post<PaginatedResponse<ProductSummary>>(
         `${BASE_URL}/_search`,
         searchRequest
       );
@@ -155,6 +152,23 @@ export const productService = {
         ProductSummary[]
       >(
         `${BASE_URL}/best-sellers`
+      );
+
+    return response.data;
+  },
+
+  /**
+   * Productos relacionados (misma categoría)
+   */
+  async getRelatedProducts(
+    id: number
+  ): Promise<ProductSummary[]> {
+
+    const response =
+      await apiClient.get<
+        ProductSummary[]
+      >(
+        `${BASE_URL}/${id}/related`
       );
 
     return response.data;

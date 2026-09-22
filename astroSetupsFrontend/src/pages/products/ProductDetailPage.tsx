@@ -18,11 +18,11 @@ import LoadingState
 import ErrorState
   from '../../components/ui/states/ErrorState';
 
-import { ProductSummary }
-  from '../../interfaces/product/product-summary.interface';
-
 import { useProduct }
   from '../../hooks/useProduct';
+
+import { useRelatedProducts }
+  from '../../hooks/useRelatedProducts';
 
 export default function ProductDetailPage() {
 
@@ -30,27 +30,16 @@ export default function ProductDetailPage() {
 
   const productId = Number(id);
 
-
-
-  /**
-   * React Query
-   */
   const {
     data: product,
     isLoading,
     isError,
   } = useProduct(productId);
 
-
-
-  /**
-   * TODO:
-   * Endpoint real relacionados
-   */
-  const relatedProducts:
-    ProductSummary[] = [];
-
-
+  const {
+    data: relatedProducts = [],
+    isLoading: isRelatedLoading,
+  } = useRelatedProducts(productId);
 
   return (
 
@@ -155,31 +144,35 @@ export default function ProductDetailPage() {
 
 
         {/* Relacionados */}
-        <Container
-          padding="large"
-          className="pt-0"
-        >
+        {relatedProducts.length > 0 && (
 
-          <div className="border-t border-gray-200 pt-8">
+          <Container
+            padding="large"
+            className="pt-0"
+          >
 
-            <h2 className="text-2xl font-bold text-white mb-6 text-center">
-              Productos Relacionados
-            </h2>
+            <div className="border-t border-gray-200 pt-8">
+
+              <h2 className="text-2xl font-bold text-white mb-6 text-center">
+                Productos Relacionados
+              </h2>
 
 
 
-            <div className="flex justify-center">
+              <div className="flex justify-center">
 
-              <ProductGridRelated
-                products={relatedProducts}
-                productsPerPage={4}
-              />
+                <ProductGridRelated
+                  products={relatedProducts}
+                  productsPerPage={4}
+                />
+
+              </div>
 
             </div>
 
-          </div>
+          </Container>
 
-        </Container>
+        )}
 
       </main>
 

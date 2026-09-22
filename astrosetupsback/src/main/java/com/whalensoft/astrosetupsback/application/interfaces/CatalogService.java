@@ -69,5 +69,8 @@ public interface CatalogService {
     List<CategoryTypeBasicDTO>
     getAllCategoryTypes();
 
+    List<CategoryTypeWithCategoriesDTO>
+    getCategoryTypesWithCategories();
+
     void deleteCategoryType(Long id);
 }

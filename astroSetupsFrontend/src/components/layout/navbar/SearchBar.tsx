@@ -9,7 +9,7 @@ export function SearchBar() {
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
     if (query.trim()) {
-      navigate(`/catalog?q=${encodeURIComponent(query.trim())}`);
+      navigate(`/products?q=${encodeURIComponent(query.trim())}`);
     }
   };
 

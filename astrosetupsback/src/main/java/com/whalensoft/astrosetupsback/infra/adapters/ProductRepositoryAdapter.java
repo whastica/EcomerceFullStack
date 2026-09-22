@@ -88,14 +88,16 @@ public class ProductRepositoryAdapter implements ProductRepository {
 
     @Override
     public Page<Product> findByFilters(
+            String query,
             Long categoryId,
+            Long categoryTypeId,
             BigDecimal minPrice,
             BigDecimal maxPrice,
             String brand,
             Pageable pageable
     ) {
         return jpaProductRepository.findByFilters(
-                categoryId, minPrice, maxPrice, brand, pageable
+                query, categoryId, categoryTypeId, minPrice, maxPrice, brand, pageable
         );
     }
 

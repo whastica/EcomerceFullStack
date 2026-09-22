@@ -29,7 +29,7 @@ public class ProductDetailDTO {
     private String brand;
     private Integer stock;
 
-    private String mainImageUrl;
+    private String imageUrl;
 
     @Builder.Default
     private List<String> galleryImages = new ArrayList<>();

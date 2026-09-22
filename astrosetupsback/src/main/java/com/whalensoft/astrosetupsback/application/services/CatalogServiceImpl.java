@@ -234,7 +234,9 @@ public class CatalogServiceImpl implements CatalogService {
         );
 
         Page<Product> productsPage = productRepository.findByFilters(
+                searchDTO.getQuery(),
                 searchDTO.getCategoryId(),
+                searchDTO.getCategoryTypeId(),
                 searchDTO.getMinPrice(),
                 searchDTO.getMaxPrice(),
                 searchDTO.getBrand(),
@@ -551,6 +553,37 @@ public class CatalogServiceImpl implements CatalogService {
         categoryTypeRepository.deleteById(id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryTypeWithCategoriesDTO>
+    getCategoryTypesWithCategories() {
+
+        return categoryTypeRepository.findAll()
+                .stream()
+                .map(categoryType ->
+                        CategoryTypeWithCategoriesDTO.builder()
+                                .id(categoryType.getId())
+                                .name(categoryType.getName())
+                                .categories(
+                                        categoryType.getCategories()
+                                                .stream()
+                                                .map(category ->
+                                                        CategorySummaryDTO.builder()
+                                                                .id(category.getId())
+                                                                .name(category.getName())
+                                                                .slug(category.getSlug())
+                                                                .categoryTypeName(
+                                                                        categoryType.getName()
+                                                                )
+                                                                .build()
+                                                )
+                                                .toList()
+                                )
+                                .build()
+                )
+                .toList();
+    }
+
     // =========================================================
     // CONVERTERS
     // =========================================================
@@ -665,7 +698,7 @@ public class CatalogServiceImpl implements CatalogService {
                 .hasDiscount(product.hasDiscount())
                 .brand(product.getBrand())
                 .stock(product.getStock())
-                .mainImageUrl(product.getImageUrl())
+                .imageUrl(product.getImageUrl())
                 .galleryImages(
                         product.getImageUrl() != null
                                 ? List.of(product.getImageUrl())

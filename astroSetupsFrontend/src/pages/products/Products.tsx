@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Sidebar from '../../components/layout/sidebar/Sidebar';
 import Container from '../../components/layout/container/Container';
@@ -8,13 +8,20 @@ import ErrorState from '../../components/ui/states/ErrorState';
 import EmptyState from '../../components/ui/states/EmptyState';
 import { FilterState } from '../../components/layout/sidebar/SidebarTypes';
 import { ProductSummary } from '../../interfaces/product/product-summary.interface';
-import { Category } from '../../interfaces/category/category.interface';
-import { useProducts } from '../../hooks/useProducts';
-import { useCategories } from '../../hooks/useCategories';
+import { useProductSearch } from '../../hooks/useProductSearch';
+import { useCategoryTypes } from '../../hooks/useCategoryTypes';
+
+const SORT_MAP: Record<string, { sortBy: 'price' | 'name' | 'newest'; sortDirection: 'asc' | 'desc' }> = {
+  'newest': { sortBy: 'newest', sortDirection: 'desc' },
+  'oldest': { sortBy: 'newest', sortDirection: 'asc' },
+  'price-asc': { sortBy: 'price', sortDirection: 'asc' },
+  'price-desc': { sortBy: 'price', sortDirection: 'desc' },
+};
 
 export default function ProductsPage() {
   const [searchParams] = useSearchParams();
   const categoryIdFromUrl = searchParams.get('categoryId');
+  const categoryTypeIdFromUrl = searchParams.get('categoryTypeId');
   const queryFromUrl = searchParams.get('q');
 
   const [isSidebarOpen] = useState(true);
@@ -24,6 +31,7 @@ export default function ProductsPage() {
     searchTerm: queryFromUrl || '',
     sortBy: 'newest',
     categories: categoryIdFromUrl ? [Number(categoryIdFromUrl)] : [],
+    categoryType: categoryTypeIdFromUrl ? Number(categoryTypeIdFromUrl) : undefined,
   });
 
   useEffect(() => {
@@ -34,24 +42,48 @@ export default function ProductsPage() {
   }, [categoryIdFromUrl]);
 
   useEffect(() => {
+    if (categoryTypeIdFromUrl) {
+      setFilters(prev => ({ ...prev, categoryType: Number(categoryTypeIdFromUrl) }));
+      setPage(0);
+    }
+  }, [categoryTypeIdFromUrl]);
+
+  useEffect(() => {
     if (queryFromUrl) {
       setFilters(prev => ({ ...prev, searchTerm: queryFromUrl }));
       setPage(0);
     }
   }, [queryFromUrl]);
 
-  // Data fetching
+  // Mapear filtros a request del backend
+  const searchRequest = useMemo(() => {
+    const sortConfig = SORT_MAP[filters.sortBy] || SORT_MAP['newest'];
+
+    return {
+      query: filters.searchTerm.trim() || undefined,
+      categoryId: filters.categories.length === 1 && !filters.categoryType ? filters.categories[0] : undefined,
+      categoryTypeId: filters.categoryType || undefined,
+      minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : undefined,
+      maxPrice: filters.priceRange[1] < 5000000 ? filters.priceRange[1] : undefined,
+      sortBy: sortConfig.sortBy,
+      sortDirection: sortConfig.sortDirection,
+      page,
+      size: 50,
+    };
+  }, [filters, page]);
+
+  // Data fetching con búsqueda server-side
   const {
     data,
     isLoading: isProductsLoading,
     isError: isProductsError,
-  } = useProducts(page, 8);
+  } = useProductSearch(searchRequest);
 
   const {
-    data: categories = [],
-    isLoading: isCategoriesLoading,
-    isError: isCategoriesError,
-  } = useCategories();
+    data: categoryTypes = [],
+    isLoading: isCategoryTypesLoading,
+    isError: isCategoryTypesError,
+  } = useCategoryTypes();
 
   const products = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
@@ -63,56 +95,27 @@ export default function ProductsPage() {
     setPage(0);
   };
 
-  // useMemo — antes de early returns
-  const filteredProducts = useMemo(() => {
-    let filtered = [...products] as ProductSummary[];
-
-    filtered = filtered.filter((product) => {
-      // Precio
-      const isDefaultPrice =
-        filters.priceRange[0] === 0 && filters.priceRange[1] === 5000000;
-      const productPrice = product.effectivePrice ?? product.price;
-      const matchesPrice =
-        isDefaultPrice ||
-        (productPrice >= filters.priceRange[0] && productPrice <= filters.priceRange[1]);
-
-      // Búsqueda
-      const search = filters.searchTerm.toLowerCase();
-      const matchesSearch =
-        !filters.searchTerm.trim() ||
-        product.name.toLowerCase().includes(search) ||
-        (product.brand || '').toLowerCase().includes(search) ||
-        (product.description || '').toLowerCase().includes(search);
-
-      // Categorías
-      const matchesCategory =
-        filters.categories.length === 0 ||
-        filters.categories.some((catId) => {
-          const category = categories.find((c: Category) => c.id === catId);
-          if (!category) return false;
-          return product.categoryName === category.name;
-        });
-
-      return matchesPrice && matchesSearch && matchesCategory;
-    });
-
-    // Ordenamiento
-    switch (filters.sortBy) {
-      case 'newest': filtered.sort((a, b) => b.id - a.id); break;
-      case 'oldest': filtered.sort((a, b) => a.id - b.id); break;
-      case 'price-asc': filtered.sort((a, b) => (a.effectivePrice ?? a.price) - (b.effectivePrice ?? b.price)); break;
-      case 'price-desc': filtered.sort((a, b) => (b.effectivePrice ?? b.price) - (a.effectivePrice ?? a.price)); break;
+  // Nombre de la categoría para el título
+  const title = useMemo(() => {
+    if (filters.categories.length === 1) {
+      for (const ct of categoryTypes) {
+        const found = ct.categories.find(c => c.id === filters.categories[0]);
+        if (found) return found.name;
+      }
     }
-
-    return filtered;
-  }, [products, categories, filters]);
+    if (filters.categoryType) {
+      const ct = categoryTypes.find(ct => ct.id === filters.categoryType);
+      if (ct) return ct.name;
+    }
+    return 'Todos los productos';
+  }, [filters, categoryTypes]);
 
   // Early returns
-  if (isProductsLoading || isCategoriesLoading) {
+  if (isProductsLoading || isCategoryTypesLoading) {
     return <LoadingState message="Cargando catálogo..." />;
   }
 
-  if (isProductsError || isCategoriesError) {
+  if (isProductsError || isCategoryTypesError) {
     return (
       <ErrorState
         title="Error cargando catálogo"
@@ -128,7 +131,7 @@ export default function ProductsPage() {
         <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
         <div className="absolute inset-0 bg-tech-grid opacity-20" />
         <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
+          className="absolute top-0 left-0 w-full h-20 opacity-20"
           style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)' }}
         />
       </div>
@@ -137,7 +140,7 @@ export default function ProductsPage() {
         <Sidebar
           isOpen={isSidebarOpen}
           type="catalog"
-          categories={categories}
+          categoryTypes={categoryTypes}
           filters={filters}
           onFilterChange={handleFilterChange}
         />
@@ -145,9 +148,7 @@ export default function ProductsPage() {
           <Container padding="large">
             <div className="rounded-xl p-6 mb-8 border border-[#666] bg-[#4D4D4D] max-w-6xl mx-auto">
               <h1 className="text-3xl font-bold text-dark-text mb-2 text-shadow-glow">
-                {filters.categories.length === 1
-                  ? categories.find(c => c.id === filters.categories[0])?.name ?? 'Todos los productos'
-                  : 'Todos los productos'}
+                {title}
               </h1>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="text-dark-muted text-sm">
@@ -175,14 +176,14 @@ export default function ProductsPage() {
             </div>
 
             <div className="glass-effect rounded-xl p-6 animate-slide-up">
-              {filteredProducts.length === 0 ? (
+              {products.length === 0 ? (
                 <EmptyState
                   title="No hay productos"
                   message="No existen productos que coincidan con los filtros seleccionados."
                 />
               ) : (
                 <ProductGrid
-                  products={filteredProducts}
+                  products={products as ProductSummary[]}
                   currentPage={page}
                   totalPages={totalPages}
                   totalElements={totalElements}

@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from 'react';
+import { useEffect, RefObject, useMemo } from 'react';
 import Container from '../../components/layout/container/Container';
 import { carouselSlides } from '../../interfaces/carousel/CarouselSlide';
 import CategoryGrid from '../../components/home/CategoryGrid';
@@ -7,22 +7,30 @@ import FAQ from '../../components/home/FAQ/FAQ';
 import ProductGridRelated from '../../components/products/ProductGridRelated';
 import Carousel from '../../components/ui/Carousel';
 import { useFeaturedProducts } from '../../hooks/Usefeaturedproducts';
+import { useCategoryTypes } from '../../hooks/useCategoryTypes';
 
 interface HomeProps {
   faqRef?: RefObject<HTMLElement | null>;
 }
 
-// Categorías del home — id real del backend + imagen local
-const HOME_CATEGORIES = [
-  { id: 3,  name: 'Tarjetas Gráficas',  imageUrl: '/assets/categories/Trajeta_grafica.png' },
-  { id: 5,  name: 'Procesadores',        imageUrl: '/assets/categories/Procesador.png' },
-  { id: 2,  name: 'Memorias RAM',        imageUrl: '/assets/categories/Ram.png' },
-  { id: 7,  name: 'Tarjetas Madre',      imageUrl: '/assets/categories/Madres.png' },
-  { id: 14, name: 'Monitores',           imageUrl: '/assets/categories/Monitores.png' },
-  { id: 16, name: 'Fuentes de Poder',    imageUrl: '/assets/categories/Fuente_poder.png' },
-  { id: 13, name: 'Almacenamiento SSD',  imageUrl: '/assets/categories/Almacenamiento.png' },
-  { id: 19, name: 'Periféricos',         imageUrl: '/assets/categories/Perifericos.png' },
+// Categorías del home — nombre + imagen local
+// Los IDs se resuelven desde la API usando el nombre
+const HOME_CATEGORIES_CONFIG = [
+  { name: 'Tarjetas Gráficas',  imageUrl: '/assets/categories/Trajeta_grafica.png' },
+  { name: 'Procesadores',        imageUrl: '/assets/categories/Procesador.png' },
+  { name: 'Memorias RAM',        imageUrl: '/assets/categories/Ram.png' },
+  { name: 'Tarjetas Madre',      imageUrl: '/assets/categories/Madres.png' },
+  { name: 'Monitores',           imageUrl: '/assets/categories/Monitores.png' },
+  { name: 'Fuentes de Poder',    imageUrl: '/assets/categories/Fuente_poder.png' },
+  { name: 'Almacenamiento SSD',  imageUrl: '/assets/categories/Almacenamiento.png' },
+  { name: 'Periféricos',         imageUrl: '/assets/categories/Perifericos.png' },
 ];
+
+function matchCategoryType(configName: string, apiCategoryTypes: { id: number; name: string }[]): number | undefined {
+  const lower = configName.toLowerCase();
+  const match = apiCategoryTypes.find(ct => ct.name.toLowerCase() === lower);
+  return match?.id;
+}
 
 export default function Home({ faqRef }: HomeProps) {
   useEffect(() => {
@@ -30,6 +38,15 @@ export default function Home({ faqRef }: HomeProps) {
   }, []);
 
   const { data: featuredProducts = [], isLoading } = useFeaturedProducts();
+  const { data: apiCategoryTypes = [] } = useCategoryTypes();
+
+  const HOME_CATEGORIES = useMemo(() => {
+    return HOME_CATEGORIES_CONFIG.map(config => ({
+      id: matchCategoryType(config.name, apiCategoryTypes) ?? 0,
+      name: config.name,
+      imageUrl: config.imageUrl,
+    })).filter(cat => cat.id > 0);
+  }, [apiCategoryTypes]);
 
   return (
     <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">

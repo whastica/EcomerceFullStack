@@ -150,53 +150,41 @@ src/main/java/com/whalensoft/astrosetupsback/
 
 ---
 
-## Backlog de Implementacion (Priorizado para Despliegue Beta)
+## Backlog de Implementacion - Ajustes Criticos Beta
 
-### Fase 1: FUNCIONALIDAD CORE ✅ COMPLETADA
+### 🔴 Tareas Criticas Backend (En progreso)
+
+| # | Tarea | Estado | Archivos | Descripcion |
+|---|-------|--------|----------|-------------|
+| 1 | Busqueda por nombre y categoryTypeId | ✅ Completado | `JpaProductRepository.java`, `ProductRepository.java`, `CatalogServiceImpl.java`, `ProductRepositoryAdapter.java` | Habilitar campos `query` y `categoryTypeId` en `findByFilters` JPQL |
+| 2 | Endpoint CategoryTypes con categorías | ✅ Completado | `CatalogController.java`, `CatalogServiceImpl.java`, nuevo DTO | `GET /category-types/with-categories` para sidebar jerárquico |
+| 3 | Corregir imagen ProductDetailDTO | ✅ Completado | `ProductDetailDTO.java`, `CatalogServiceImpl.java` | Renombrar `mainImageUrl` → `imageUrl` |
+
+### ✅ Completado (Pre-existente)
 
 | # | Tarea | Estado |
 |---|-------|--------|
 | 1 | ~~Seed data de productos/categorias~~ | ✅ 112 productos en data.sql |
 | 2 | ~~Endpoint productos relacionados~~ | ✅ GET /api/catalog/products/{id}/related |
 | 3 | ~~Productos destacados automaticos~~ | ✅ Campo isFeatured + query filtrada |
+| 4 | ~~Validacion de transiciones de estado~~ | ✅ validateStatusTransition() con state machine |
+| 5 | ~~Historial de estado de ordenes~~ | ✅ OrderStatusHistory + getRealHistory |
+| 6 | ~~Carrito guest + migracion~~ | ✅ getGuestCart + migrateGuestCart + endpoints |
+| 7 | ~~CartItem.productName~~ | ✅ Campo snapshot del nombre |
 
-### Fase 2: FUNCIONALIDADES PENDIENTES ✅ COMPLETADA
+### 📋 Pendiente Post-Beta
 
-| # | Tarea | Estado |
-|---|-------|--------|
-| 4 | ~~Paginacion real en searchOrders~~ | ⏳ Pendiente (no critico para beta) |
-| 5 | ~~Validacion de transiciones de estado~~ | ✅ validateStatusTransition() con state machine |
-| 6 | ~~Historial de estado de ordenes~~ | ✅ OrderStatusHistory + getRealHistory |
-| 7 | ~~Gestion de stock en checkout~~ | ⏳ Pendiente (pedido por orden, sin stock propio) |
-
-### Fase 2: CARRITO GUEST + MIGRACION ✅ COMPLETADA
-
-| # | Tarea | Archivos modificados |
-|---|-------|---------------------|
-| 8 | ~~Carrito guest~~ | CartController (GET /guest/{id}), SalesService, SalesServiceImpl |
-| 9 | ~~Migracion guest→user~~ | CartController (POST /migrate), MigrateCartDTO, SalesService |
-| 10 | ~~CartItem.productName~~ | CartItem.java, SalesServiceImpl (addToCart + migrateGuestCart) |
-
-### Fase 3: MEJORAS - Post-Beta
-
-| # | Tarea | Archivos a modificar | Notas |
-|---|-------|---------------------|-------|
-| 11 | **Tests unitarios** | `src/test/` | Crear tests para servicios criticos: AuthService, CatalogService, SalesService |
-| 12 | **Tests de integracion** | `src/test/` | Tests de controladores con MockMvc |
-| 13 | **Documentacion Swagger/OpenAPI** | `pom.xml`, `SecurityConfig.java` | Agregar dependencia springdoc-openapi y configurar |
-| 14 | **Refresh Token** | `AuthController.java`, `AuthServiceImpl.java`, `JwtProvider.java` | Implementar refresh token para sesiones largas |
-| 15 | **Email de verificacion** | `AuthServiceImpl.java`, nuevo servicio de email | Enviar email de bienvenida al registrar usuario |
-| 16 | **Paginacion real searchOrders** | `SalesServiceImpl.java` | Filtrar en query JPA, no en memoria |
-| 17 | **Chatbot con IA** | Nuevo modulo | Python + LangChain para soporte al cliente |
-| 18 | **Integracion con pasarela de pagos** | `SalesServiceImpl.java`, nuevo servicio | Wompi/PayU para pagos en Colombia |
-
-### Fase 4: DEPLOY - Configuracion Produccion
-
-| # | Tarea | Archivos a modificar | Notas |
-|---|-------|---------------------|-------|
-| 19 | **Variables de entorno para produccion** | `application.properties` | Mover MySQL config, JWT secret, y demas a variables de entorno (`${DB_URL}`, `${JWT_SECRET}`, etc.) |
-| 20 | **CORS para produccion** | `SecurityConfig.java` | Agregar dominio de Vercel a `setAllowedOrigins` |
-| 21 | **JWT Secret seguro** | `application.properties`, `JwtProvider.java` | Asegurar que uses `${JWT_SECRET}` sin fallback a valor por defecto |
+| # | Tarea | Notas |
+|---|-------|-------|
+| 8 | Tests unitarios e integracion | Tests para AuthService, CatalogService, SalesService |
+| 9 | Swagger/OpenAPI | springdoc-openapi |
+| 10 | Refresh Token | Sesiones largas |
+| 11 | Email de verificacion | Email de bienvenida |
+| 12 | Paginacion real searchOrders | Filtrar en query JPA, no en memoria |
+| 13 | Integracion pasarela de pagos | Wompi/PayU |
+| 14 | Variables de entorno produccion | `${DB_URL}`, `${JWT_SECRET}`, etc. |
+| 15 | CORS produccion | Dominio de Vercel en SecurityConfig |
+| 16 | JWT Secret seguro | Sin fallback hardcoded |
 
 ---
 

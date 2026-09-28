@@ -9,7 +9,7 @@ interface CategoryCardProps {
 export default function CategoryCard({ id, name, imageUrl }: CategoryCardProps) {
   return (
     <Link
-      to={`/products?categoryTypeId=${id}`}
+      to={`/catalog?categoryTypeId=${id}`}
       className="group block rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 ease-in-out"
     >
       <div className="relative w-full h-48">

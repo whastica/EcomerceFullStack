@@ -14,6 +14,7 @@ import CheckoutPage from './pages/checkout/CheckoutPage';
 import PrivacyPolicies from './pages/privacyPolicies';
 import Conditions from './pages/conditions';
 import CustomPCPage from './pages/products/CustomPCPage';
+import TrackingPage from './pages/tracking/TrackingPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
 
@@ -92,6 +93,7 @@ export default function App() {
           <Route path="/custom-pc" element={<CustomPCPage />} />
           <Route path="/privacy-policies" element={<PrivacyPolicies />} />
           <Route path="/conditions" element={<Conditions />} />
+          <Route path="/tracking" element={<TrackingPage />} />
         </Routes>
       </div>
       <Footer />

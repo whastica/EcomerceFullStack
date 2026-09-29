@@ -4,6 +4,7 @@ import { useState, forwardRef } from 'react';
 import { ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { FAQProps } from './faqTypes';
 import { FAQ_DATA } from './FAQdata';
+import { buildWhatsAppUrl } from '../../../config/socialLinks';
 
 const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
   const [openItem, setOpenItem] = useState<number | null>(null);
@@ -13,13 +14,12 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
   };
 
   const handleWhatsAppContact = () => {
-    const phoneNumber = '573001234567';
-    const message = encodeURIComponent('Hola, tengo una consulta sobre sus productos.');
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    const message = 'Hola, tengo una consulta sobre sus productos.';
+    window.open(buildWhatsAppUrl(message), '_blank');
   };
 
   return (
-    <section ref={ref} id={id} className="py-16 bg-dark-background text-dark-text">
+    <section ref={ref} id={id} className="py-16 text-dark-text">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Columna izquierda - Contacto */}

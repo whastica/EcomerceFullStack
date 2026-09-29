@@ -4,10 +4,9 @@ import Container from '../../components/layout/container/Container';
 import { carouselSlides } from '../../interfaces/carousel/CarouselSlide';
 import CategoryGrid from '../../components/home/CategoryGrid';
 import CustomSetup from '../../components/home/customSetup/CustomSetup';
+import ExploreProducts from '../../components/home/ExploreProducts';
 import FAQ from '../../components/home/FAQ/FAQ';
-import ProductGridRelated from '../../components/products/ProductGridRelated';
 import Carousel from '../../components/ui/Carousel';
-import { useCatalogProducts } from '../../hooks/useCatalogProducts';
 import { useCategoryTypes } from '../../hooks/useCategoryTypes';
 
 interface HomeProps {
@@ -41,7 +40,6 @@ export default function Home({ faqRef }: HomeProps) {
     document.documentElement.classList.add('dark');
   }, []);
 
-  const { data: catalogProducts = [], isLoading } = useCatalogProducts(0, 16);
   const { data: apiCategoryTypes = [] } = useCategoryTypes();
 
   const HOME_CATEGORIES = useMemo(() => {
@@ -54,19 +52,8 @@ export default function Home({ faqRef }: HomeProps) {
   }, [apiCategoryTypes]);
 
   return (
-    <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">
-      {/* Fondo decorativo */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-dark-gradient" />
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
-        <div className="absolute inset-0 bg-tech-grid opacity-20" />
-        <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)' }}
-        />
-      </div>
-
-      <div className="relative z-10 content-overlay">
+    <div className="min-h-screen text-dark-text flex flex-col relative bg-app-gradient">
+      <div className="relative z-10">
         {/* Carousel */}
         <div className="relative">
           <Carousel
@@ -94,7 +81,7 @@ export default function Home({ faqRef }: HomeProps) {
 
         {/* Categorías */}
         <Container padding="large" className="mt-8">
-          <div className="glass-effect rounded-lg p-6 mb-8">
+          <div className="p-6 mb-8">
             <motion.h2
               initial={{ opacity: 0, y: -30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -119,23 +106,7 @@ export default function Home({ faqRef }: HomeProps) {
         </div>
 
         {/* Productos destacados desde el backend */}
-        <Container padding="large" className="pt-0">
-          <div className="glass-effect rounded-lg p-6 border-dark-border">
-            <h2 className="text-4xl font-bold mb-6 text-dark-text text-shadow-dark">
-              Explora Nuestros Productos
-            </h2>
-            {isLoading ? (
-              <div className="text-center py-8 text-dark-muted">
-                Cargando productos...
-              </div>
-            ) : (
-              <ProductGridRelated
-                products={catalogProducts}
-                productsPerPage={4}
-              />
-            )}
-          </div>
-        </Container>
+        <ExploreProducts />
       </div>
     </div>
   );

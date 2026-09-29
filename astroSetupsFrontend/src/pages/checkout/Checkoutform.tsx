@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 /* ── Iconos ── */
 const ShieldIcon = () => (
@@ -98,28 +99,45 @@ export default function CheckoutForm({ onSubmit, isSubmitting = false }: Checkou
     <div className="font-helvetica">
 
       {/* ── Barra de pasos ── */}
-      <div className="flex items-start gap-2 mb-10 flex-wrap">
-        {STEPS.map((step, idx) => (
-          <div key={step.id} className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveStep(step.id)}
-              className={`
-                text-sm font-bold leading-snug pb-1 bg-transparent border-x-0 border-t-0
-                cursor-pointer transition-all duration-200
-                ${activeStep === step.id
-                  ? 'text-dark-text border-b-2 border-red-500'
-                  : 'text-dark-border border-b-2 border-transparent hover:text-dark-muted'
-                }
-              `}
-            >
-              {step.label}
-            </button>
-            {idx < STEPS.length - 1 && (
-              <span className="text-dark-border text-base select-none">→</span>
-            )}
-          </div>
-        ))}
+      <div className="flex items-start gap-3 mb-10 flex-wrap">
+        {STEPS.map((step, idx) => {
+          const isActive = activeStep === step.id;
+          return (
+            <div key={step.id} className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveStep(step.id)}
+                aria-current={isActive ? 'step' : undefined}
+                className={`
+                  text-sm font-bold leading-snug pb-1 bg-transparent border-x-0 border-t-0
+                  cursor-pointer transition-all duration-200
+                  ${isActive
+                    ? 'text-brand border-b-2 border-brand'
+                    : 'text-dark-muted border-b-2 border-transparent hover:text-dark-text'
+                  }
+                `}
+              >
+                {step.label}
+              </button>
+
+              {idx < STEPS.length - 1 && (
+                <span
+                  aria-hidden="true"
+                  className={`
+                    flex h-6 w-6 shrink-0 items-center justify-center rounded-full
+                    border transition-colors duration-200
+                    ${isActive
+                      ? 'border-brand text-brand'
+                      : 'border-dark-border text-dark-muted'
+                    }
+                  `}
+                >
+                  <ArrowRight size={12} strokeWidth={2.5} />
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* ── Formulario ── */}
@@ -135,25 +153,17 @@ export default function CheckoutForm({ onSubmit, isSubmitting = false }: Checkou
               <div>
                 <label className={labelClass}>Nombre completo *</label>
                 <input
-                  type="text" name="name" placeholder="Tu nombre completo"
+                  type="text" name="name" placeholder="Nombre completo"
                   value={formData.name} onChange={handleChange}
                   className={inputClass} required
                 />
               </div>
               <div>
-                <label className={labelClass}>Correo electrónico *</label>
+                <label className={labelClass}>Dirección de e-mail *</label>
                 <input
-                  type="email" name="email" placeholder="correo@ejemplo.com"
+                  type="email" name="email" placeholder="Dirección de e-mail"
                   value={formData.email} onChange={handleChange}
                   className={inputClass} required
-                />
-              </div>
-              <div>
-                <label className={labelClass}>Teléfono</label>
-                <input
-                  type="tel" name="phone" placeholder="+57 300 123 4567"
-                  value={formData.phone} onChange={handleChange}
-                  className={inputClass}
                 />
               </div>
             </div>
@@ -164,6 +174,27 @@ export default function CheckoutForm({ onSubmit, isSubmitting = false }: Checkou
                 Iniciar sesión
               </a>
             </p>
+
+            {/* Aviso de reembolsos */}
+            <div className="flex items-start gap-2 rounded-lg border border-dark-border bg-dark-surface/60 px-3 py-2.5">
+              <svg
+                className="w-4 h-4 text-brand shrink-0 mt-0.5"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="1.8" aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round"
+                  d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2m4-2v4m-4 0h4" />
+              </svg>
+              <p className="text-xs leading-relaxed text-dark-muted">
+                <span className="font-bold text-dark-text">Reembolsos:</span>{' '}
+                Si tu compra no cumple con lo esperado, aplica a reembolso o
+                cambio según nuestra{' '}
+                <a href="/conditions" className="text-brand font-semibold hover:underline">
+                  política de garantías
+                </a>
+                .
+              </p>
+            </div>
           </div>
         )}
 

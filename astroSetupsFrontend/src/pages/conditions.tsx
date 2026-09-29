@@ -1,6 +1,6 @@
 const PrivacyPolicies = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div className="min-h-screen flex flex-col bg-app-gradient">
       <main className="flex-grow flex flex-col items-center py-10">
         <div className="bg-dark-panel text-white w-full max-w-4xl p-6 rounded-md text-center">
           <h1 className="text-[46px] font-bold font-montserrat">Condiciones de Uso y Garantías</h1>

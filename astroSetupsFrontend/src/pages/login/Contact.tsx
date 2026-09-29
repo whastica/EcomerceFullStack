@@ -1,5 +1,6 @@
 import Container from '../../components/layout/container/Container';
-import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
+import SocialLinks from '../../components/social/SocialLinks';
+import { buildWhatsAppUrl } from '../../config/socialLinks';
 import { useState } from 'react';
 
 export default function ContactPage() {
@@ -9,13 +10,6 @@ export default function ContactPage() {
     phone: '',
     message: ''
   });
-
-  const socialLinks = [
-    { icon: <FaFacebookF />, label: 'Facebook', href: '#' },
-    { icon: <FaInstagram />, label: 'Instagram', href: '#' },
-    { icon: <FaTwitter />, label: 'Twitter', href: '#' },
-    { icon: <FaYoutube />, label: 'YouTube', href: '#' },
-  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -32,29 +26,12 @@ export default function ContactPage() {
   };
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = '573237221518'; // Número sin espacios ni caracteres especiales
     const message = 'Hola, me gustaría recibir información sobre sus productos y servicios.';
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(buildWhatsAppUrl(message), '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">
-      {/* Fondo decorativo animado */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Capas base */}
-        <div className="absolute inset-0 bg-dark-gradient"></div>
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
-        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
-        {/* Degradado gris claro en diagonal hacia la parte superior derecha */}
-        <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{
-            backgroundImage: `linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)`,
-          }}
-        />
-      </div>
+    <div className="min-h-screen bg-app-gradient text-dark-text flex flex-col relative">
 
       <main className="flex-grow flex items-center justify-center z-10 relative py-16">
         <Container className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl bg-transparent p-4 md:p-10 rounded-lg">
@@ -71,10 +48,7 @@ export default function ContactPage() {
             </div>
 
             {/* Formulario de Contacto */}
-            <div
-              className="rounded-xl shadow-lg p-8 w-full"
-              style={{ backgroundColor: 'var(--color-dark-panel)' }}
-            >
+            <div className="rounded-xl p-8 w-full bg-transparent">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-white mb-2 text-center">
                   Por favor completa el formulario a continuación y nos contactaremos
@@ -253,20 +227,7 @@ export default function ContactPage() {
                   <h4 className="text-lg font-semibold text-white mb-4">
                     Síguenos en nuestras redes:
                   </h4>
-                  <div className="flex space-x-4">
-                    {socialLinks.map(({ icon, label, href }) => (
-                      <a
-                        key={label}
-                        href={href}
-                        aria-label={label}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-brand to-brand-hover hover:from-brand-hover hover:to-brand-dark rounded-lg text-white text-lg shadow-md transition-transform duration-200 hover:scale-105 active:scale-95"
-                      >
-                        {icon}
-                      </a>
-                    ))}
-                  </div>
+                  <SocialLinks className="flex space-x-4" />
                 </div>
               </div>
             </div>

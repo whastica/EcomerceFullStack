@@ -1,5 +1,7 @@
 import ProductCard
   from './ProductCard';
+import { ChevronLeft, ChevronRight }
+  from 'lucide-react';
 import { ProductSummary }
   from '../../interfaces/product/product-summary.interface';
 
@@ -54,8 +56,8 @@ export default function ProductGrid({
 
   return (
     <div className="space-y-8">
-      {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+      {/* Grid — 4 columnas (20 productos por página = 4×5) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
         {products.map((product) => (
           <ProductCard
             key={product.id}
@@ -70,9 +72,10 @@ export default function ProductGrid({
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 0}
-            className="px-4 py-2 rounded-lg border text-sm font-medium bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-brand transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Página anterior"
+            className="w-9 h-9 flex items-center justify-center rounded-lg border border-dark-border text-dark-muted hover:text-dark-text hover:border-dark-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            ⬅ Anterior
+            <ChevronLeft size={16} />
           </button>
 
           {/* Números de página — mostramos base-1 al usuario */}
@@ -90,10 +93,12 @@ export default function ProductGrid({
                   <button
                     key={i}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                    aria-label={`Página ${displayNum}`}
+                    aria-current={pageNum === currentPage ? 'page' : undefined}
+                    className={`min-w-[36px] px-2 py-1.5 rounded-lg text-sm border transition-colors ${
                       pageNum === currentPage
-                        ? 'bg-brand text-white border-brand'
-                        : 'bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-brand'
+                        ? 'text-dark-text border-dark-soft bg-white/5'
+                        : 'text-dark-muted border-dark-border hover:text-dark-text hover:border-dark-soft'
                     }`}
                   >
                     {displayNum}
@@ -116,9 +121,10 @@ export default function ProductGrid({
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages - 1}
-            className="px-4 py-2 rounded-lg border text-sm font-medium bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-brand transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Página siguiente"
+            className="w-9 h-9 flex items-center justify-center rounded-lg border border-dark-border text-dark-muted hover:text-dark-text hover:border-dark-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Siguiente ➡
+            <ChevronRight size={16} />
           </button>
         </div>
       )}

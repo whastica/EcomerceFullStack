@@ -72,7 +72,7 @@ export default function CheckoutPage() {
   /* ── Carrito vacío ── */
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-elegant-dark-diagonal-subtle flex items-center justify-center font-helvetica">
+      <div className="min-h-screen bg-app-gradient flex items-center justify-center font-helvetica">
         <div className="text-center space-y-6">
           <h1 className="text-3xl font-bold text-dark-text">
             No hay productos en el carrito
@@ -90,7 +90,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-elegant-dark-diagonal-subtle py-12 font-helvetica">
+    <div className="min-h-screen bg-app-gradient py-12 font-helvetica">
       <Container padding="large">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 max-w-6xl mx-auto items-start">
 

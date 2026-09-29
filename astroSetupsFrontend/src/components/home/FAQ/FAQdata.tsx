@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { FAQItem } from './faqTypes';
 import { motion } from 'framer-motion';
+import { buildWhatsAppUrl } from '../../../config/socialLinks';
 
 const answerWrapper = (content: ReactNode) => (
   <motion.div
@@ -32,7 +33,7 @@ export const FAQ_DATA: FAQItem[] = [
         <p>
           Si presentas alguna duda adicional puedes hablar con nuestro equipo por WhatsApp tocando el siguiente link:{' '}
           <a
-            href="https://wa.me/573001234567"
+            href={buildWhatsAppUrl()}
             target="_blank"
             rel="noopener noreferrer"
             className="text-green-600 font-semibold underline hover:text-green-700"

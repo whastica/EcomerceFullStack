@@ -78,32 +78,32 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onQtyChange, onRemov
               </span>
               <button
                 type="button"
-                className="text-[11px] font-bold text-white bg-red-500 border-none
-                           rounded px-1.5 py-0.5 cursor-pointer hover:bg-red-600
+                className="text-[11px] font-bold text-white bg-brand border-none
+                           rounded px-1.5 py-0.5 cursor-pointer hover:bg-brand-hover
                            transition-colors duration-150 tracking-wide"
               >
-                ELIMINAR
+                CAMBIAR
               </button>
             </div>
 
-            {/* Cantidad */}
+            {/* Cantidad (compacta) */}
             <div className="flex items-center border border-gray-300 rounded w-fit">
               <button
                 type="button"
                 onClick={() => onQtyChange(item.id, -1)}
-                className="bg-transparent border-none px-2.5 py-1 text-base text-gray-700
+                className="bg-transparent border-none px-1.5 py-0.5 text-sm text-gray-700
                            cursor-pointer hover:bg-gray-100 transition-colors duration-150 rounded-l"
               >
                 −
               </button>
-              <span className="px-3 py-1 text-sm text-gray-900 border-l border-r
-                               border-gray-300 min-w-[28px] text-center">
+              <span className="px-2 py-0.5 text-xs text-gray-900 border-l border-r
+                               border-gray-300 min-w-[22px] text-center tabular-nums">
                 {item.quantity}
               </span>
               <button
                 type="button"
                 onClick={() => onQtyChange(item.id, 1)}
-                className="bg-transparent border-none px-2.5 py-1 text-base text-gray-700
+                className="bg-transparent border-none px-1.5 py-0.5 text-sm text-gray-700
                            cursor-pointer hover:bg-gray-100 transition-colors duration-150 rounded-r"
               >
                 +
@@ -112,8 +112,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onQtyChange, onRemov
           </div>
 
           {/* Precio + eliminar */}
-          <div className="flex flex-col items-end gap-2 shrink-0">
-            <span className="text-sm font-bold text-gray-900">
+          <div className="flex items-center gap-2 shrink-0 self-start">
+            <span className="text-sm font-bold text-gray-900 tabular-nums">
               ${(item.price * item.quantity).toLocaleString('es-CO')}
             </span>
             <button
@@ -131,26 +131,28 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onQtyChange, onRemov
 
       <Divider />
 
-      {/* ── Subtotal / Envío ── */}
+      {/* ── Desglose ── */}
       <div className="space-y-1.5 mb-1">
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500">Subtotal:</span>
-          <span className="text-sm font-semibold text-gray-900">
+        <div className="flex justify-between items-baseline gap-3">
+          <span className="text-sm font-bold text-gray-900">Subtotal:</span>
+          <span className="text-sm font-bold text-gray-900 tabular-nums text-right">
             ${subtotal.toLocaleString('es-CO')}
           </span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500">Envío:</span>
-          <span className="text-sm font-semibold text-gray-900">
+        <div className="flex justify-between items-baseline gap-3">
+          <span className="text-sm font-bold text-gray-900">Envío:</span>
+          <span className="text-sm font-bold text-gray-900 tabular-nums text-right">
             {shipping === 0 ? 'Gratis' : `$${shipping.toLocaleString('es-CO')}`}
           </span>
         </div>
-      </div>
-
-      {/* ── IVA ── */}
-      <div className="mb-3 mt-1">
-        <p className="text-xs text-gray-400">Impuesto incluido:</p>
-        <p className="text-xs text-gray-400">IVA (19%): ${iva.toLocaleString('es-CO')}</p>
+        <div className="flex justify-between items-baseline gap-3">
+          <span className="text-sm font-bold text-gray-900">
+            Impuesto incluido: IVA (19%)
+          </span>
+          <span className="text-sm font-bold text-gray-900 tabular-nums text-right">
+            ${iva.toLocaleString('es-CO')}
+          </span>
+        </div>
       </div>
 
       <Divider />
@@ -187,38 +189,47 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onQtyChange, onRemov
 
       <Divider />
 
-      {/* ── Barra de envío gratis ── */}
-      {shipping > 0 ? (
-        <div className="mb-2">
-          <p className="text-xs text-gray-600 mb-2 leading-snug">
-            Añade{' '}
-            <strong className="text-gray-900">${remaining.toLocaleString('es-CO')}</strong>
-            {' '}más a tu compra y consigue{' '}
-            <strong className="text-gray-900">ENVÍO GRATIS</strong>
-          </p>
-          <div className="relative h-2.5 bg-gray-200 rounded-full overflow-visible">
-            <div
-              className="h-2.5 bg-red-500 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-            <span className="absolute -top-6 right-0 text-[11px] font-bold text-white
-                             bg-gray-500 rounded px-1 py-px">
-              {progress}%
-            </span>
-          </div>
-        </div>
-      ) : (
-        <p className="text-xs font-bold text-green-600 mb-2">
-          ✓ ¡Tienes ENVÍO GRATIS!
+      {/* ── Barra de progreso de envío gratis ── */}
+      <div className="mb-3">
+        <p className="text-xs text-gray-600 mb-6 leading-snug">
+          {remaining > 0 ? (
+            <>
+              Añade{' '}
+              <strong className="text-gray-900">
+                ${remaining.toLocaleString('es-CO')}
+              </strong>
+              {' '}más a tu compra y consigue{' '}
+              <strong className="text-gray-900">ENVÍO GRATIS</strong>
+            </>
+          ) : (
+            <>
+              <strong className="text-green-600">¡Tienes ENVÍO GRATIS!</strong>
+              {' '}Tu pedido ya califica para envío sin costo.
+            </>
+          )}
         </p>
-      )}
+
+        <div className="relative h-3 bg-gray-200 rounded-full">
+          <div
+            className="h-3 rounded-full bg-brand transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+          <span
+            className="absolute -top-5 -translate-x-1/2 rounded-full bg-gray-900
+                       px-2 py-0.5 text-[10px] font-bold text-white shadow-md"
+            style={{ left: `${progress}%` }}
+          >
+            {progress}%
+          </span>
+        </div>
+      </div>
 
       <Divider />
 
       {/* ── Total ── */}
-      <div className="flex justify-between items-baseline">
-        <span className="text-sm text-gray-500 font-medium">Total:</span>
-        <span className="text-2xl font-black text-gray-900">
+      <div className="flex justify-between items-baseline gap-3">
+        <span className="text-sm font-bold text-gray-900">Total:</span>
+        <span className="text-2xl font-black text-gray-900 tabular-nums text-right">
           ${total.toLocaleString('es-CO')}
         </span>
       </div>

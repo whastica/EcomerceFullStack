@@ -46,20 +46,8 @@ export default function CartPage() {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-dark-tech-pattern text-dark-text relative">
-      {/* Fondo decorativo animado */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-dark-gradient"></div>
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
-        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
-        <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{
-            backgroundImage: 'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)',
-          }}
-        />
-      </div>
-      
+    <div className="min-h-screen flex flex-col bg-app-gradient text-dark-text relative">
+
       <main className="flex-1 relative z-10">
         <Container padding="large" className="py-3">
           <h1 className="text-2xl font-bold text-dark-text mb-8">🛒 Tu Carrito</h1>

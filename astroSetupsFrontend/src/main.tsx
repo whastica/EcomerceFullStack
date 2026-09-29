@@ -7,7 +7,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 
 import './index.css';
-import './styles/global.css';
 import './styles/admin.css';
 
 import App from './App';

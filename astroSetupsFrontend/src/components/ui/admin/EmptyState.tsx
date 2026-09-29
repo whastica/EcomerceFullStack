@@ -23,13 +23,13 @@ export default function EmptyState({
       )}
     >
       <div className="relative mb-6">
-        <div className="p-5 rounded-2xl admin-glass border border-white/[0.08] text-[#AAAAAA]">
+        <div className="p-5 rounded-2xl admin-glass border border-white/[0.08] text-dark-muted">
           {icon}
         </div>
-        <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-[#8B5CF6]/5 to-[#3B82F6]/5 blur-lg -z-10" />
+        <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-brand/5 to-info/5 blur-lg -z-10" />
       </div>
       <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-      <p className="text-sm text-[#AAAAAA] max-w-sm mb-6">{description}</p>
+      <p className="text-sm text-dark-muted max-w-sm mb-6">{description}</p>
       {action}
     </div>
   );

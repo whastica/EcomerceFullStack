@@ -30,30 +30,30 @@ export default function StatsCard({
     >
       <div className="flex items-start justify-between">
         <div className="space-y-2.5">
-          <p className="text-xs text-[#AAAAAA] font-medium uppercase tracking-wider">{title}</p>
+          <p className="text-xs text-dark-muted font-medium uppercase tracking-wider">{title}</p>
           <p className="text-2xl font-bold text-white admin-glow-text">{value}</p>
           {subtitle && (
-            <p className="text-[11px] text-[#AAAAAA]">{subtitle}</p>
+            <p className="text-[11px] text-dark-muted">{subtitle}</p>
           )}
           {trend && (
             <div className="flex items-center gap-1">
               <span
                 className={cn(
                   'text-xs font-semibold',
-                  trend.isPositive ? 'text-[#D7FE3B]' : 'text-[#FB5607]'
+                  trend.isPositive ? 'text-lime' : 'text-brand'
                 )}
               >
                 {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
               </span>
-              <span className="text-[10px] text-[#AAAAAA]">vs mes anterior</span>
+              <span className="text-[10px] text-dark-muted">vs mes anterior</span>
             </div>
           )}
         </div>
         <div className="relative">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-[#8B5CF6]/20 to-[#3B82F6]/10 border border-[#8B5CF6]/15">
-            <Icon size={20} className="text-[#8B5CF6] drop-shadow-[0_0_8px_rgba(139,92,246,0.4)]" />
+          <div className="p-3 rounded-xl bg-gradient-to-br from-brand/20 to-info/10 border border-brand/15">
+            <Icon size={20} className="text-brand drop-shadow-[0_0_8px_rgba(251,86,7,0.4)]" />
           </div>
-          <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-[#8B5CF6]/10 to-transparent blur-sm -z-10" />
+          <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-brand/10 to-transparent blur-sm -z-10" />
         </div>
       </div>
     </div>

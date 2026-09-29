@@ -174,7 +174,7 @@ export default function AdminProductsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-[22px] font-bold text-white">Productos</h1>
-          <p className="text-[13px] text-[#555555] mt-1">
+          <p className="text-[13px] text-dark-dim mt-1">
             Gestiona el inventario, precios y disponibilidad de tus productos.
           </p>
         </div>
@@ -194,29 +194,29 @@ export default function AdminProductsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="admin-kpi">
-          <div className="admin-kpi-icon bg-[rgba(96,165,250,0.08)]">
-            <Package size={18} className="text-[#60A5FA]" />
+          <div className="admin-kpi-icon bg-blue-400/[0.08]">
+            <Package size={18} className="text-blue-400" />
           </div>
           <div className="admin-kpi-value">{totalElements}</div>
           <div className="admin-kpi-label">Total de productos</div>
         </div>
         <div className="admin-kpi">
           <div className="admin-kpi-icon bg-[rgba(52,211,153,0.08)]">
-            <Package size={18} className="text-[#34D399]" />
+            <Package size={18} className="text-emerald-400" />
           </div>
           <div className="admin-kpi-value">{totalStock}</div>
           <div className="admin-kpi-label">Productos en stock</div>
         </div>
         <div className="admin-kpi">
           <div className="admin-kpi-icon bg-[rgba(251,191,36,0.08)]">
-            <Package size={18} className="text-[#FBBF24]" />
+            <Package size={18} className="text-amber-400" />
           </div>
           <div className="admin-kpi-value">{lowStock}</div>
           <div className="admin-kpi-label">Productos con stock bajo</div>
         </div>
         <div className="admin-kpi">
           <div className="admin-kpi-icon bg-[rgba(248,113,113,0.08)]">
-            <Package size={18} className="text-[#F87171]" />
+            <Package size={18} className="text-red-400" />
           </div>
           <div className="admin-kpi-value">{outOfStock}</div>
           <div className="admin-kpi-label">Productos fuera de stock</div>
@@ -226,7 +226,7 @@ export default function AdminProductsPage() {
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#444444]" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-faint" />
           <input
             type="text"
             placeholder="Buscar producto por nombre, SKU o categoría..."
@@ -313,28 +313,28 @@ export default function AdminProductsPage() {
                         />
                       ) : (
                         <div className="admin-product-thumb-placeholder">
-                          <Package size={16} className="text-[#444444]" />
+                          <Package size={16} className="text-dark-faint" />
                         </div>
                       )}
                       <div>
                         <p className="text-white font-medium">{product.name}</p>
                         {product.hasDiscount && (
-                          <span className="text-[11px] text-[#FB5607] font-medium">
+                          <span className="text-[11px] text-brand font-medium">
                             Con descuento
                           </span>
                         )}
                       </div>
                     </div>
                   </td>
-                  <td className="text-[#777777]">{product.brand || '—'}</td>
-                  <td className="text-[#777777]">{product.categoryName}</td>
+                  <td className="text-dark-soft">{product.brand || '—'}</td>
+                  <td className="text-dark-soft">{product.categoryName}</td>
                   <td>
                     <div>
                       <span className="text-white font-medium">
                         {formatCurrency(product.effectivePrice ?? product.price)}
                       </span>
                       {product.hasDiscount && product.discountPrice && (
-                        <span className="block text-[11px] text-[#555555] line-through">
+                        <span className="block text-[11px] text-dark-dim line-through">
                           {formatCurrency(product.price)}
                         </span>
                       )}
@@ -363,7 +363,7 @@ export default function AdminProductsPage() {
                     >
                       <span
                         className={`admin-badge-dot ${
-                          product.stock > 0 ? 'bg-[#34D399]' : 'bg-[#F87171]'
+                          product.stock > 0 ? 'bg-emerald-400' : 'bg-red-400'
                         }`}
                       />
                       {product.stock > 0 ? 'Disponible' : 'Agotado'}
@@ -371,16 +371,16 @@ export default function AdminProductsPage() {
                   </td>
                   <td>
                     <div className="flex items-center gap-1">
-                      <button className="p-2 rounded-lg text-[#555555] hover:text-[#60A5FA] hover:bg-[rgba(96,165,250,0.08)] transition-all">
+                      <button className="p-2 rounded-lg text-dark-dim hover:text-blue-400 hover:bg-blue-400/[0.08] transition-all">
                         <Eye size={15} />
                       </button>
                       <button
                         onClick={() => handleEdit(product)}
-                        className="p-2 rounded-lg text-[#555555] hover:text-[#FB5607] hover:bg-[rgba(251,86,7,0.08)] transition-all"
+                        className="p-2 rounded-lg text-dark-dim hover:text-brand hover:bg-brand/[0.08] transition-all"
                       >
                         <Pencil size={15} />
                       </button>
-                      <button className="p-2 rounded-lg text-[#555555] hover:text-white hover:bg-white/5 transition-all">
+                      <button className="p-2 rounded-lg text-dark-dim hover:text-white hover:bg-white/5 transition-all">
                         <MoreHorizontal size={15} />
                       </button>
                     </div>
@@ -425,9 +425,9 @@ export default function AdminProductsPage() {
         </div>
       ) : (
         <div className="admin-card text-center py-12">
-          <Package size={40} className="mx-auto text-[#333333] mb-3" />
-          <p className="text-[15px] text-[#555555] font-medium">No hay productos</p>
-          <p className="text-[13px] text-[#444444] mt-1">
+          <Package size={40} className="mx-auto text-dark-border mb-3" />
+          <p className="text-[15px] text-dark-dim font-medium">No hay productos</p>
+          <p className="text-[13px] text-dark-faint mt-1">
             Comienza agregando productos al catálogo.
           </p>
         </div>
@@ -442,7 +442,7 @@ export default function AdminProductsPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
               Nombre *
             </label>
             <input
@@ -454,7 +454,7 @@ export default function AdminProductsPage() {
             />
           </div>
           <div>
-            <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
               Descripción
             </label>
             <textarea
@@ -467,7 +467,7 @@ export default function AdminProductsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
                 Precio *
               </label>
               <input
@@ -481,7 +481,7 @@ export default function AdminProductsPage() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
                 Precio Descuento
               </label>
               <input
@@ -497,7 +497,7 @@ export default function AdminProductsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
                 Marca
               </label>
               <input
@@ -509,7 +509,7 @@ export default function AdminProductsPage() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
                 Categoría
               </label>
               <select
@@ -527,7 +527,7 @@ export default function AdminProductsPage() {
             </div>
           </div>
           <div>
-            <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
               URL de Imagen
             </label>
             <input
@@ -538,7 +538,7 @@ export default function AdminProductsPage() {
               placeholder="https://..."
             />
           </div>
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-dark-sunken border border-dark-surface">
             <input
               type="checkbox"
               id="active"
@@ -546,11 +546,11 @@ export default function AdminProductsPage() {
               onChange={(e) => setForm({ ...form, active: e.target.checked })}
               className="admin-checkbox"
             />
-            <label htmlFor="active" className="text-[13px] text-[#777777]">
+            <label htmlFor="active" className="text-[13px] text-dark-soft">
               Producto activo
             </label>
           </div>
-          <div className="h-px bg-[#1A1A1A]" />
+          <div className="h-px bg-dark-surface" />
           <div className="flex justify-end gap-3">
             <button onClick={handleClose} className="admin-btn-secondary">
               Cancelar

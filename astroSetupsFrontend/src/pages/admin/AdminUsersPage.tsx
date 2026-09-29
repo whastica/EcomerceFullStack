@@ -54,7 +54,7 @@ export default function AdminUsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-[22px] font-bold text-white">Clientes</h1>
-          <p className="text-[13px] text-[#555555] mt-1">
+          <p className="text-[13px] text-dark-dim mt-1">
             Gestiona los usuarios registrados.
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function AdminUsersPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#444444]" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-faint" />
           <input
             type="text"
             placeholder="Buscar por nombre o email..."
@@ -109,7 +109,7 @@ export default function AdminUsersPage() {
             <tbody>
               {users.map((user) => (
                 <tr key={user.id}>
-                  <td className="font-mono text-[#555555]">#{user.id}</td>
+                  <td className="font-mono text-dark-dim">#{user.id}</td>
                   <td>
                     <div className="flex items-center gap-3">
                       <div className="admin-avatar">
@@ -121,16 +121,16 @@ export default function AdminUsersPage() {
                       </div>
                       <div>
                         <p className="text-white font-medium">{user.fullName}</p>
-                        <p className="text-[11px] text-[#555555]">{user.email}</p>
+                        <p className="text-[11px] text-dark-dim">{user.email}</p>
                       </div>
                     </div>
                   </td>
                   <td>
                     <div className="flex items-center gap-1.5">
                       {user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? (
-                        <ShieldCheck size={14} className="text-[#FB5607]" />
+                        <ShieldCheck size={14} className="text-brand" />
                       ) : (
-                        <Shield size={14} className="text-[#555555]" />
+                        <Shield size={14} className="text-dark-dim" />
                       )}
                       <StatusBadge status={user.role} />
                     </div>
@@ -141,20 +141,20 @@ export default function AdminUsersPage() {
                     <span
                       className={
                         user.verified
-                          ? 'text-[#34D399] text-[12px] font-semibold bg-[rgba(52,211,153,0.1)] px-2 py-0.5 rounded-full'
-                          : 'text-[#555555] text-[12px] bg-white/[0.03] px-2 py-0.5 rounded-full'
+                          ? 'text-emerald-400 text-[12px] font-semibold bg-[rgba(52,211,153,0.1)] px-2 py-0.5 rounded-full'
+                          : 'text-dark-dim text-[12px] bg-white/[0.03] px-2 py-0.5 rounded-full'
                       }
                     >
                       {user.verified ? 'Sí' : 'No'}
                     </span>
                   </td>
-                  <td className="text-[#555555] text-[12px]">
+                  <td className="text-dark-dim text-[12px]">
                     {new Date(user.createdAt).toLocaleDateString('es-CO')}
                   </td>
                   <td>
                     <button
                       onClick={() => handleViewProfile(user.id)}
-                      className="p-2 rounded-lg text-[#555555] hover:text-[#60A5FA] hover:bg-[rgba(96,165,250,0.08)] transition-all"
+                      className="p-2 rounded-lg text-dark-dim hover:text-blue-400 hover:bg-blue-400/[0.08] transition-all"
                     >
                       <Eye size={15} />
                     </button>
@@ -199,9 +199,9 @@ export default function AdminUsersPage() {
         </div>
       ) : (
         <div className="admin-card text-center py-12">
-          <Users size={40} className="mx-auto text-[#333333] mb-3" />
-          <p className="text-[15px] text-[#555555] font-medium">No hay usuarios</p>
-          <p className="text-[13px] text-[#444444] mt-1">
+          <Users size={40} className="mx-auto text-dark-border mb-3" />
+          <p className="text-[15px] text-dark-dim font-medium">No hay usuarios</p>
+          <p className="text-[13px] text-dark-faint mt-1">
             Los usuarios registrados aparecerán aquí.
           </p>
         </div>
@@ -235,7 +235,7 @@ export default function AdminUsersPage() {
                 <h3 className="text-[16px] font-bold text-white">
                   {profile.fullName}
                 </h3>
-                <p className="text-[13px] text-[#555555]">{profile.email}</p>
+                <p className="text-[13px] text-dark-dim">{profile.email}</p>
                 <div className="flex items-center gap-2 mt-1.5">
                   <StatusBadge status={profile.role} />
                   <StatusBadge status={profile.status} />
@@ -243,7 +243,7 @@ export default function AdminUsersPage() {
               </div>
             </div>
 
-            <div className="h-px bg-[#1A1A1A]" />
+            <div className="h-px bg-dark-surface" />
 
             {/* Info Grid */}
             <div className="grid grid-cols-2 gap-3">
@@ -260,8 +260,8 @@ export default function AdminUsersPage() {
                     : 'Sin pedidos',
                 },
               ].map((item) => (
-                <div key={item.label} className="p-3.5 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
-                  <p className="text-[11px] text-[#555555] uppercase tracking-wider mb-1">{item.label}</p>
+                <div key={item.label} className="p-3.5 rounded-lg bg-dark-sunken border border-dark-surface">
+                  <p className="text-[11px] text-dark-dim uppercase tracking-wider mb-1">{item.label}</p>
                   <p className="text-[13px] text-white font-medium">{item.value}</p>
                 </div>
               ))}
@@ -270,27 +270,27 @@ export default function AdminUsersPage() {
             {/* Addresses */}
             {profile.shippingAddresses && profile.shippingAddresses.length > 0 && (
               <div>
-                <p className="text-[11px] text-[#555555] uppercase tracking-wider mb-2.5">
+                <p className="text-[11px] text-dark-dim uppercase tracking-wider mb-2.5">
                   Direcciones de Envío
                 </p>
                 <div className="space-y-2">
                   {profile.shippingAddresses.map((addr) => (
                     <div
                       key={addr.id}
-                      className="p-3.5 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A] hover:border-[#252525] transition-colors"
+                      className="p-3.5 rounded-lg bg-dark-sunken border border-dark-surface hover:border-[#252525] transition-colors"
                     >
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="text-[13px] text-white font-medium">{addr.addressLine1}</p>
                           {addr.addressLine2 && (
-                            <p className="text-[11px] text-[#555555]">{addr.addressLine2}</p>
+                            <p className="text-[11px] text-dark-dim">{addr.addressLine2}</p>
                           )}
-                          <p className="text-[11px] text-[#555555] mt-1">
+                          <p className="text-[11px] text-dark-dim mt-1">
                             {addr.cityName}, {addr.stateName}, {addr.countryName}
                           </p>
                         </div>
                         {addr.isDefault && (
-                          <span className="text-[10px] bg-[rgba(251,86,7,0.1)] text-[#FB5607] px-2 py-0.5 rounded-full font-semibold">
+                          <span className="text-[10px] bg-brand/[0.1] text-brand px-2 py-0.5 rounded-full font-semibold">
                             Principal
                           </span>
                         )}
@@ -301,7 +301,7 @@ export default function AdminUsersPage() {
               </div>
             )}
 
-            <div className="h-px bg-[#1A1A1A]" />
+            <div className="h-px bg-dark-surface" />
 
             <div className="flex justify-end">
               <button

@@ -24,9 +24,9 @@ const LockIcon = () => (
 
 /* ── Clases reutilizables para inputs ── */
 const inputClass =
-  'w-full bg-white border border-light-border text-gray-900 placeholder-gray-400 ' +
+  'w-full bg-white border border-gray-200 text-gray-900 placeholder-gray-400 ' +
   'rounded-lg px-4 py-3 text-sm outline-none ' +
-  'focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 ' +
+  'focus:border-brand focus:ring-2 focus:ring-brand/20 ' +
   'hover:border-gray-400 transition-all duration-200';
 
 const labelClass = 'text-sm font-medium text-gray-700 mb-1 block';
@@ -296,7 +296,7 @@ export default function CheckoutForm({ onSubmit, isSubmitting = false }: Checkou
                 <input
                   type="checkbox" name="billingAddress"
                   checked={formData.billingAddress} onChange={handleChange}
-                  className="accent-[#CDFF00] w-4 h-4 shrink-0"
+                  className="accent-lime w-4 h-4 shrink-0"
                 />
                 <span className="text-sm text-dark-muted">
                   Mi dirección de facturación es diferente a la de envío
@@ -324,7 +324,7 @@ export default function CheckoutForm({ onSubmit, isSubmitting = false }: Checkou
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-[#CDFF00] text-dark-background font-bold text-base
+            className="flex-1 bg-lime text-dark-background font-bold text-base
                        py-4 rounded-lg hover:brightness-110 transition-all duration-200
                        cursor-pointer tracking-wide
                        disabled:opacity-50 disabled:cursor-not-allowed"

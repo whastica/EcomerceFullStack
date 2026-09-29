@@ -48,7 +48,7 @@ export default function ProductModal({
     >
       <div
         className="rounded-xl shadow-2xl w-full max-w-3xl mx-4 relative max-h-[90vh] overflow-y-auto"
-        style={{ backgroundColor: '#4D4D4D' }}
+        style={{ backgroundColor: 'var(--color-dark-panel)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Botón cerrar */}
@@ -64,7 +64,7 @@ export default function ProductModal({
           {/* Columna izquierda — imagen */}
           <div
             className="flex flex-col items-center justify-center p-6 rounded-tl-xl rounded-bl-xl"
-            style={{ backgroundColor: '#3a3a3a' }}
+            style={{ backgroundColor: 'var(--color-dark-fill)' }}
           >
             {/* Imagen principal */}
             <div className="w-full flex items-center justify-center h-56">
@@ -78,8 +78,8 @@ export default function ProductModal({
             {/* Miniaturas — por ahora solo una */}
             <div className="flex gap-2 mt-4">
               <div
-                className="w-16 h-16 rounded-md border-2 border-[#FB5607] flex items-center justify-center overflow-hidden"
-                style={{ backgroundColor: '#4D4D4D' }}
+                className="w-16 h-16 rounded-md border-2 border-brand flex items-center justify-center overflow-hidden"
+                style={{ backgroundColor: 'var(--color-dark-panel)' }}
               >
                 <img
                   src={product.imageUrl || '/assets/products/placeholder.png'}
@@ -96,7 +96,7 @@ export default function ProductModal({
             {/* Nombre */}
             <h2
               className="text-xl font-bold leading-snug"
-              style={{ color: '#CAD519' }}
+              style={{ color: 'var(--color-lime)' }}
             >
               {product.name}
             </h2>
@@ -116,7 +116,7 @@ export default function ProductModal({
             {/* Ver detalles */}
             <a
               href={`/product/${product.id}`}
-              className="text-sm text-[#FB5607] hover:underline w-fit"
+              className="text-sm text-brand hover:underline w-fit"
             >
               Ver detalles
             </a>
@@ -125,8 +125,8 @@ export default function ProductModal({
             <div className="space-y-1">
               <p className="text-sm text-gray-300">Duración de envío</p>
               <select
-                className="w-full rounded-md px-3 py-2 text-sm text-white border border-gray-500 outline-none focus:border-[#FB5607]"
-                style={{ backgroundColor: '#3a3a3a' }}
+                className="w-full rounded-md px-3 py-2 text-sm text-white border border-gray-500 outline-none focus:border-brand"
+                style={{ backgroundColor: 'var(--color-dark-fill)' }}
                 defaultValue="normal"
               >
                 <option value="normal">Normal (7 a 14 días hábiles)</option>
@@ -138,7 +138,7 @@ export default function ProductModal({
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-[#FB5607] transition-colors"
+                className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-brand transition-colors"
               >
                 -
               </button>
@@ -147,7 +147,7 @@ export default function ProductModal({
               </span>
               <button
                 onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
-                className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-[#FB5607] transition-colors"
+                className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-brand transition-colors"
                 disabled={quantity >= product.stock}
               >
                 +
@@ -164,7 +164,7 @@ export default function ProductModal({
               onClick={handleAddToCart}
               disabled={product.stock === 0}
               className="w-full py-3 rounded-md font-bold text-white text-sm uppercase tracking-wide transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: '#FB5607' }}
+              style={{ backgroundColor: 'var(--color-brand)' }}
             >
               Añadir al carrito
             </button>

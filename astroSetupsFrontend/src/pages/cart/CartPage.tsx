@@ -55,7 +55,7 @@ export default function CartPage() {
         <div
           className="absolute top-0 left-0 w-full h-full opacity-20"
           style={{
-            backgroundImage: 'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)',
+            backgroundImage: 'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)',
           }}
         />
       </div>
@@ -69,7 +69,7 @@ export default function CartPage() {
               <p className="text-lg">Tu carrito está vacío.</p>
               <Link 
                 to="/catalog" 
-                className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                className="inline-block bg-brand hover:bg-brand-hover text-white px-6 py-3 rounded-lg font-semibold transition"
               >
                 Ver productos
               </Link>
@@ -78,7 +78,7 @@ export default function CartPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
               {/* Lista de productos */}
               <div className="lg:col-span-2 relative z-10">
-                <div className="bg-[#4D4D4D] rounded-lg shadow p-6 text-white">
+                <div className="bg-dark-panel rounded-lg shadow p-6 text-white">
                   <div className="space-y-6">
                     {items.map((item, index) => (
                       <div key={item.id}>
@@ -93,7 +93,7 @@ export default function CartPage() {
                             <p className="text-sm text-gray-300">Cantidad: {item.quantity}</p>
                             <div className="flex justify-between items-center mt-2">
                               <div className="flex items-center gap-2">
-                                <label htmlFor={`qty-${item.id}`} className="text-sm" style={{ color: '#C5EC29' }}>
+                                <label htmlFor={`qty-${item.id}`} className="text-sm" style={{ color: 'var(--color-lime)' }}>
                                   Cantidad:
                                 </label>
                                 <input
@@ -145,7 +145,7 @@ export default function CartPage() {
                       <button
                         onClick={() => setShowDiscountInput(true)}
                         className="text-xs underline font-medium hover:opacity-80 transition"
-                        style={{ color: '#F54A00' }}
+                        style={{ color: 'var(--color-brand)' }}
                       >
                         Insertar código de descuento
                       </button>
@@ -162,7 +162,7 @@ export default function CartPage() {
                       <button
                         onClick={handleValidateDiscount}
                         className="w-full text-white text-sm py-2 px-4 rounded hover:brightness-110 transition"
-                        style={{ backgroundColor: '#F54A00' }}
+                        style={{ backgroundColor: 'var(--color-brand)' }}
                       >
                         Validar código
                       </button>
@@ -178,7 +178,7 @@ export default function CartPage() {
                     </Link>
                     <button
                       onClick={handleCheckout}
-                      className="bg-[#FB5607] hover:bg-orange-600 text-white py-2 px-4 rounded text-sm font-medium transition"
+                      className="bg-brand hover:bg-brand-hover text-white py-2 px-4 rounded text-sm font-medium transition"
                     >
                       Ir a pagar 💳
                     </button>

@@ -32,8 +32,8 @@ export default function Login() {
         <div className="w-full max-w-md">
           <div className="rounded-xl border border-dark-border bg-dark-surface/80 backdrop-blur-sm shadow-glass p-8">
             <div className="text-center mb-8">
-              <div className="w-14 h-14 rounded-full bg-[#8B5CF6]/15 flex items-center justify-center mx-auto mb-4">
-                <LogIn className="text-[#8B5CF6]" size={24} />
+              <div className="w-14 h-14 rounded-full bg-brand/15 flex items-center justify-center mx-auto mb-4">
+                <LogIn className="text-brand" size={24} />
               </div>
               <h1 className="text-2xl font-bold text-dark-text">
                 Iniciar Sesión
@@ -61,7 +61,7 @@ export default function Login() {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                     placeholder="ejemplo@email.com"
                     required
                   />
@@ -85,7 +85,7 @@ export default function Login() {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                     placeholder="••••••••"
                     required
                     minLength={8}
@@ -96,7 +96,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 px-4 rounded-lg bg-brand hover:bg-brand-hover text-white font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Ingresando...' : 'Iniciar Sesión'}
               </button>
@@ -107,7 +107,7 @@ export default function Login() {
                 ¿No tienes una cuenta?{' '}
                 <Link
                   to="/register"
-                  className="text-[#FB5607] hover:underline font-medium"
+                  className="text-brand hover:underline font-medium"
                 >
                   Regístrate aquí
                 </Link>

@@ -22,7 +22,7 @@ export default function CategoryCard({ id, name, imageUrl }: CategoryCardProps) 
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
         </div>
-        <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-purple-400/30 transition-colors duration-300 pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-brand/30 transition-colors duration-300 pointer-events-none" />
         {/* Nombre de la categoría */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
           <span className="text-white font-semibold text-sm">{name}</span>

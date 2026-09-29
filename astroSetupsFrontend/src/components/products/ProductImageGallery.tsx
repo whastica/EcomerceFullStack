@@ -74,7 +74,7 @@ export default function ProductImageGallery({ images, productName }: ProductImag
               onClick={() => handleImageSelect(index)}
               className={`relative aspect-square rounded-lg border-2 overflow-hidden transition-all duration-200 ${
                 index === selectedImageIndex
-                  ? 'border-purple-600 ring-2 ring-purple-600 ring-opacity-50'
+                  ? 'border-brand ring-2 ring-brand/50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
@@ -86,7 +86,7 @@ export default function ProductImageGallery({ images, productName }: ProductImag
               
               {/* Overlay para imagen seleccionada */}
               {index === selectedImageIndex && (
-                <div className="absolute inset-0 bg-purple-600 bg-opacity-20"></div>
+                <div className="absolute inset-0 bg-brand/20"></div>
               )}
             </button>
           ))}

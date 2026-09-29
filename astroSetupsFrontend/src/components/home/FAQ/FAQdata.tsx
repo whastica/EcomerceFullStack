@@ -159,7 +159,7 @@ export const FAQ_DATA: FAQItem[] = [
           📌 Haz clic aquí para llenar el formulario:{' '}
           <Link
             to="/custom-pc"
-            className="text-purple-600 font-semibold underline hover:text-purple-700"
+            className="text-brand font-semibold underline hover:text-brand-hover"
           >
             Tu computadora personalizada
           </Link>

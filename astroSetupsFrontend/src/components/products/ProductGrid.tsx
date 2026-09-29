@@ -70,7 +70,7 @@ export default function ProductGrid({
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 0}
-            className="px-4 py-2 rounded-lg border text-sm font-medium bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-[#FB5607] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg border text-sm font-medium bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-brand transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ⬅ Anterior
           </button>
@@ -92,8 +92,8 @@ export default function ProductGrid({
                     onClick={() => handlePageChange(pageNum)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
                       pageNum === currentPage
-                        ? 'bg-[#FB5607] text-white border-[#FB5607]'
-                        : 'bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-[#FB5607]'
+                        ? 'bg-brand text-white border-brand'
+                        : 'bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-brand'
                     }`}
                   >
                     {displayNum}
@@ -116,7 +116,7 @@ export default function ProductGrid({
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages - 1}
-            className="px-4 py-2 rounded-lg border text-sm font-medium bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-[#FB5607] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg border text-sm font-medium bg-dark-card text-dark-text border-dark-border hover:bg-dark-surface hover:border-brand transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Siguiente ➡
           </button>

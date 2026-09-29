@@ -2,7 +2,7 @@ const TrackingPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-black">
       <main className="flex-grow flex flex-col items-center py-10">
-        <div className="bg-[#4D4D4D] text-white w-full max-w-4xl p-6 rounded-md text-center">
+        <div className="bg-dark-panel text-white w-full max-w-4xl p-6 rounded-md text-center">
           <h1 className="text-[46px] font-bold font-montserrat">Rastrea tu Paquete</h1>
         </div>
         <a href="/" className="text-white underline text-center block mt-6">Volver al inicio</a>

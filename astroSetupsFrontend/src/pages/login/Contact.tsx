@@ -51,7 +51,7 @@ export default function ContactPage() {
         <div
           className="absolute top-0 left-0 w-full h-full opacity-20"
           style={{
-            backgroundImage: `linear-gradient(45deg, transparent 0%, #f3f4f6 200%)`,
+            backgroundImage: `linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)`,
           }}
         />
       </div>
@@ -73,7 +73,7 @@ export default function ContactPage() {
             {/* Formulario de Contacto */}
             <div
               className="rounded-xl shadow-lg p-8 w-full"
-              style={{ backgroundColor: '#4D4D4D' }}
+              style={{ backgroundColor: 'var(--color-dark-panel)' }}
             >
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-white mb-2 text-center">
@@ -147,7 +147,7 @@ export default function ContactPage() {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical"
+                    className="w-full px-4 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
                     placeholder="Describe tu requerimiento o consulta..."
                     required
                   />
@@ -155,7 +155,7 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 rounded-md bg-[#FB5607] hover:bg-[#e44e06] text-white font-semibold transition duration-300"
+                  className="w-full py-3 px-4 rounded-md bg-brand hover:bg-brand-hover text-white font-semibold transition duration-300"
                 >
                   Enviar mensaje
                 </button>
@@ -167,7 +167,7 @@ export default function ContactPage() {
           <div className="flex flex-col justify-center">
             <div
               className="rounded-xl shadow-lg p-8 w-full"
-              style={{ backgroundColor: '#4D4D4D' }}
+              style={{ backgroundColor: 'var(--color-dark-panel)' }}
             >
               <h3 className="text-2xl font-bold text-white mb-6 text-center">
                 Algunas formas de conectarse con nosotros
@@ -185,19 +185,19 @@ export default function ContactPage() {
                     onClick={handleWhatsAppClick}
                     className="w-full font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105"
                     style={{
-                      backgroundColor: '#D6FF3C',
-                      color: '#000',
+                      backgroundColor: 'var(--color-lime)',
+                      color: 'var(--color-black)',
                       textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
                       boxShadow:
                         '0 4px 15px rgba(214, 255, 60, 0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.1)',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'linear-gradient(to right, #f97316, #ea580c)';
-                      e.currentTarget.style.color = '#fff';
+                      e.currentTarget.style.background = 'linear-gradient(to right, var(--color-brand), var(--color-brand-hover))';
+                      e.currentTarget.style.color = 'var(--color-white)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#D6FF3C';
-                      e.currentTarget.style.color = '#000';
+                      e.currentTarget.style.background = 'var(--color-lime)';
+                      e.currentTarget.style.color = 'var(--color-black)';
                     }}
                     >
                     <svg 
@@ -261,7 +261,7 @@ export default function ContactPage() {
                         aria-label={label}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-lg text-white text-lg shadow-md transition-transform duration-200 hover:scale-105 active:scale-95"
+                        className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-brand to-brand-hover hover:from-brand-hover hover:to-brand-dark rounded-lg text-white text-lg shadow-md transition-transform duration-200 hover:scale-105 active:scale-95"
                       >
                         {icon}
                       </a>

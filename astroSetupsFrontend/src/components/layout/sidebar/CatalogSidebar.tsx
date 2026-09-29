@@ -85,7 +85,7 @@ export default function CatalogSidebar({
         <div className="flex justify-between items-center">
           <button
             onClick={clearFilters}
-            className="text-sm text-[#FB5607] hover:text-orange-300 transition-colors focus:outline-none"
+            className="text-sm text-brand hover:text-brand-light transition-colors focus:outline-none"
             aria-label="Limpiar filtros"
           >
             Limpiar Filtros

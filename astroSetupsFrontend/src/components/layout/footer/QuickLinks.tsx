@@ -17,7 +17,7 @@ export default function QuickLinks() {
       <ul className="space-y-2 text-dark-muted">
         {links.map(({ to, label }, index) => (
           <li key={`${to}-${index}`}>
-            <Link to={to} className="hover:text-purple-500 transition-colors">{label}</Link>
+            <Link to={to} className="hover:text-brand transition-colors">{label}</Link>
           </li>
         ))}
       </ul>

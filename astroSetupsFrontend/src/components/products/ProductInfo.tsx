@@ -47,7 +47,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   return (
     <div
       className="rounded-lg border border-gray-600 p-6 space-y-5"
-      style={{ backgroundColor: '#4D4D4D' }}
+      style={{ backgroundColor: 'var(--color-dark-panel)' }}
     >
       {/* Header */}
       <div>
@@ -72,7 +72,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             ${product.price.toLocaleString('es-CO')}
           </p>
         )}
-        <p className="text-3xl font-bold" style={{ color: '#D6FF3C' }}>
+        <p className="text-3xl font-bold" style={{ color: 'var(--color-lime)' }}>
           ${finalPrice.toLocaleString('es-CO')}
         </p>
         {product.hasDiscount && (
@@ -93,8 +93,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       <div className="space-y-1">
         <p className="text-sm text-gray-300">Duración de envío</p>
         <select
-          className="w-full rounded-md px-3 py-2 text-sm text-white border border-gray-500 outline-none focus:border-[#FB5607]"
-          style={{ backgroundColor: '#3a3a3a' }}
+          className="w-full rounded-md px-3 py-2 text-sm text-white border border-gray-500 outline-none focus:border-brand"
+          style={{ backgroundColor: 'var(--color-dark-fill)' }}
           defaultValue="normal"
         >
           <option value="normal">Normal (7 a 14 días hábiles)</option>
@@ -106,7 +106,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-          className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-[#FB5607] transition-colors"
+          className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-brand transition-colors"
         >
           -
         </button>
@@ -115,7 +115,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </span>
         <button
           onClick={() => setQuantity((q) => Math.min(product.stock ?? 99, q + 1))}
-          className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-[#FB5607] transition-colors"
+          className="w-9 h-9 rounded-md bg-gray-600 text-white text-lg font-bold hover:bg-brand transition-colors"
           disabled={quantity >= (product.stock ?? 99)}
         >
           +
@@ -128,15 +128,15 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           onClick={handleAddToCart}
           disabled={(product.stock ?? 0) === 0}
           className="flex-1 py-3 rounded-md font-bold text-white text-sm uppercase tracking-wide transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: '#FB5607' }}
+          style={{ backgroundColor: 'var(--color-brand)' }}
         >
           Añadir al carrito
         </button>
         <button
           onClick={handleBuyNow}
           disabled={(product.stock ?? 0) === 0}
-          className="flex-1 py-3 rounded-md font-bold text-sm uppercase tracking-wide transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed border border-[#D6FF3C] text-black"
-          style={{ backgroundColor: '#D6FF3C' }}
+          className="flex-1 py-3 rounded-md font-bold text-sm uppercase tracking-wide transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed border border-lime text-black"
+          style={{ backgroundColor: 'var(--color-lime)' }}
         >
           Comprar ahora
         </button>

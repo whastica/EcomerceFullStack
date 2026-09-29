@@ -14,7 +14,7 @@ export default function LoadingState({
           w-12
           h-12
           border-4
-          border-orange-500
+          border-brand
           border-t-transparent
           rounded-full
           animate-spin

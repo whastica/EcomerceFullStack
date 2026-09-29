@@ -62,7 +62,7 @@ export default function Home({ faqRef }: HomeProps) {
         <div className="absolute inset-0 bg-tech-grid opacity-20" />
         <div
           className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)' }}
+          style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)' }}
         />
       </div>
 

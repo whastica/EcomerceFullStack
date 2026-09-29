@@ -41,19 +41,19 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
                   onClick={handleWhatsAppContact}
                   className="w-full font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105"
                   style={{
-                    backgroundColor: '#D6FF3C',
-                    color: '#000',
+                    backgroundColor: 'var(--color-lime)',
+                    color: 'var(--color-black)',
                     textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
                     boxShadow:
                       '0 4px 15px rgba(214, 255, 60, 0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.1)',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(to right, #f97316, #ea580c)';
-                    e.currentTarget.style.color = '#fff';
+                    e.currentTarget.style.background = 'linear-gradient(to right, var(--color-brand), var(--color-brand-hover))';
+                    e.currentTarget.style.color = 'var(--color-white)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#D6FF3C';
-                    e.currentTarget.style.color = '#000';
+                    e.currentTarget.style.background = 'var(--color-lime)';
+                    e.currentTarget.style.color = 'var(--color-black)';
                   }}
                 >
                   <MessageCircle className="h-5 w-5" />
@@ -69,7 +69,7 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
               {FAQ_DATA.map((item) => (
                 <div
                   key={item.id}
-                  className="border border-gray-600/20 bg-[#4D4D4D] overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-purple-500"
+                  className="border border-gray-600/20 bg-dark-panel overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-brand"
                 >
                   <button
                     onClick={() => toggleItem(item.id)}
@@ -77,7 +77,7 @@ const FAQ = forwardRef<HTMLElement, FAQProps>(({ id }, ref) => {
                     aria-expanded={openItem === item.id}
                   >
                     <span className="font-semibold text-white text-lg">{item.question}</span>
-                    <span className="text-gray-300 hover:text-purple-400 transition-colors duration-200">
+                    <span className="text-gray-300 hover:text-brand transition-colors duration-200">
                       {openItem === item.id ? (
                         <ChevronUp className="h-5 w-5" />
                       ) : (

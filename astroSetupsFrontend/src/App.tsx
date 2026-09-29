@@ -28,39 +28,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    document.documentElement.classList.add('dark');
-    document.body.classList.add('dark');
-    document.body.style.backgroundColor = '#010101';
-    document.body.style.color = '#FFFFFF';
-    document.documentElement.style.backgroundColor = '#010101';
-    document.documentElement.style.color = '#FFFFFF';
-
-    const observer = new MutationObserver(() => {
-      if (!document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.add('dark');
-      }
-      if (!document.body.classList.contains('dark')) {
-        document.body.classList.add('dark');
-      }
-      if (document.body.style.backgroundColor !== 'rgb(1, 1, 1)') {
-        document.body.style.backgroundColor = '#010101';
-        document.body.style.color = '#FFFFFF';
-      }
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'style'],
-    });
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class', 'style'],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
     if (location.pathname === '/' && location.hash === '#faq') {
       setTimeout(() => {
         faqRef.current?.scrollIntoView({ behavior: 'smooth' });

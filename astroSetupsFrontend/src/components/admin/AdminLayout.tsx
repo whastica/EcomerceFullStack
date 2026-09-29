@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import {
   Search,
   Bell,
@@ -39,7 +39,7 @@ export default function AdminLayout() {
         <header className="admin-header">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg text-[#555555] hover:text-white hover:bg-white/5 lg:hidden transition-colors"
+            className="p-2 rounded-lg text-dark-dim hover:text-white hover:bg-white/5 lg:hidden transition-colors"
           >
             <Menu size={20} />
           </button>
@@ -47,7 +47,7 @@ export default function AdminLayout() {
           <div className="admin-header-search">
             <Search
               size={16}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#444444]"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-faint"
             />
             <input
               type="text"
@@ -57,9 +57,9 @@ export default function AdminLayout() {
           </div>
 
           <div className="admin-header-actions">
-            <button className="relative p-2.5 rounded-lg text-[#555555] hover:text-white hover:bg-white/5 transition-colors">
+            <button className="relative p-2.5 rounded-lg text-dark-dim hover:text-white hover:bg-white/5 transition-colors">
               <Bell size={18} />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FB5607]" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand" />
             </button>
 
             <div className="relative">
@@ -75,7 +75,7 @@ export default function AdminLayout() {
                 </span>
                 <ChevronDown
                   size={14}
-                  className={`text-[#555555] transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}
+                  className={`text-dark-dim transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
@@ -85,22 +85,22 @@ export default function AdminLayout() {
                     className="fixed inset-0 z-40"
                     onClick={() => setDropdownOpen(false)}
                   />
-                  <div className="absolute right-0 top-full mt-2 w-52 py-2 bg-[#111111] border border-[#1A1A1A] rounded-xl shadow-lg z-50">
-                    <div className="px-4 py-2.5 border-b border-[#1A1A1A]">
+                  <div className="absolute right-0 top-full mt-2 w-52 py-2 bg-dark-raised border border-dark-surface rounded-xl shadow-lg z-50">
+                    <div className="px-4 py-2.5 border-b border-dark-surface">
                       <p className="text-[13px] font-medium text-white">
                         {user ? `${user.firstName} ${user.lastName}` : 'Admin'}
                       </p>
-                      <p className="text-[11px] text-[#555555]">
+                      <p className="text-[11px] text-dark-dim">
                         {user?.email || 'admin@astrosetups.com'}
                       </p>
                     </div>
-                    <button className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-[#777777] hover:text-white hover:bg-white/5 transition-colors">
+                    <button className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-dark-soft hover:text-white hover:bg-white/5 transition-colors">
                       <User size={15} />
                       Mi perfil
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-[#F87171] hover:bg-[#F87171]/5 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-red-400 hover:bg-red-400/5 transition-colors"
                     >
                       <LogOut size={15} />
                       Cerrar sesión

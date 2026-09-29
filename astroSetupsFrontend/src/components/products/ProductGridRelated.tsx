@@ -68,7 +68,7 @@ export default function ProductGridRelated({
                 onClick={() => setPage(index)}
                 aria-label={`Ir a la página ${index + 1}`}
                 className={`h-2 rounded-full transition-all duration-200 ${
-                  index === safePage ? 'w-6 bg-purple-500' : 'w-2 bg-gray-500 hover:bg-gray-400'
+                  index === safePage ? 'w-6 bg-brand' : 'w-2 bg-gray-500 hover:bg-gray-400'
                 }`}
               />
             ))}

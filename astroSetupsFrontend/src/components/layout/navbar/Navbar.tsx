@@ -8,12 +8,10 @@ import { SearchBar } from './SearchBar';
 import { useAuth } from '@/hooks/useAuth';
 
 interface NavbarProps {
-  cartItemCount?: number;
   onFAQClick?: () => void;
 }
 
 export function Navbar({
-  cartItemCount = 0,
   onFAQClick,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -30,11 +28,11 @@ export function Navbar({
     }
   };
 
-  const linkHoverClasses = "text-white hover:text-[#D7FE3B] px-2 xl:px-3 py-2 text-[12px] font-medium transition-all duration-300 relative group whitespace-nowrap uppercase";
-  const underlineClasses = "absolute bottom-0 left-1/2 w-0 h-0.5 bg-[#D7FE3B] transition-all duration-300 group-hover:w-full group-hover:left-0";
+  const linkHoverClasses = "text-white hover:text-lime px-2 xl:px-3 py-2 text-[12px] font-medium transition-all duration-300 relative group whitespace-nowrap uppercase";
+  const underlineClasses = "absolute bottom-0 left-1/2 w-0 h-0.5 bg-lime transition-all duration-300 group-hover:w-full group-hover:left-0";
 
   return (
-    <nav className="bg-[#4D4D4D] shadow-lg sticky top-0 z-50 font-montserrat font-medium">
+    <nav className="bg-dark-panel shadow-lg sticky top-0 z-50 font-montserrat font-medium">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-2">
 
@@ -62,7 +60,7 @@ export function Navbar({
 
               <Link
                 to="/custom-pc"
-                className="ml-2 px-3 py-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold text-[11px] shadow-md hover:scale-105 transition-all whitespace-nowrap border border-orange-300"
+                className="ml-2 px-3 py-1.5 bg-gradient-to-r from-brand to-brand-hover text-white rounded-lg font-bold text-[11px] shadow-md hover:scale-105 transition-all whitespace-nowrap border border-brand-light"
               >
                 <span className="hidden xl:inline">🖥️ PERSONALIZA TU PC</span>
               </Link>
@@ -72,7 +70,7 @@ export function Navbar({
           {/* 3. Acciones Derecha */}
           <div className="flex items-center space-x-1 sm:space-x-2">
             <div className="flex items-center mr-1">
-              <Link to="/cart" className="p-2 text-white hover:text-[#D7FE3B] transition-all">
+              <Link to="/cart" className="p-2 text-white hover:text-lime transition-all">
                 <ShoppingBag className="w-5 h-5" />
               </Link>
 
@@ -80,9 +78,9 @@ export function Navbar({
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-1.5 text-white text-[11px] hover:text-[#D7FE3B] transition-all whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/10"
+                    className="flex items-center gap-1.5 text-white text-[11px] hover:text-lime transition-all whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/10"
                   >
-                    <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/30 flex items-center justify-center text-[10px] font-bold text-[#8B5CF6]">
+                    <div className="w-6 h-6 rounded-full bg-brand/30 flex items-center justify-center text-[10px] font-bold text-brand">
                       {user?.firstName?.[0]}{user?.lastName?.[0]}
                     </div>
                     <span className="font-medium hidden sm:inline">{user?.firstName}</span>
@@ -108,7 +106,7 @@ export function Navbar({
                           <Link
                             to="/admin/dashboard"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 text-sm text-dark-muted hover:text-[#8B5CF6] hover:bg-dark-surface transition-colors"
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-dark-muted hover:text-brand hover:bg-dark-surface transition-colors"
                           >
                             <Shield size={14} />
                             Panel Admin
@@ -131,7 +129,7 @@ export function Navbar({
               ) : (
                 <Link
                   to="/login"
-                  className="flex items-center text-white text-[11px] hover:text-[#D7FE3B] transition-all whitespace-nowrap px-1"
+                  className="flex items-center text-white text-[11px] hover:text-lime transition-all whitespace-nowrap px-1"
                 >
                   <User className="w-4 h-4 mr-1 flex-shrink-0" />
                   <span className="font-medium">Iniciar Sesión</span>
@@ -139,7 +137,7 @@ export function Navbar({
               )}
             </div>
 
-            <div className="relative flex items-center bg-[#3a3a3a] rounded-md border border-gray-500/30">
+            <div className="relative flex items-center bg-dark-fill rounded-md border border-gray-500/30">
               <SearchBar />
             </div>
 

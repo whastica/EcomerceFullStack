@@ -1,0 +1,284 @@
+/* ============================================================
+   ASTRO SETUPS · DESIGN TOKENS
+   Tailwind CSS v4 — @theme
+   Única fuente de verdad de: paleta, tipografía, sombras y
+   animaciones. Todo token definido aquí genera sus utilidades
+   automáticamente (bg-dark-card, text-brand, animate-slide-up…).
+   ============================================================ */
+
+@theme {
+  /* ---------- Paleta oscura ---------- */
+  --color-dark-background: #010101;
+  --color-dark-surface: #1a1a1a;
+  --color-dark-card: #1e1e1e;
+  --color-dark-panel: #4d4d4d;
+  --color-dark-text: #ffffff;
+  --color-dark-muted: #aaaaaa;
+  --color-dark-border: #333333;
+  --color-dark-dim: #555555;
+  --color-dark-soft: #777777;
+  --color-dark-faint: #444444;
+  --color-dark-sunken: #0e0e0e;
+  --color-dark-raised: #111111;
+  --color-dark-fill: #3a3a3a;
+
+  /* ---------- Marca ---------- */
+  --color-brand: #fb5607;
+  --color-brand-light: #ff6800;
+  --color-brand-hover: #e4500a;
+  --color-brand-dark: #cc3600;
+  --color-accent: #fb5607;
+  --color-lime: #d6ff3c;
+  --color-info: #3b82f6;
+
+  /* ---------- Tipografía ---------- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-helvetica: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-montserrat: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+
+  /* ---------- Sombras ---------- */
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+  /* ---------- Animaciones (solo las usadas en el proyecto) ---------- */
+  --animate-fade-in: fadeIn 0.6s ease-out;
+  --animate-fade-in-up: fadeInUp 0.8s ease-out;
+  --animate-slide-up: slideUp 0.4s ease-out;
+  --animate-scale-in: scaleIn 0.3s ease-out;
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+}
+
+/* Modo oscuro por clase → <html class="dark"> (index.html) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   KEYFRAMES (referenciados por tokens y utilidades)
+   ============================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(251, 86, 7, 0.1);
+  }
+  to {
+    box-shadow: 0 0 40px rgba(251, 86, 7, 0.3);
+  }
+}
+
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes geometricShift {
+  0%,
+  100% {
+    background-position: 0% 0%, 0% 0%, 0% 0%, 0 0, 0 0;
+  }
+  33% {
+    background-position: 33% 33%, 66% 66%, 99% 99%, 33% 33%, 33% 33%;
+  }
+  66% {
+    background-position: 66% 66%, 33% 33%, 0% 0%, 66% 66%, 66% 66%;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ============================================================
+   UTILIDADES PERSONALIZADAS (@utility — generan clases reales)
+   ============================================================ */
+
+/* --- Efectos de cristal (glassmorphism) --- */
+@utility glass-effect {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    border-color: rgba(251, 86, 7, 0.3);
+    box-shadow: 0 12px 40px rgba(251, 86, 7, 0.15);
+    background: rgba(26, 26, 26, 0.85);
+    transform: translateY(-2px);
+  }
+}
+
+/* --- Capa de contenido sobre fondos decorativos --- */
+@utility content-overlay {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.4) 25%,
+      rgba(0, 0, 0, 0.2) 50%,
+      rgba(0, 0, 0, 0.1) 75%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+/* --- Efectos de texto --- */
+@utility text-shadow-glow {
+  text-shadow: 0 0 20px rgba(251, 86, 7, 0.4), 0 0 40px rgba(251, 86, 7, 0.2);
+}
+
+@utility text-shadow-dark {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Fondos decorativos --- */
+@utility bg-elegant-dark-diagonal-subtle {
+  background: linear-gradient(
+    135deg,
+    #000000 0%,
+    #111111 40%,
+    #1a1a1a 80%,
+    #222222 100%
+  );
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  min-height: 100vh;
+}
+
+@utility bg-dark-gradient {
+  background-image: linear-gradient(135deg, #010101 0%, #1a1a1a 100%);
+}
+
+@utility bg-dark-tech-pattern {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+@utility bg-tech-grid {
+  background-image: linear-gradient(rgba(251, 86, 7, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251, 86, 7, 0.08) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+@utility bg-geometric-pattern {
+  background-image: radial-gradient(
+      circle at 20% 20%,
+      rgba(251, 86, 7, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+    linear-gradient(
+      45deg,
+      rgba(251, 86, 7, 0.02) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(251, 86, 7, 0.02) 75%
+    ),
+    linear-gradient(
+      -45deg,
+      rgba(59, 130, 246, 0.02) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(59, 130, 246, 0.02) 75%
+    );
+  background-size: 200px 200px, 250px 250px, 180px 180px, 60px 60px, 60px 60px;
+  animation: geometricShift 25s ease-in-out infinite;
+}
+
+/* --- Checkbox nativo con acento de marca --- */
+@utility form-checkbox {
+  accent-color: var(--color-brand);
+}
+
+/* --- Barra de progreso (carrusel) --- */
+@utility animate-progress {
+  animation-name: progressFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  transform-origin: left center;
+  width: 0%;
+}
+
+@utility progress-bar-glow {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.8),
+      transparent
+    );
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+}

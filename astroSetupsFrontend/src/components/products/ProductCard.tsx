@@ -137,7 +137,7 @@ export default function ProductCard({
                   rounded-full
                   bg-gray-300
                   text-gray-700
-                  hover:bg-[#FB5607]
+                  hover:bg-brand
                   hover:text-white
                   shadow-lg
                   transition-colors
@@ -157,7 +157,7 @@ export default function ProductCard({
                   rounded-full
                   bg-gray-300
                   text-gray-700
-                  hover:bg-[#FB5607]
+                  hover:bg-brand
                   hover:text-white
                   shadow-lg
                   transition-colors
@@ -182,7 +182,7 @@ export default function ProductCard({
                 text-base
                 font-semibold
                 text-dark-text
-                group-hover:text-[#FB5607]
+                group-hover:text-brand
                 transition-colors
                 duration-200
                 line-clamp-2
@@ -204,7 +204,7 @@ export default function ProductCard({
                   transition-colors
                   duration-200
                 "
-                style={{ color: '#CAD519' }}
+                style={{ color: 'var(--color-lime)' }}
               >
                 ${finalPrice.toLocaleString()}
               </p>

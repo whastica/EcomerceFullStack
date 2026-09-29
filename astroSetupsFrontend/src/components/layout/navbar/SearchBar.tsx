@@ -16,7 +16,7 @@ export function SearchBar() {
   return (
     <form
       onSubmit={handleSearch}
-      className="flex items-center bg-gray-700 rounded-md px-2 py-1 border border-white hover:border-silver"
+      className="flex items-center bg-gray-700 rounded-md px-2 py-1 border border-white hover:border-dark-muted"
     >
       <input
         type="text"
@@ -25,7 +25,7 @@ export function SearchBar() {
         placeholder="Buscar productos..."
         className="bg-transparent text-white placeholder-gray-400 focus:outline-none px-2"
       />
-      <button type="submit" className="text-orange-500 hover:text-orange-400">
+      <button type="submit" className="text-brand hover:text-brand-light">
         <Search className="w-5 h-5" />
       </button>
     </form>

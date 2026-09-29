@@ -74,8 +74,8 @@ export default function Register() {
         <div className="w-full max-w-md">
           <div className="rounded-xl border border-dark-border bg-dark-surface/80 backdrop-blur-sm shadow-glass p-8">
             <div className="text-center mb-8">
-              <div className="w-14 h-14 rounded-full bg-[#FB5607]/15 flex items-center justify-center mx-auto mb-4">
-                <UserPlus className="text-[#FB5607]" size={24} />
+              <div className="w-14 h-14 rounded-full bg-brand/15 flex items-center justify-center mx-auto mb-4">
+                <UserPlus className="text-brand" size={24} />
               </div>
               <h1 className="text-2xl font-bold text-dark-text">
                 Crear Cuenta
@@ -115,7 +115,7 @@ export default function Register() {
                       name="firstName"
                       value={form.firstName}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                      className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                       placeholder="Tu nombre"
                       required
                     />
@@ -134,7 +134,7 @@ export default function Register() {
                     name="lastName"
                     value={form.lastName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    className="w-full px-3 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                     placeholder="Tu apellido"
                     required
                   />
@@ -159,7 +159,7 @@ export default function Register() {
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                     placeholder="ejemplo@email.com"
                     required
                   />
@@ -184,7 +184,7 @@ export default function Register() {
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                     placeholder="300 123 4567"
                     required
                   />
@@ -209,7 +209,7 @@ export default function Register() {
                     name="password"
                     value={form.password}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                     placeholder="Mínimo 8 caracteres"
                     required
                     minLength={8}
@@ -235,7 +235,7 @@ export default function Register() {
                     name="confirmPassword"
                     value={form.confirmPassword}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-[#8B5CF6]/50 focus:ring-1 focus:ring-[#8B5CF6]/25 transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-dark-border bg-dark-background text-dark-text text-sm placeholder:text-dark-muted focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/25 transition-colors"
                     placeholder="Repite tu contraseña"
                     required
                     minLength={8}
@@ -246,7 +246,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 rounded-lg bg-[#FB5607] hover:bg-[#e44e06] text-white font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 px-4 rounded-lg bg-brand hover:bg-brand-hover text-white font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
               </button>
@@ -257,20 +257,20 @@ export default function Register() {
                 ¿Ya tienes una cuenta?{' '}
                 <Link
                   to="/login"
-                  className="text-[#FB5607] hover:underline font-medium"
+                  className="text-brand hover:underline font-medium"
                 >
                   Inicia sesión
                 </Link>
               </p>
               <p className="text-xs text-dark-muted">
                 Al registrarte aceptas nuestros{' '}
-                <Link to="/conditions" className="text-[#8B5CF6] hover:underline">
+                <Link to="/conditions" className="text-brand hover:underline">
                   Términos
                 </Link>{' '}
                 y{' '}
                 <Link
                   to="/privacy-policies"
-                  className="text-[#8B5CF6] hover:underline"
+                  className="text-brand hover:underline"
                 >
                   Política de Privacidad
                 </Link>

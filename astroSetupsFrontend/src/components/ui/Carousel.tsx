@@ -57,7 +57,7 @@ export default function Carousel({
       <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20 z-20 overflow-hidden rounded-full">
         <div
           key={progressKey}
-          className="h-full bg-gradient-to-r from-white via-orange-400 to-orange-500 animate-progress progress-bar-glow relative overflow-hidden rounded-full"
+          className="h-full bg-gradient-to-r from-white via-brand-light to-brand animate-progress progress-bar-glow relative overflow-hidden rounded-full"
           style={{ 
             animationDuration: `${slideInterval}ms`,
             animationTimingFunction: 'linear',

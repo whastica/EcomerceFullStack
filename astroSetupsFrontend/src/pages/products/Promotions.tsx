@@ -21,19 +21,7 @@ export default function PromotionsPage() {
   const products = data?.content ?? [];
 
   return (
-    <div className="min-h-screen bg-dark-tech-pattern text-dark-text flex flex-col relative">
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-dark-gradient" />
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
-        <div className="absolute inset-0 bg-tech-grid opacity-20" />
-        <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{
-            backgroundImage:
-              'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)',
-          }}
-        />
-      </div>
+    <div className="min-h-screen bg-app-gradient text-dark-text flex flex-col relative">
 
       <div className="relative z-10">
         <main className="flex-1">

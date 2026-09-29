@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SearchBox from '@/components/layout/sidebar/sidebarComponents/SearchBox';
 import PriceRangeSlider from '@/components/layout/sidebar/sidebarComponents/PriceRangeSlider';
 import type { SidebarProps, FilterState } from './SidebarTypes';
@@ -11,6 +11,20 @@ const defaultFilterState: FilterState = {
   categories: [],
 };
 
+/* Indicador circular (estilo radio button) */
+function RadioDot({ active }: { active: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border transition-colors ${
+        active ? 'border-brand' : 'border-dark-soft group-hover:border-dark-muted'
+      }`}
+    >
+      {active && <span className="h-1.5 w-1.5 rounded-full bg-brand" />}
+    </span>
+  );
+}
+
 export default function CatalogSidebar({
   isOpen,
   categoryTypes = [],
@@ -18,7 +32,26 @@ export default function CatalogSidebar({
   onFilterChange,
 }: SidebarProps) {
   const activeFilters = filters ?? defaultFilterState;
-  const [expandedTypes, setExpandedTypes] = useState<Set<number>>(new Set());
+  const [expandedTypeId, setExpandedTypeId] = useState<number | null>(null);
+
+  const selectedCategoryId =
+    activeFilters.categories.length === 1 ? activeFilters.categories[0] : undefined;
+  const isAllSelected =
+    activeFilters.categories.length === 0 && activeFilters.categoryType === undefined;
+
+  // Si el filtro llega desde la URL (home / enlaces), desplegar su grupo
+  useEffect(() => {
+    if (activeFilters.categoryType != null) {
+      setExpandedTypeId(activeFilters.categoryType);
+      return;
+    }
+    if (selectedCategoryId != null) {
+      const parent = categoryTypes.find((ct) =>
+        ct.categories.some((c) => c.id === selectedCategoryId)
+      );
+      setExpandedTypeId(parent ? parent.id : null);
+    }
+  }, [activeFilters.categoryType, selectedCategoryId, categoryTypes]);
 
   const updateFilters = (updated: Partial<FilterState>) => {
     onFilterChange?.({ ...activeFilters, ...updated });
@@ -26,55 +59,46 @@ export default function CatalogSidebar({
 
   const clearFilters = () => {
     onFilterChange?.(defaultFilterState);
-    setExpandedTypes(new Set());
+    setExpandedTypeId(null);
   };
 
-  const toggleExpand = (typeId: number) => {
-    setExpandedTypes((prev) => {
-      const next = new Set(prev);
-      if (next.has(typeId)) {
-        next.delete(typeId);
-      } else {
-        next.add(typeId);
-      }
-      return next;
-    });
+  /* "Todos los productos" → catálogo completo, desmarca todo lo demás */
+  const handleSelectAll = () => {
+    if (isAllSelected) return;
+    updateFilters({ categories: [], categoryType: undefined });
+    setExpandedTypeId(null);
   };
 
-  const handleCategoryTypeToggle = (categoryType: CategoryTypeWithCategories) => {
-    const allCategoryIds = categoryType.categories.map((c) => c.id);
-    const allSelected = allCategoryIds.every((id) => activeFilters.categories.includes(id));
+  /* Selección exclusiva sobre una categoría principal */
+  const handleTypeSelect = (categoryType: CategoryTypeWithCategories) => {
+    const alreadySelected =
+      activeFilters.categoryType === categoryType.id && selectedCategoryId === undefined;
 
-    if (allSelected) {
-      // Deseleccionar: quitar categories y categoryType
-      const newCategories = activeFilters.categories.filter((id) => !allCategoryIds.includes(id));
-      updateFilters({ categories: newCategories, categoryType: undefined });
-    } else {
-      // Seleccionar: agregar categories y setear categoryType
-      const newCategories = [...new Set([...activeFilters.categories, ...allCategoryIds])];
-      updateFilters({ categories: newCategories, categoryType: categoryType.id });
+    if (alreadySelected) {
+      setExpandedTypeId((prev) => (prev === categoryType.id ? null : categoryType.id));
+      return;
     }
+
+    updateFilters({ categories: [], categoryType: categoryType.id });
+    setExpandedTypeId(categoryType.id);
   };
 
-  const handleCategoryToggle = (categoryId: number, categoryTypeId: number) => {
-    const newCategories = activeFilters.categories.includes(categoryId)
-      ? activeFilters.categories.filter((id) => id !== categoryId)
-      : [...activeFilters.categories, categoryId];
-    updateFilters({ categories: newCategories, categoryType: categoryTypeId });
-  };
+  /* Selección exclusiva sobre una subcategoría */
+  const handleSubSelect = (categoryId: number, typeId: number) => {
+    const alreadySelected = selectedCategoryId === categoryId;
 
-  const isCategoryTypeSelected = (categoryType: CategoryTypeWithCategories) => {
-    return categoryType.categories.every((c) => activeFilters.categories.includes(c.id));
-  };
+    if (alreadySelected) {
+      updateFilters({ categories: [], categoryType: undefined });
+      return;
+    }
 
-  const isCategoryTypePartial = (categoryType: CategoryTypeWithCategories) => {
-    const someSelected = categoryType.categories.some((c) => activeFilters.categories.includes(c.id));
-    return someSelected && !isCategoryTypeSelected(categoryType);
+    updateFilters({ categories: [categoryId], categoryType: undefined });
+    setExpandedTypeId(typeId);
   };
 
   return (
     <aside
-      className={`w-full lg:w-64 glass-effect border-r border-dark-border overflow-y-auto transition-all duration-300 ease-in-out ${
+      className={`w-full lg:w-64 border-r border-dark-border overflow-y-auto transition-all duration-300 ease-in-out ${
         isOpen ? 'block' : 'hidden lg:block'
       }`}
       role="complementary"
@@ -93,71 +117,82 @@ export default function CatalogSidebar({
         </div>
 
         {/* Opción "Todos los productos" */}
-        <div>
-          <label className="flex items-center space-x-2 text-sm text-dark-text cursor-pointer font-semibold">
-            <input
-              type="checkbox"
-              checked={activeFilters.categories.length === 0}
-              onChange={() => updateFilters({ categories: [], categoryType: undefined })}
-              className="form-checkbox text-accent focus:ring-2 focus:ring-offset-1 focus:ring-accent"
-            />
-            <span>Todos los productos</span>
-          </label>
-        </div>
+        <button
+          type="button"
+          onClick={handleSelectAll}
+          aria-pressed={isAllSelected}
+          className="group w-full flex items-center gap-2.5 text-sm cursor-pointer text-left"
+        >
+          <RadioDot active={isAllSelected} />
+          <span
+            className={`${
+              isAllSelected ? 'text-brand font-semibold' : 'text-dark-text'
+            } transition-colors`}
+          >
+            Todos los productos
+          </span>
+        </button>
 
-        {/* Categorías jerárquicas */}
+        {/* Categorías jerárquicas — selección exclusiva */}
         <div>
           <h3 className="text-sm font-semibold mb-2 text-dark-text">Categorías</h3>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {categoryTypes.map((categoryType) => {
-              const isExpanded = expandedTypes.has(categoryType.id);
-              const isSelected = isCategoryTypeSelected(categoryType);
-              const isPartial = isCategoryTypePartial(categoryType);
+              const isTypeSelected =
+                activeFilters.categoryType === categoryType.id &&
+                selectedCategoryId === undefined;
+              const isExpanded = expandedTypeId === categoryType.id;
 
               return (
                 <div key={categoryType.id}>
-                  {/* CategoryType header */}
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => toggleExpand(categoryType.id)}
-                      className="w-5 h-5 flex items-center justify-center text-dark-muted hover:text-dark-text transition-colors text-xs"
-                      aria-label={isExpanded ? 'Colapsar' : 'Expandir'}
+                  {/* Categoría principal */}
+                  <button
+                    type="button"
+                    onClick={() => handleTypeSelect(categoryType)}
+                    aria-pressed={isTypeSelected}
+                    aria-expanded={isExpanded}
+                    className="group w-full flex items-center gap-2.5 py-1.5 text-left"
+                  >
+                    <RadioDot active={isTypeSelected} />
+                    <span
+                      className={`text-sm transition-colors ${
+                        isTypeSelected
+                          ? 'text-brand font-semibold'
+                          : 'text-dark-text group-hover:text-brand'
+                      }`}
                     >
-                      {isExpanded ? '▼' : '▶'}
-                    </button>
-                    <label className="flex items-center space-x-2 text-sm text-dark-text cursor-pointer flex-1">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        ref={(el) => {
-                          if (el) el.indeterminate = isPartial;
-                        }}
-                        onChange={() => handleCategoryTypeToggle(categoryType)}
-                        className="form-checkbox text-accent focus:ring-2 focus:ring-offset-1 focus:ring-accent"
-                      />
-                      <span className={isSelected || isPartial ? 'font-semibold' : ''}>
-                        {categoryType.name}
-                      </span>
-                    </label>
-                  </div>
+                      {categoryType.name}
+                    </span>
+                  </button>
 
-                  {/* Sub-categorías (Categories) */}
-                  {isExpanded && (
-                    <ul className="ml-6 mt-1 space-y-1">
-                      {categoryType.categories.map((category) => (
-                        <li key={category.id}>
-                          <label className="flex items-center space-x-2 text-sm text-dark-muted cursor-pointer hover:text-dark-text transition-colors">
-                            <input
-                              type="checkbox"
-                              checked={activeFilters.categories.includes(category.id)}
-                              onChange={() => handleCategoryToggle(category.id, categoryType.id)}
-                              className="form-checkbox text-accent focus:ring-2 focus:ring-offset-1 focus:ring-accent"
-                            />
-                            <span>{category.name}</span>
-                          </label>
-                        </li>
-                      ))}
+                  {/* Subcategorías */}
+                  {isExpanded && categoryType.categories.length > 0 && (
+                    <ul className="ml-[7px] mt-0.5 space-y-0.5 border-l border-dark-border pl-3">
+                      {categoryType.categories.map((category) => {
+                        const isSubSelected = selectedCategoryId === category.id;
+
+                        return (
+                          <li key={category.id}>
+                            <button
+                              type="button"
+                              onClick={() => handleSubSelect(category.id, categoryType.id)}
+                              aria-pressed={isSubSelected}
+                              className="group w-full flex items-center gap-2.5 py-1 text-left"
+                            >
+                              <RadioDot active={isSubSelected} />
+                              <span
+                                className={`text-sm transition-colors ${
+                                  isSubSelected
+                                    ? 'text-brand font-semibold'
+                                    : 'text-dark-muted group-hover:text-dark-text'
+                                }`}
+                              >
+                                {category.name}
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>

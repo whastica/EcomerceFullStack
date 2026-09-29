@@ -11,7 +11,7 @@ html {
 }
 
 body {
-  background-color: var(--color-dark-background);
+  @apply bg-app-gradient;
   color: var(--color-dark-text);
   font-family: var(--font-sans);
   font-feature-settings: "rlig" 1, "calt" 1;

@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { buildWhatsAppUrl } from '../../../config/socialLinks';
 import {
   LayoutDashboard,
   Package,
@@ -100,9 +101,16 @@ export default function AdminSidebar({
               </p>
             </div>
           </div>
-          <button className="w-full h-9 rounded-lg bg-brand/10 text-brand text-[12px] font-semibold hover:bg-brand/15 transition-colors">
+          <a
+            href={buildWhatsAppUrl(
+              'Hola, necesito soporte desde el panel de administración.'
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full h-9 flex items-center justify-center rounded-lg bg-brand/10 text-brand text-[12px] font-semibold hover:bg-brand/15 transition-colors"
+          >
             Contactar soporte
-          </button>
+          </a>
         </div>
       </aside>
     </>

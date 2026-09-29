@@ -16,7 +16,7 @@ export function SearchBar() {
   return (
     <form
       onSubmit={handleSearch}
-      className="flex items-center bg-gray-700 rounded-md px-2 py-1 border border-white hover:border-dark-muted"
+      className="flex items-center bg-transparent rounded-md px-2 py-1"
     >
       <input
         type="text"

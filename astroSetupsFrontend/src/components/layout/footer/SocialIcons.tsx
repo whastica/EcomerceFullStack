@@ -1,26 +1,6 @@
-import { FaFacebookF, FaInstagram, FaYoutube } from 'react-icons/fa';
+import SocialLinks from '../../social/SocialLinks';
 
+/** Redes sociales del footer — delega en el componente compartido. */
 export default function SocialIcons() {
-  const socialLinks = [
-    { icon: <FaFacebookF />, label: 'Facebook', href: '#' },
-    { icon: <FaInstagram />, label: 'Instagram', href: '#' },
-    { icon: <FaYoutube />, label: 'YouTube', href: '#' },
-  ];
-
-  return (
-    <div className="flex space-x-3">
-      {socialLinks.map(({ icon, label, href }) => (
-        <a
-          key={label}
-          href={href}
-          aria-label={label}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-brand to-brand-hover hover:from-brand-hover hover:to-brand-dark rounded-lg text-white text-lg shadow-md transition-transform duration-200 hover:scale-105 active:scale-95"
-        >
-          {icon}
-        </a>
-      ))}
-    </div>
-  );
+  return <SocialLinks className="flex space-x-3" />;
 }

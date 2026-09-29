@@ -42,28 +42,7 @@ export default function ProductDetailPage() {
 
   return (
 
-    <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">
-
-      {/* Fondo */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-
-        <div className="absolute inset-0 bg-dark-gradient"></div>
-
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30"></div>
-
-        <div className="absolute inset-0 bg-tech-grid opacity-20"></div>
-
-        <div
-          className="absolute top-0 left-0 w-full h-full opacity-20"
-          style={{
-            backgroundImage:
-              'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)',
-          }}
-        />
-
-      </div>
-
-
+    <div className="min-h-screen text-dark-text flex flex-col relative bg-app-gradient">
 
       <main className="flex-1">
 

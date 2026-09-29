@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { Navbar } from './components/layout/navbar/Navbar';
+import PromoBanner from './components/home/PromoBanner';
 import Home from './pages/home/Home';
 import ProductsPage from './pages/products/Products';
 import PromotionsPage from './pages/products/Promotions';
@@ -22,6 +23,7 @@ export default function App() {
   const faqRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isHome = location.pathname === '/';
 
   const scrollToFAQ = () => {
     faqRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,8 +47,9 @@ export default function App() {
 
   return (
     <>
+      {isHome && <PromoBanner />}
       <Navbar onFAQClick={scrollToFAQ} />
-      <div className="min-h-screen bg-dark-background text-dark-text">
+      <div className="min-h-screen bg-app-gradient text-dark-text">
         <Routes>
           <Route path="/" element={<Home faqRef={faqRef} />} />
           <Route path="/catalog" element={<ProductsPage />} />

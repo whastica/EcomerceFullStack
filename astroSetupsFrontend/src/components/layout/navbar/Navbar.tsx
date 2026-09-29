@@ -32,7 +32,7 @@ export function Navbar({
   const underlineClasses = "absolute bottom-0 left-1/2 w-0 h-0.5 bg-lime transition-all duration-300 group-hover:w-full group-hover:left-0";
 
   return (
-    <nav className="bg-dark-panel shadow-lg sticky top-0 z-50 font-montserrat font-medium">
+    <nav className="bg-dark-panel shadow-lg sticky top-0 z-50 font-montserrat font-medium navbar-gradient-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-2">
 
@@ -137,7 +137,7 @@ export function Navbar({
               )}
             </div>
 
-            <div className="relative flex items-center bg-dark-fill rounded-md border border-gray-500/30">
+            <div className="relative flex items-center bg-dark-panel rounded-md border border-gray-500/30">
               <SearchBar />
             </div>
 

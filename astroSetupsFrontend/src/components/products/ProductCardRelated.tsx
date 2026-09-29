@@ -15,7 +15,7 @@ export default function ProductCardRelated({ product }: ProductCardRelatedProps)
     >
       <div className="relative overflow-hidden bg-transparent border border-white border-t-0">
         {/* Imagen */}
-        <div className="relative overflow-hidden bg-dark-card">
+        <div className="relative overflow-hidden bg-transparent">
           <img
             src={product.imageUrl || '/assets/products/placeholder.png'}
             alt={product.name}

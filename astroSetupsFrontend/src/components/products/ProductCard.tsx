@@ -60,7 +60,7 @@ export default function ProductCard({
       >
         <div className="relative overflow-hidden rounded-b-lg bg-transparent">
           {/* Imagen */}
-          <div className="relative overflow-hidden bg-dark-card rounded-t-lg">
+          <div className="relative overflow-hidden bg-transparent">
             <img
               src={
                 product.imageUrl ||

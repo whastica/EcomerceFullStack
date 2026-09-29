@@ -21,12 +21,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-background text-dark-text flex flex-col relative">
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-dark-gradient" />
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
-        <div className="absolute inset-0 bg-tech-grid opacity-20" />
-      </div>
+    <div className="min-h-screen bg-app-gradient text-dark-text flex flex-col relative">
 
       <main className="flex-grow flex items-center justify-center z-10 relative py-16 px-4">
         <div className="w-full max-w-md">

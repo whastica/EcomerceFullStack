@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import Sidebar from '../../components/layout/sidebar/Sidebar';
 import Container from '../../components/layout/container/Container';
 import ProductGrid from '../../components/products/ProductGrid';
+import SortDropdown from '../../components/products/SortDropdown';
 import LoadingState from '../../components/ui/states/LoadingState';
 import ErrorState from '../../components/ui/states/ErrorState';
 import EmptyState from '../../components/ui/states/EmptyState';
@@ -17,6 +18,13 @@ const SORT_MAP: Record<string, { sortBy: 'price' | 'name' | 'newest'; sortDirect
   'price-asc': { sortBy: 'price', sortDirection: 'asc' },
   'price-desc': { sortBy: 'price', sortDirection: 'desc' },
 };
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Más recientes' },
+  { value: 'oldest', label: 'Más antiguos' },
+  { value: 'price-asc', label: 'Precio: menor a mayor' },
+  { value: 'price-desc', label: 'Precio: mayor a menor' },
+];
 
 export default function ProductsPage() {
   const [searchParams] = useSearchParams();
@@ -35,18 +43,15 @@ export default function ProductsPage() {
   });
 
   useEffect(() => {
+    // Selección exclusiva: categoría (sub) y tipo de categoría no pueden coexistir
     if (categoryIdFromUrl) {
-      setFilters(prev => ({ ...prev, categories: [Number(categoryIdFromUrl)] }));
+      setFilters(prev => ({ ...prev, categories: [Number(categoryIdFromUrl)], categoryType: undefined }));
+      setPage(0);
+    } else if (categoryTypeIdFromUrl) {
+      setFilters(prev => ({ ...prev, categories: [], categoryType: Number(categoryTypeIdFromUrl) }));
       setPage(0);
     }
-  }, [categoryIdFromUrl]);
-
-  useEffect(() => {
-    if (categoryTypeIdFromUrl) {
-      setFilters(prev => ({ ...prev, categoryType: Number(categoryTypeIdFromUrl) }));
-      setPage(0);
-    }
-  }, [categoryTypeIdFromUrl]);
+  }, [categoryIdFromUrl, categoryTypeIdFromUrl]);
 
   useEffect(() => {
     if (queryFromUrl) {
@@ -61,14 +66,14 @@ export default function ProductsPage() {
 
     return {
       query: filters.searchTerm.trim() || undefined,
-      categoryId: filters.categories.length === 1 && !filters.categoryType ? filters.categories[0] : undefined,
-      categoryTypeId: filters.categoryType || undefined,
+      categoryId: filters.categories.length === 1 ? filters.categories[0] : undefined,
+      categoryTypeId: filters.categories.length === 1 ? undefined : filters.categoryType || undefined,
       minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : undefined,
       maxPrice: filters.priceRange[1] < 5000000 ? filters.priceRange[1] : undefined,
       sortBy: sortConfig.sortBy,
       sortDirection: sortConfig.sortDirection,
       page,
-      size: 50,
+      size: 20,
     };
   }, [filters, page]);
 
@@ -125,16 +130,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen text-dark-text flex flex-col relative bg-elegant-dark-diagonal-subtle">
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-dark-gradient" />
-        <div className="absolute inset-0 bg-geometric-pattern opacity-30" />
-        <div className="absolute inset-0 bg-tech-grid opacity-20" />
-        <div
-          className="absolute top-0 left-0 w-full h-20 opacity-20"
-          style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)' }}
-        />
-      </div>
+    <div className="min-h-screen text-dark-text flex flex-col relative bg-app-gradient">
 
       <div className="relative z-10 flex flex-1">
         <Sidebar
@@ -155,27 +151,21 @@ export default function ProductsPage() {
                   Mostrando {totalElements} productos
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-dark-muted text-sm">Ordenar por:</label>
-                  <select
+                  <SortDropdown
                     value={filters.sortBy}
-                    onChange={(e) =>
+                    options={SORT_OPTIONS}
+                    onChange={(value) =>
                       handleFilterChange({
                         ...filters,
-                        sortBy: e.target.value as FilterState['sortBy'],
+                        sortBy: value as FilterState['sortBy'],
                       })
                     }
-                    className="bg-dark-card border border-dark-border rounded px-3 py-1 text-dark-text text-sm focus:ring-2 focus:ring-brand outline-none"
-                  >
-                    <option value="newest">Más recientes</option>
-                    <option value="oldest">Más antiguos</option>
-                    <option value="price-asc">Precio: menor a mayor</option>
-                    <option value="price-desc">Precio: mayor a menor</option>
-                  </select>
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="glass-effect rounded-xl p-6 animate-slide-up">
+            <div className="animate-slide-up">
               {products.length === 0 ? (
                 <EmptyState
                   title="No hay productos"

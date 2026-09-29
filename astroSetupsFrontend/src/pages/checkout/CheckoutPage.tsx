@@ -79,7 +79,7 @@ export default function CheckoutPage() {
           </h1>
           <button
             onClick={() => navigate('/catalog')}
-            className="bg-[#CDFF00] text-dark-background font-bold px-8 py-4
+            className="bg-lime text-dark-background font-bold px-8 py-4
                        rounded-lg hover:brightness-110 transition-all duration-200"
           >
             Ir a la tienda

@@ -24,3 +24,6 @@ VALUES ('Cliente', 'Test', 'cliente@astrosetups.com', '3000000003', 'CLIENT', 'A
 
 -- Productos destacados por categoría (1-2 por categoría principal)
 UPDATE products SET is_featured = true WHERE product_id IN (58, 59, 93, 92, 71, 74, 18, 35, 9, 1, 13, 53, 86, 24, 100, 42, 51);
+
+-- Categoría adicional para el home (category_types)
+INSERT IGNORE INTO category_types (name) VALUES ('Lámparas LED');

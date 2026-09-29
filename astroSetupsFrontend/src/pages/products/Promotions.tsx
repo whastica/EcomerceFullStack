@@ -30,7 +30,7 @@ export default function PromotionsPage() {
           className="absolute top-0 left-0 w-full h-full opacity-20"
           style={{
             backgroundImage:
-              'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)',
+              'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)',
           }}
         />
       </div>

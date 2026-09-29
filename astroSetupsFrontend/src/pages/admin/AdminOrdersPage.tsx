@@ -84,7 +84,7 @@ export default function AdminOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-[22px] font-bold text-white">Pedidos</h1>
-          <p className="text-[13px] text-[#555555] mt-1">
+          <p className="text-[13px] text-dark-dim mt-1">
             Gestiona los pedidos de tu tienda.
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function AdminOrdersPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#444444]" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-faint" />
           <input
             type="text"
             placeholder="Buscar por cliente..."
@@ -103,7 +103,7 @@ export default function AdminOrdersPage() {
           />
         </div>
         <div className="relative">
-          <Filter size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#444444] pointer-events-none" />
+          <Filter size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-faint pointer-events-none" />
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value as OrderStatus | ''); setPage(0); }}
@@ -142,32 +142,32 @@ export default function AdminOrdersPage() {
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id}>
-                  <td className="font-mono text-[#555555]">#{order.id}</td>
+                  <td className="font-mono text-dark-dim">#{order.id}</td>
                   <td>
                     <p className="text-white font-medium">{order.userFullName}</p>
-                    <p className="text-[11px] text-[#555555]">
+                    <p className="text-[11px] text-dark-dim">
                       {order.totalItems} producto{order.totalItems !== 1 ? 's' : ''}
                     </p>
                   </td>
-                  <td className="text-[#777777]">
+                  <td className="text-dark-soft">
                     {order.summaryDescription || order.firstProductName}
                   </td>
                   <td className="text-white font-semibold">{formatCurrency(order.total)}</td>
                   <td><StatusBadge status={order.status} /></td>
-                  <td className="text-[#777777] text-[12px]">
+                  <td className="text-dark-soft text-[12px]">
                     {order.paymentMethod === 'CASH_ON_DELIVERY'
                       ? 'Contra entrega'
                       : order.paymentMethod === 'BANK_TRANSFER'
                       ? 'Transferencia'
                       : 'Crédito'}
                   </td>
-                  <td className="text-[#555555] text-[12px]">
+                  <td className="text-dark-dim text-[12px]">
                     {new Date(order.orderDate).toLocaleDateString('es-CO')}
                   </td>
                   <td>
                     <button
                       onClick={() => handleViewDetail(order.id)}
-                      className="p-2 rounded-lg text-[#555555] hover:text-[#60A5FA] hover:bg-[rgba(96,165,250,0.08)] transition-all"
+                      className="p-2 rounded-lg text-dark-dim hover:text-blue-400 hover:bg-blue-400/[0.08] transition-all"
                     >
                       <Eye size={15} />
                     </button>
@@ -212,9 +212,9 @@ export default function AdminOrdersPage() {
         </div>
       ) : (
         <div className="admin-card text-center py-12">
-          <ShoppingCart size={40} className="mx-auto text-[#333333] mb-3" />
-          <p className="text-[15px] text-[#555555] font-medium">No hay pedidos</p>
-          <p className="text-[13px] text-[#444444] mt-1">
+          <ShoppingCart size={40} className="mx-auto text-dark-border mb-3" />
+          <p className="text-[15px] text-dark-dim font-medium">No hay pedidos</p>
+          <p className="text-[13px] text-dark-faint mt-1">
             Los pedidos aparecerán aquí cuando los clientes realicen compras.
           </p>
         </div>
@@ -230,21 +230,21 @@ export default function AdminOrdersPage() {
         {selectedOrder && (
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-3.5 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
-                <p className="text-[11px] text-[#555555] uppercase tracking-wider mb-1">Cliente</p>
+              <div className="p-3.5 rounded-lg bg-dark-sunken border border-dark-surface">
+                <p className="text-[11px] text-dark-dim uppercase tracking-wider mb-1">Cliente</p>
                 <p className="text-[13px] font-semibold text-white">
                   {selectedOrder.userFullName || selectedOrder.guestUser?.fullName}
                 </p>
-                <p className="text-[11px] text-[#555555]">
+                <p className="text-[11px] text-dark-dim">
                   {selectedOrder.userEmail || selectedOrder.guestUser?.email}
                 </p>
               </div>
-              <div className="p-3.5 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
-                <p className="text-[11px] text-[#555555] uppercase tracking-wider mb-1">Estado</p>
+              <div className="p-3.5 rounded-lg bg-dark-sunken border border-dark-surface">
+                <p className="text-[11px] text-dark-dim uppercase tracking-wider mb-1">Estado</p>
                 <StatusBadge status={selectedOrder.status} />
               </div>
-              <div className="p-3.5 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
-                <p className="text-[11px] text-[#555555] uppercase tracking-wider mb-1">Método de Pago</p>
+              <div className="p-3.5 rounded-lg bg-dark-sunken border border-dark-surface">
+                <p className="text-[11px] text-dark-dim uppercase tracking-wider mb-1">Método de Pago</p>
                 <p className="text-[13px] text-white">
                   {selectedOrder.paymentMethod === 'CASH_ON_DELIVERY'
                     ? 'Contra entrega'
@@ -253,8 +253,8 @@ export default function AdminOrdersPage() {
                     : 'Tarjeta de Crédito'}
                 </p>
               </div>
-              <div className="p-3.5 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
-                <p className="text-[11px] text-[#555555] uppercase tracking-wider mb-1">Total</p>
+              <div className="p-3.5 rounded-lg bg-dark-sunken border border-dark-surface">
+                <p className="text-[11px] text-dark-dim uppercase tracking-wider mb-1">Total</p>
                 <p className="text-[13px] text-white font-bold">
                   {formatCurrency(selectedOrder.total)}
                 </p>
@@ -263,28 +263,28 @@ export default function AdminOrdersPage() {
 
             {/* Items */}
             <div>
-              <p className="text-[11px] text-[#555555] uppercase tracking-wider mb-2.5">Productos</p>
+              <p className="text-[11px] text-dark-dim uppercase tracking-wider mb-2.5">Productos</p>
               <div className="space-y-2">
                 {selectedOrder.orderItems?.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A] hover:border-[#252525] transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg bg-dark-sunken border border-dark-surface hover:border-[#252525] transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       {item.productImageUrl ? (
                         <img
                           src={item.productImageUrl}
                           alt={item.productName}
-                          className="w-10 h-10 rounded-lg object-cover border border-[#1A1A1A]"
+                          className="w-10 h-10 rounded-lg object-cover border border-dark-surface"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A] flex items-center justify-center">
-                          <ShoppingCart size={14} className="text-[#444444]" />
+                        <div className="w-10 h-10 rounded-lg bg-dark-sunken border border-dark-surface flex items-center justify-center">
+                          <ShoppingCart size={14} className="text-dark-faint" />
                         </div>
                       )}
                       <div>
                         <p className="text-[13px] font-semibold text-white">{item.productName}</p>
-                        <p className="text-[11px] text-[#555555]">x{item.quantity}</p>
+                        <p className="text-[11px] text-dark-dim">x{item.quantity}</p>
                       </div>
                     </div>
                     <p className="text-[13px] font-bold text-white">
@@ -295,7 +295,7 @@ export default function AdminOrdersPage() {
               </div>
             </div>
 
-            <div className="h-px bg-[#1A1A1A]" />
+            <div className="h-px bg-dark-surface" />
 
             <div className="flex justify-end gap-3">
               <button
@@ -324,7 +324,7 @@ export default function AdminOrdersPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
               Nuevo Estado
             </label>
             <select
@@ -338,7 +338,7 @@ export default function AdminOrdersPage() {
             </select>
           </div>
           <div>
-            <label className="block text-[11px] font-semibold text-[#555555] uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-dark-dim uppercase tracking-wider mb-1.5">
               Observación (opcional)
             </label>
             <textarea
@@ -349,7 +349,7 @@ export default function AdminOrdersPage() {
               placeholder="Motivo del cambio de estado..."
             />
           </div>
-          <div className="h-px bg-[#1A1A1A]" />
+          <div className="h-px bg-dark-surface" />
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setStatusModal(false)}

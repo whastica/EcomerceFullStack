@@ -30,10 +30,10 @@ export default function ProductCardRelated({ product }: ProductCardRelatedProps)
               {product.brand}
             </p>
           )}
-          <h3 className="text-base font-semibold text-dark-text group-hover:text-[#FB5607] transition-colors duration-200 line-clamp-2">
+          <h3 className="text-base font-semibold text-dark-text group-hover:text-brand transition-colors duration-200 line-clamp-2">
             {product.name}
           </h3>
-          <p className="text-lg font-bold" style={{ color: '#CAD519' }}>
+          <p className="text-lg font-bold" style={{ color: 'var(--color-lime)' }}>
             ${finalPrice.toLocaleString('es-CO')}
           </p>
         </div>

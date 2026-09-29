@@ -132,7 +132,7 @@ export default function ProductsPage() {
         <div className="absolute inset-0 bg-tech-grid opacity-20" />
         <div
           className="absolute top-0 left-0 w-full h-20 opacity-20"
-          style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)' }}
+          style={{ backgroundImage: 'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)' }}
         />
       </div>
 
@@ -146,7 +146,7 @@ export default function ProductsPage() {
         />
         <main className="flex-1">
           <Container padding="large">
-            <div className="rounded-xl p-6 mb-8 border border-[#666] bg-[#4D4D4D] max-w-6xl mx-auto">
+            <div className="rounded-xl p-6 mb-8 border border-[#666] bg-dark-panel max-w-6xl mx-auto">
               <h1 className="text-3xl font-bold text-dark-text mb-2 text-shadow-glow">
                 {title}
               </h1>
@@ -164,7 +164,7 @@ export default function ProductsPage() {
                         sortBy: e.target.value as FilterState['sortBy'],
                       })
                     }
-                    className="bg-dark-card border border-dark-border rounded px-3 py-1 text-dark-text text-sm focus:ring-2 focus:ring-[#FB5607] outline-none"
+                    className="bg-dark-card border border-dark-border rounded px-3 py-1 text-dark-text text-sm focus:ring-2 focus:ring-brand outline-none"
                   >
                     <option value="newest">Más recientes</option>
                     <option value="oldest">Más antiguos</option>

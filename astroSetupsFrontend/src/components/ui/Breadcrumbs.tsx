@@ -22,7 +22,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
               {!isLast ? (
                 <Link
                   to={item.href}
-                  className="hover:text-purple-600 transition-colors"
+                  className="hover:text-brand transition-colors"
                 >
                   {item.label}
                 </Link>

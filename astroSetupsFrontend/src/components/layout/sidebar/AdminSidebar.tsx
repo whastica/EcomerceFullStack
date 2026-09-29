@@ -53,13 +53,13 @@ export default function AdminSidebar({
             <div className="text-[15px] font-bold text-white tracking-tight">
               ASTRO
             </div>
-            <div className="text-[10px] text-[#555555] font-medium tracking-wider uppercase">
+            <div className="text-[10px] text-dark-dim font-medium tracking-wider uppercase">
               Admin Panel
             </div>
           </div>
           <button
             onClick={onClose}
-            className="ml-auto p-1.5 rounded-lg text-[#555555] hover:text-white hover:bg-white/5 lg:hidden transition-colors"
+            className="ml-auto p-1.5 rounded-lg text-dark-dim hover:text-white hover:bg-white/5 lg:hidden transition-colors"
           >
             <X size={18} />
           </button>
@@ -88,19 +88,19 @@ export default function AdminSidebar({
         {/* Support Card */}
         <div className="admin-sidebar-support">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-lg bg-[rgba(251,86,7,0.1)] flex items-center justify-center">
-              <LifeBuoy size={16} className="text-[#FB5607]" />
+            <div className="w-9 h-9 rounded-lg bg-brand/[0.1] flex items-center justify-center">
+              <LifeBuoy size={16} className="text-brand" />
             </div>
             <div>
               <p className="text-[13px] font-medium text-[#CCCCCC]">
                 ¿Necesitas ayuda?
               </p>
-              <p className="text-[11px] text-[#555555]">
+              <p className="text-[11px] text-dark-dim">
                 Contactar soporte
               </p>
             </div>
           </div>
-          <button className="w-full h-9 rounded-lg bg-[#FB5607]/10 text-[#FB5607] text-[12px] font-semibold hover:bg-[#FB5607]/15 transition-colors">
+          <button className="w-full h-9 rounded-lg bg-brand/10 text-brand text-[12px] font-semibold hover:bg-brand/15 transition-colors">
             Contactar soporte
           </button>
         </div>

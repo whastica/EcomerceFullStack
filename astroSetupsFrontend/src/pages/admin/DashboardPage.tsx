@@ -61,7 +61,7 @@ export default function DashboardPage() {
           <h1 className="text-[22px] font-bold text-white">
             ¡Hola, Admin! 👋
           </h1>
-          <p className="text-[13px] text-[#555555] mt-1">
+          <p className="text-[13px] text-dark-dim mt-1">
             Aquí tienes un resumen del rendimiento de tu tienda.
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function DashboardPage() {
           <div className="admin-kpi">
             <div className="flex items-center justify-between">
               <div className="admin-kpi-icon bg-[rgba(52,211,153,0.08)]">
-                <DollarSign size={18} className="text-[#34D399]" />
+                <DollarSign size={18} className="text-emerald-400" />
               </div>
               <span className="admin-kpi-change positive">
                 <ArrowUpRight size={13} /> 18%
@@ -102,8 +102,8 @@ export default function DashboardPage() {
 
           <div className="admin-kpi">
             <div className="flex items-center justify-between">
-              <div className="admin-kpi-icon bg-[rgba(96,165,250,0.08)]">
-                <ShoppingCart size={18} className="text-[#60A5FA]" />
+              <div className="admin-kpi-icon bg-blue-400/[0.08]">
+                <ShoppingCart size={18} className="text-blue-400" />
               </div>
               <span className="admin-kpi-change positive">
                 <ArrowUpRight size={13} /> 24%
@@ -116,7 +116,7 @@ export default function DashboardPage() {
           <div className="admin-kpi">
             <div className="flex items-center justify-between">
               <div className="admin-kpi-icon bg-[rgba(168,85,247,0.08)]">
-                <Users size={18} className="text-[#A855F7]" />
+                <Users size={18} className="text-brand" />
               </div>
               <span className="admin-kpi-change positive">
                 <ArrowUpRight size={13} /> 12%
@@ -130,8 +130,8 @@ export default function DashboardPage() {
 
           <div className="admin-kpi">
             <div className="flex items-center justify-between">
-              <div className="admin-kpi-icon bg-[rgba(251,86,7,0.08)]">
-                <TrendingUp size={18} className="text-[#FB5607]" />
+              <div className="admin-kpi-icon bg-brand/[0.08]">
+                <TrendingUp size={18} className="text-brand" />
               </div>
               <span className="admin-kpi-change positive">
                 <ArrowUpRight size={13} /> 10%
@@ -170,31 +170,31 @@ export default function DashboardPage() {
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#FB5607" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#FB5607" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--color-brand)" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="var(--color-brand)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1A1A1A" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-dark-surface)" />
                   <XAxis
                     dataKey="day"
-                    stroke="#333333"
-                    tick={{ fill: '#555555', fontSize: 12 }}
+                    stroke="var(--color-dark-border)"
+                    tick={{ fill: 'var(--color-dark-dim)', fontSize: 12 }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis
-                    stroke="#333333"
-                    tick={{ fill: '#555555', fontSize: 12 }}
+                    stroke="var(--color-dark-border)"
+                    tick={{ fill: 'var(--color-dark-dim)', fontSize: 12 }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`}
                   />
                   <Tooltip
                     contentStyle={{
-                      background: '#111111',
-                      border: '1px solid #1A1A1A',
+                      background: 'var(--color-dark-raised)',
+                      border: '1px solid var(--color-dark-surface)',
                       borderRadius: '10px',
-                      color: '#FFFFFF',
+                      color: 'var(--color-white)',
                       fontSize: 13,
                     }}
                     formatter={(value) => [formatCurrency(Number(value)), 'Ventas']}
@@ -202,7 +202,7 @@ export default function DashboardPage() {
                   <Area
                     type="monotone"
                     dataKey="ventas"
-                    stroke="#FB5607"
+                    stroke="var(--color-brand)"
                     strokeWidth={2}
                     fill="url(#colorVentas)"
                   />
@@ -237,7 +237,7 @@ export default function DashboardPage() {
                 <tbody>
                   {bestSellers?.slice(0, 5).map((product, index) => (
                     <tr key={product.id}>
-                      <td className="text-[#555555] font-medium">{index + 1}</td>
+                      <td className="text-dark-dim font-medium">{index + 1}</td>
                       <td>
                         <div className="flex items-center gap-3">
                           {product.imageUrl ? (
@@ -248,18 +248,18 @@ export default function DashboardPage() {
                             />
                           ) : (
                             <div className="admin-product-thumb-placeholder">
-                              <Package size={16} className="text-[#444444]" />
+                              <Package size={16} className="text-dark-faint" />
                             </div>
                           )}
                           <div>
                             <p className="text-white font-medium">{product.name}</p>
                             {product.brand && (
-                              <p className="text-[11px] text-[#555555]">{product.brand}</p>
+                              <p className="text-[11px] text-dark-dim">{product.brand}</p>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="text-[#777777]">{product.categoryName}</td>
+                      <td className="text-dark-soft">{product.categoryName}</td>
                       <td className="text-white font-medium">
                         {formatCurrency(product.effectivePrice ?? product.price)}
                       </td>
@@ -280,7 +280,7 @@ export default function DashboardPage() {
                   ))}
                   {(!bestSellers || bestSellers.length === 0) && (
                     <tr>
-                      <td colSpan={5} className="text-center py-8 text-[#555555]">
+                      <td colSpan={5} className="text-center py-8 text-dark-dim">
                         No hay productos vendidos aún
                       </td>
                     </tr>
@@ -299,7 +299,7 @@ export default function DashboardPage() {
               <div className="admin-card-title">Pedidos recientes</div>
               <a
                 href="/admin/orders"
-                className="text-[12px] text-[#FB5607] hover:text-[#E4500A] font-medium flex items-center gap-1 transition-colors"
+                className="text-[12px] text-brand hover:text-brand-hover font-medium flex items-center gap-1 transition-colors"
               >
                 Ver todos <ChevronRight size={13} />
               </a>
@@ -317,8 +317,8 @@ export default function DashboardPage() {
                     key={order.id}
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/[0.02] transition-colors"
                   >
-                    <div className="w-9 h-9 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A] flex items-center justify-center flex-shrink-0">
-                      <ShoppingCart size={14} className="text-[#555555]" />
+                    <div className="w-9 h-9 rounded-lg bg-dark-sunken border border-dark-surface flex items-center justify-center flex-shrink-0">
+                      <ShoppingCart size={14} className="text-dark-dim" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -327,7 +327,7 @@ export default function DashboardPage() {
                         </span>
                         <StatusBadge status={order.status} />
                       </div>
-                      <p className="text-[11px] text-[#555555] mt-0.5 truncate">
+                      <p className="text-[11px] text-dark-dim mt-0.5 truncate">
                         {order.userFullName}
                       </p>
                     </div>
@@ -337,7 +337,7 @@ export default function DashboardPage() {
                   </div>
                 ))}
                 {(!ordersData?.orders || ordersData.orders.length === 0) && (
-                  <p className="text-center py-6 text-[#555555] text-[13px]">
+                  <p className="text-center py-6 text-dark-dim text-[13px]">
                     No hay pedidos recientes
                   </p>
                 )}
@@ -358,7 +358,7 @@ export default function DashboardPage() {
                       cy="28"
                       r="24"
                       fill="none"
-                      stroke="#1A1A1A"
+                      stroke="var(--color-dark-surface)"
                       strokeWidth="4"
                     />
                     <circle
@@ -366,7 +366,7 @@ export default function DashboardPage() {
                       cy="28"
                       r="24"
                       fill="none"
-                      stroke="#34D399"
+                      stroke="var(--color-emerald-400)"
                       strokeWidth="4"
                       strokeLinecap="round"
                       strokeDasharray={`${(sales?.ordersDelivered ?? 0) / Math.max(sales?.totalOrders ?? 1, 1) * 150.8} 150.8`}
@@ -380,47 +380,47 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-[13px] text-white font-medium">Tasa de entrega</p>
-                  <p className="text-[11px] text-[#555555]">
+                  <p className="text-[11px] text-dark-dim">
                     {sales?.ordersDelivered ?? 0} de {sales?.totalOrders ?? 0} pedidos
                   </p>
                 </div>
               </div>
 
-              <div className="h-px bg-[#1A1A1A]" />
+              <div className="h-px bg-dark-surface" />
 
               {/* Metrics */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
+                <div className="p-3 rounded-lg bg-dark-sunken border border-dark-surface">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <Truck size={14} className="text-[#60A5FA]" />
-                    <span className="text-[11px] text-[#555555]">Envíos</span>
+                    <Truck size={14} className="text-blue-400" />
+                    <span className="text-[11px] text-dark-dim">Envíos</span>
                   </div>
                   <p className="text-[18px] font-bold text-white">
                     {sales?.ordersShipped ?? 0}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
+                <div className="p-3 rounded-lg bg-dark-sunken border border-dark-surface">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <Star size={14} className="text-[#FBBF24]" />
-                    <span className="text-[11px] text-[#555555]">Satisfacción</span>
+                    <Star size={14} className="text-amber-400" />
+                    <span className="text-[11px] text-dark-dim">Satisfacción</span>
                   </div>
                   <p className="text-[18px] font-bold text-white">
                     {customers?.avgOrdersPerCustomer?.toFixed(1) ?? '0.0'}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
+                <div className="p-3 rounded-lg bg-dark-sunken border border-dark-surface">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <Zap size={14} className="text-[#FB5607]" />
-                    <span className="text-[11px] text-[#555555]">Pendientes</span>
+                    <Zap size={14} className="text-brand" />
+                    <span className="text-[11px] text-dark-dim">Pendientes</span>
                   </div>
                   <p className="text-[18px] font-bold text-white">
                     {sales?.ordersPending ?? 0}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-[#0E0E0E] border border-[#1A1A1A]">
+                <div className="p-3 rounded-lg bg-dark-sunken border border-dark-surface">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <Users size={14} className="text-[#A855F7]" />
-                    <span className="text-[11px] text-[#555555]">Nuevos</span>
+                    <Users size={14} className="text-brand" />
+                    <span className="text-[11px] text-dark-dim">Nuevos</span>
                   </div>
                   <p className="text-[18px] font-bold text-white">
                     {customers?.newCustomersThisMonth ?? 0}

@@ -3,17 +3,17 @@ import { Truck, Headset, Star } from 'lucide-react'; // Puedes reemplazarlos por
 export default function CustomSetupFeatures() {
   const features = [
     {
-      icon: <Truck className="w-6 h-6 text-primary" />,
+      icon: <Truck className="w-6 h-6 text-brand" />,
       title: 'Envíos a toda Colombia',
       description: 'Trabajamos con las mejores transportadoras del país.',
     },
     {
-      icon: <Headset className="w-6 h-6 text-primary" />,
+      icon: <Headset className="w-6 h-6 text-brand" />,
       title: 'Asesoría personalizada',
       description: 'Tenemos un equipo especializado para ayudarte.',
     },
     {
-      icon: <Star className="w-6 h-6 text-primary" />,
+      icon: <Star className="w-6 h-6 text-brand" />,
       title: 'Los mejores productos',
       description: 'Ofrecemos las mejores marcas a nivel mundial.',
     },

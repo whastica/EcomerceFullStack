@@ -4,7 +4,7 @@
 
 /* ---------- Page Shell ---------- */
 .admin-page {
-  background: #010101;
+  background: var(--color-dark-background);
   min-height: 100vh;
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -13,7 +13,7 @@
 .admin-sidebar {
   width: 260px;
   background: #0A0A0A;
-  border-right: 1px solid #1A1A1A;
+  border-right: 1px solid var(--color-dark-surface);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #1A1A1A;
+  border-bottom: 1px solid var(--color-dark-surface);
 }
 
 .admin-sidebar-logo-icon {
@@ -53,7 +53,7 @@
   padding: 8px 12px 6px;
   font-size: 10px;
   font-weight: 600;
-  color: #555555;
+  color: var(--color-dark-dim);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -66,7 +66,7 @@
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
-  color: #777777;
+  color: var(--color-dark-soft);
   text-decoration: none;
   transition: all 0.2s ease;
   margin-bottom: 2px;
@@ -79,7 +79,7 @@
 }
 
 .admin-sidebar-link.active {
-  color: #FB5607;
+  color: var(--color-brand);
   background: rgba(251, 86, 7, 0.08);
   font-weight: 600;
 }
@@ -93,7 +93,7 @@
   width: 3px;
   height: 20px;
   border-radius: 0 3px 3px 0;
-  background: #FB5607;
+  background: var(--color-brand);
 }
 
 .admin-sidebar-support {
@@ -108,7 +108,7 @@
 .admin-header {
   height: 64px;
   background: #0A0A0A;
-  border-bottom: 1px solid #1A1A1A;
+  border-bottom: 1px solid var(--color-dark-surface);
   display: flex;
   align-items: center;
   padding: 0 28px;
@@ -141,8 +141,8 @@
 
 /* ---------- Cards ---------- */
 .admin-card {
-  background: #111111;
-  border: 1px solid #1A1A1A;
+  background: var(--color-dark-raised);
+  border: 1px solid var(--color-dark-surface);
   border-radius: 14px;
   padding: 24px;
   transition: border-color 0.2s ease;
@@ -162,7 +162,7 @@
 .admin-card-title {
   font-size: 15px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--color-dark-text);
 }
 
 .admin-card-subtitle {
@@ -173,8 +173,8 @@
 
 /* ---------- KPI Cards ---------- */
 .admin-kpi {
-  background: #111111;
-  border: 1px solid #1A1A1A;
+  background: var(--color-dark-raised);
+  border: 1px solid var(--color-dark-surface);
   border-radius: 14px;
   padding: 22px 24px;
   display: flex;
@@ -199,7 +199,7 @@
 .admin-kpi-value {
   font-size: 28px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-dark-text);
   line-height: 1;
   letter-spacing: -0.5px;
 }
@@ -219,17 +219,17 @@
 }
 
 .admin-kpi-change.positive {
-  color: #34D399;
+  color: var(--color-emerald-400);
 }
 
 .admin-kpi-change.negative {
-  color: #F87171;
+  color: var(--color-red-400);
 }
 
 /* ---------- Tables ---------- */
 .admin-table-wrap {
-  background: #111111;
-  border: 1px solid #1A1A1A;
+  background: var(--color-dark-raised);
+  border: 1px solid var(--color-dark-surface);
   border-radius: 14px;
   overflow: hidden;
 }
@@ -241,7 +241,7 @@
 
 .admin-table thead {
   background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid #1A1A1A;
+  border-bottom: 1px solid var(--color-dark-surface);
 }
 
 .admin-table th {
@@ -249,7 +249,7 @@
   text-align: left;
   font-size: 11px;
   font-weight: 600;
-  color: #555555;
+  color: var(--color-dark-dim);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -279,30 +279,30 @@
   width: 100%;
   height: 42px;
   padding: 0 14px;
-  background: #0E0E0E;
+  background: var(--color-dark-sunken);
   border: 1px solid #222222;
   border-radius: 10px;
-  color: #FFFFFF;
+  color: var(--color-dark-text);
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s ease;
 }
 
 .admin-input::placeholder {
-  color: #444444;
+  color: var(--color-dark-faint);
 }
 
 .admin-input:focus {
-  border-color: #FB5607;
+  border-color: var(--color-brand);
 }
 
 .admin-select {
   height: 42px;
   padding: 0 32px 0 14px;
-  background: #0E0E0E;
+  background: var(--color-dark-sunken);
   border: 1px solid #222222;
   border-radius: 10px;
-  color: #FFFFFF;
+  color: var(--color-dark-text);
   font-size: 13px;
   outline: none;
   appearance: none;
@@ -314,12 +314,12 @@
 }
 
 .admin-select:focus {
-  border-color: #FB5607;
+  border-color: var(--color-brand);
 }
 
 .admin-select option {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-dark-raised);
+  color: var(--color-dark-text);
 }
 
 /* ---------- Buttons ---------- */
@@ -330,8 +330,8 @@
   gap: 8px;
   padding: 0 20px;
   height: 40px;
-  background: #FB5607;
-  color: #FFFFFF;
+  background: var(--color-brand);
+  color: var(--color-dark-text);
   font-size: 13px;
   font-weight: 600;
   border: none;
@@ -342,7 +342,7 @@
 }
 
 .admin-btn-primary:hover {
-  background: #E4500A;
+  background: var(--color-brand-hover);
   box-shadow: 0 4px 16px rgba(251, 86, 7, 0.2);
 }
 
@@ -365,8 +365,8 @@
 }
 
 .admin-btn-secondary:hover {
-  color: #FFFFFF;
-  border-color: #444444;
+  color: var(--color-dark-text);
+  border-color: var(--color-dark-faint);
   background: rgba(255, 255, 255, 0.03);
 }
 
@@ -384,32 +384,27 @@
 
 .admin-badge-success {
   background: rgba(52, 211, 153, 0.1);
-  color: #34D399;
+  color: var(--color-emerald-400);
 }
 
 .admin-badge-warning {
   background: rgba(251, 191, 36, 0.1);
-  color: #FBBF24;
+  color: var(--color-amber-400);
 }
 
 .admin-badge-danger {
   background: rgba(248, 113, 113, 0.1);
-  color: #F87171;
+  color: var(--color-red-400);
 }
 
 .admin-badge-info {
   background: rgba(96, 165, 250, 0.1);
-  color: #60A5FA;
-}
-
-.admin-badge-purple {
-  background: rgba(168, 85, 247, 0.1);
-  color: #A855F7;
+  color: var(--color-blue-400);
 }
 
 .admin-badge-neutral {
   background: rgba(255, 255, 255, 0.05);
-  color: #777777;
+  color: var(--color-dark-soft);
 }
 
 .admin-badge-dot {
@@ -424,7 +419,7 @@
   width: 18px;
   height: 18px;
   border-radius: 5px;
-  border: 1.5px solid #333333;
+  border: 1.5px solid var(--color-dark-border);
   background: transparent;
   cursor: pointer;
   appearance: none;
@@ -433,8 +428,8 @@
 }
 
 .admin-checkbox:checked {
-  background: #FB5607;
-  border-color: #FB5607;
+  background: var(--color-brand);
+  border-color: var(--color-brand);
 }
 
 .admin-checkbox:focus {
@@ -456,8 +451,8 @@
 }
 
 .admin-modal {
-  background: #111111;
-  border: 1px solid #1A1A1A;
+  background: var(--color-dark-raised);
+  border: 1px solid var(--color-dark-surface);
   border-radius: 16px;
   width: 100%;
   max-height: 85vh;
@@ -469,13 +464,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid #1A1A1A;
+  border-bottom: 1px solid var(--color-dark-surface);
 }
 
 .admin-modal-title {
   font-size: 16px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--color-dark-text);
 }
 
 .admin-modal-body {
@@ -484,7 +479,7 @@
 
 .admin-modal-footer {
   padding: 16px 24px;
-  border-top: 1px solid #1A1A1A;
+  border-top: 1px solid var(--color-dark-surface);
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -496,12 +491,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px;
-  border-top: 1px solid #1A1A1A;
+  border-top: 1px solid var(--color-dark-surface);
 }
 
 .admin-pagination-info {
   font-size: 13px;
-  color: #555555;
+  color: var(--color-dark-dim);
 }
 
 .admin-pagination-buttons {
@@ -532,9 +527,9 @@
 }
 
 .admin-pagination-btn.active {
-  background: #FB5607;
-  color: #FFFFFF;
-  border-color: #FB5607;
+  background: var(--color-brand);
+  color: var(--color-dark-text);
+  border-color: var(--color-brand);
   font-weight: 600;
 }
 
@@ -545,7 +540,7 @@
 
 /* ---------- Skeleton Loading ---------- */
 .admin-skeleton {
-  background: linear-gradient(90deg, #111111 25%, #1A1A1A 50%, #111111 75%);
+  background: linear-gradient(90deg, var(--color-dark-raised) 25%, var(--color-dark-surface) 50%, var(--color-dark-raised) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite;
   border-radius: 10px;
@@ -562,8 +557,8 @@
   height: 44px;
   border-radius: 10px;
   object-fit: cover;
-  border: 1px solid #1A1A1A;
-  background: #0E0E0E;
+  border: 1px solid var(--color-dark-surface);
+  background: var(--color-dark-sunken);
   flex-shrink: 0;
 }
 
@@ -571,8 +566,8 @@
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: #0E0E0E;
-  border: 1px solid #1A1A1A;
+  background: var(--color-dark-sunken);
+  border: 1px solid var(--color-dark-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -581,17 +576,17 @@
 
 /* ---------- Stock Indicator ---------- */
 .admin-stock-low {
-  color: #FBBF24;
+  color: var(--color-amber-400);
   font-weight: 600;
 }
 
 .admin-stock-out {
-  color: #F87171;
+  color: var(--color-red-400);
   font-weight: 600;
 }
 
 .admin-stock-ok {
-  color: #34D399;
+  color: var(--color-emerald-400);
   font-weight: 500;
 }
 
@@ -601,7 +596,7 @@
   height: 36px;
   border-radius: 10px;
   background: rgba(251, 86, 7, 0.12);
-  color: #FB5607;
+  color: var(--color-brand);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -611,14 +606,57 @@
 }
 
 /* ---------- Utility ---------- */
-.admin-text-primary { color: #FB5607; }
-.admin-text-success { color: #34D399; }
-.admin-text-warning { color: #FBBF24; }
-.admin-text-danger  { color: #F87171; }
-.admin-text-muted   { color: #555555; }
-.admin-text-secondary { color: #777777; }
+.admin-text-primary { color: var(--color-brand); }
+.admin-text-success { color: var(--color-emerald-400); }
+.admin-text-warning { color: var(--color-amber-400); }
+.admin-text-danger  { color: var(--color-red-400); }
+.admin-text-muted   { color: var(--color-dark-dim); }
+.admin-text-secondary { color: var(--color-dark-soft); }
 
 .admin-bg-success-subtle { background: rgba(52, 211, 153, 0.08); }
 .admin-bg-warning-subtle { background: rgba(251, 191, 36, 0.08); }
 .admin-bg-danger-subtle  { background: rgba(248, 113, 113, 0.08); }
 .admin-bg-info-subtle    { background: rgba(96, 165, 250, 0.08); }
+
+/* ---------- Glass surfaces ---------- */
+.admin-glass {
+  background: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-glass-strong {
+  background: rgba(17, 17, 17, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Estados hover / glow ---------- */
+.admin-card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(251, 86, 7, 0.12);
+}
+
+.admin-row-hover {
+  transition: background-color 0.15s ease;
+}
+
+.admin-row-hover:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.admin-glow-text {
+  text-shadow: 0 0 20px rgba(251, 86, 7, 0.35);
+}
+
+.admin-gradient-separator {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(251, 86, 7, 0.45), transparent);
+}

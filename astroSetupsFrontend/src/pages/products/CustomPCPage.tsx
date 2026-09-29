@@ -23,16 +23,16 @@ export default function CustomPCPage() {
               Estamos trabajando en una herramienta interactiva para que puedas
               configurar tu PC ideal seleccionando componentes compatibles entre sí.
             </p>
-            <div className="bg-[#4D4D4D] border border-gray-600 rounded-xl p-6">
+            <div className="bg-dark-panel border border-gray-600 rounded-xl p-6">
               <p className="text-sm text-gray-300">
-                <span className="font-bold text-[#D6FF3C]">Próximamente</span> —
+                <span className="font-bold text-lime">Próximamente</span> —
                 Estaremos lanzando esta funcionalidad muy pronto. Mientras tanto,
                 puedes explorar nuestro catálogo completo de productos.
               </p>
             </div>
             <button
               onClick={() => navigate('/catalog')}
-              className="px-8 py-4 bg-[#CDFF00] text-dark-background font-bold rounded-lg
+              className="px-8 py-4 bg-lime text-dark-background font-bold rounded-lg
                          hover:brightness-110 transition-all duration-200 text-base"
             >
               Explorar Catálogo

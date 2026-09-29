@@ -17,8 +17,8 @@ const statusConfig: Record<
   },
   SHIPPED: {
     label: 'Enviado',
-    className: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    dotColor: 'bg-purple-400',
+    className: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+    dotColor: 'bg-cyan-400',
   },
   DELIVERED: {
     label: 'Entregado',
@@ -52,18 +52,18 @@ const statusConfig: Record<
   },
   ADMIN: {
     label: 'Admin',
-    className: 'bg-[#8B5CF6]/10 text-[#8B5CF6] border-[#8B5CF6]/20',
-    dotColor: 'bg-[#8B5CF6]',
+    className: 'bg-brand/10 text-brand border-brand/20',
+    dotColor: 'bg-brand',
   },
   SUPER_ADMIN: {
     label: 'Super Admin',
-    className: 'bg-[#FB5607]/10 text-[#FB5607] border-[#FB5607]/20',
-    dotColor: 'bg-[#FB5607]',
+    className: 'bg-brand/10 text-brand border-brand/20',
+    dotColor: 'bg-brand',
   },
   CLIENT: {
     label: 'Cliente',
-    className: 'bg-[#3B82F6]/10 text-[#3B82F6] border-[#3B82F6]/20',
-    dotColor: 'bg-[#3B82F6]',
+    className: 'bg-info/10 text-info border-info/20',
+    dotColor: 'bg-info',
   },
 };
 

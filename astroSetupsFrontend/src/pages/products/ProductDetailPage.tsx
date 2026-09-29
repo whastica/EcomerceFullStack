@@ -38,7 +38,6 @@ export default function ProductDetailPage() {
 
   const {
     data: relatedProducts = [],
-    isLoading: isRelatedLoading,
   } = useRelatedProducts(productId);
 
   return (
@@ -58,7 +57,7 @@ export default function ProductDetailPage() {
           className="absolute top-0 left-0 w-full h-full opacity-20"
           style={{
             backgroundImage:
-              'linear-gradient(45deg, transparent 0%, #f3f4f6 200%)',
+              'linear-gradient(45deg, transparent 0%, var(--color-gray-100) 200%)',
           }}
         />
 

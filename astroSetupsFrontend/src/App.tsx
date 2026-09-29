@@ -14,6 +14,7 @@ import CheckoutPage from './pages/checkout/CheckoutPage';
 import PrivacyPolicies from './pages/privacyPolicies';
 import Conditions from './pages/conditions';
 import CustomPCPage from './pages/products/CustomPCPage';
+import TrackingPage from './pages/tracking/TrackingPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
 
@@ -25,39 +26,6 @@ export default function App() {
   const scrollToFAQ = () => {
     faqRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-    document.body.classList.add('dark');
-    document.body.style.backgroundColor = '#010101';
-    document.body.style.color = '#FFFFFF';
-    document.documentElement.style.backgroundColor = '#010101';
-    document.documentElement.style.color = '#FFFFFF';
-
-    const observer = new MutationObserver(() => {
-      if (!document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.add('dark');
-      }
-      if (!document.body.classList.contains('dark')) {
-        document.body.classList.add('dark');
-      }
-      if (document.body.style.backgroundColor !== 'rgb(1, 1, 1)') {
-        document.body.style.backgroundColor = '#010101';
-        document.body.style.color = '#FFFFFF';
-      }
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'style'],
-    });
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class', 'style'],
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     if (location.pathname === '/' && location.hash === '#faq') {
@@ -92,6 +60,7 @@ export default function App() {
           <Route path="/custom-pc" element={<CustomPCPage />} />
           <Route path="/privacy-policies" element={<PrivacyPolicies />} />
           <Route path="/conditions" element={<Conditions />} />
+          <Route path="/tracking" element={<TrackingPage />} />
         </Routes>
       </div>
       <Footer />

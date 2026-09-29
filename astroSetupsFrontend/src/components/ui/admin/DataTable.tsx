@@ -41,7 +41,7 @@ export default function DataTable<T>({
                 <th
                   key={col.key}
                   className={cn(
-                    'px-5 py-3.5 text-left text-[11px] font-semibold text-[#AAAAAA] uppercase tracking-wider',
+                    'px-5 py-3.5 text-left text-[11px] font-semibold text-dark-muted uppercase tracking-wider',
                     col.className
                   )}
                 >
@@ -55,7 +55,7 @@ export default function DataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-5 py-16 text-center text-[#AAAAAA]"
+                  className="px-5 py-16 text-center text-dark-muted"
                 >
                   {emptyMessage}
                 </td>
@@ -88,14 +88,14 @@ export default function DataTable<T>({
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-[#AAAAAA]">
+          <p className="text-xs text-dark-muted">
             {totalElements} resultado{totalElements !== 1 ? 's' : ''}
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 0}
-              className="p-2 rounded-xl admin-glass text-[#AAAAAA] hover:text-white hover:border-[#8B5CF6]/30 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300"
+              className="p-2 rounded-xl admin-glass text-dark-muted hover:text-white hover:border-brand/30 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300"
             >
               <ChevronLeft size={16} />
             </button>
@@ -118,8 +118,8 @@ export default function DataTable<T>({
                     className={cn(
                       'w-8 h-8 rounded-lg text-xs font-medium transition-all duration-300',
                       pageNum === currentPage
-                        ? 'bg-gradient-to-br from-[#8B5CF6] to-[#3B82F6] text-white shadow-lg shadow-[#8B5CF6]/20'
-                        : 'text-[#AAAAAA] hover:text-white hover:bg-white/[0.05]'
+                        ? 'bg-gradient-to-br from-brand to-info text-white shadow-lg shadow-brand/20'
+                        : 'text-dark-muted hover:text-white hover:bg-white/[0.05]'
                     )}
                   >
                     {pageNum + 1}
@@ -130,7 +130,7 @@ export default function DataTable<T>({
             <button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage >= totalPages - 1}
-              className="p-2 rounded-xl admin-glass text-[#AAAAAA] hover:text-white hover:border-[#8B5CF6]/30 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300"
+              className="p-2 rounded-xl admin-glass text-dark-muted hover:text-white hover:border-brand/30 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300"
             >
               <ChevronRight size={16} />
             </button>

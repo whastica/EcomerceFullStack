@@ -14,7 +14,7 @@ export function DesktopLinks() {
           key={name}
           to={path}
           className={({ isActive }) =>
-            `text-sm font-medium transition-colors hover:text-primary ${isActive ? 'text-primary' : 'text-muted-foreground'}`
+            `text-sm font-medium transition-colors hover:text-brand ${isActive ? 'text-brand' : 'text-dark-muted'}`
           }
         >
           {name}

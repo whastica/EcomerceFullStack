@@ -47,19 +47,19 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
     onClose();
   };
 
-  const linkClasses = "block px-4 py-3 text-gray-300 hover:text-[#D7FE3B] hover:bg-[#5A5A5A] transition-all duration-300 font-medium text-base border-b border-gray-600 last:border-b-0";
+  const linkClasses = "block px-4 py-3 text-gray-300 hover:text-lime hover:bg-[#5A5A5A] transition-all duration-300 font-medium text-base border-b border-gray-600 last:border-b-0";
 
   return (
     <>
       <div
-        className={`lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       />
 
       <div
         ref={menuRef}
-        className={`lg:hidden fixed top-0 right-0 w-80 h-full bg-[#4D4D4D] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`lg:hidden fixed top-0 right-0 w-80 h-full bg-dark-panel shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -74,7 +74,7 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-300 hover:text-[#D7FE3B] transition-colors duration-200"
+            className="p-2 text-gray-300 hover:text-lime transition-colors duration-200"
             aria-label="Cerrar menú"
           >
             <X className="w-6 h-6" />
@@ -103,9 +103,9 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
 
           <Link
             to="/custom-pc"
-            className="block mx-4 my-4 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold text-base text-center
-                       shadow-lg transform transition-all duration-200 hover:from-orange-600 hover:to-orange-700 hover:scale-105 hover:shadow-xl
-                       active:scale-95 active:shadow-md border-2 border-orange-300"
+            className="block mx-4 my-4 px-4 py-3 bg-gradient-to-r from-brand to-brand-hover text-white rounded-lg font-bold text-base text-center
+                       shadow-lg transform transition-all duration-200 hover:from-brand-hover hover:to-brand-dark hover:scale-105 hover:shadow-xl
+                       active:scale-95 active:shadow-md border-2 border-brand-light"
             style={{
               textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
               boxShadow:
@@ -122,7 +122,7 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
           {isAuthenticated ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3 px-2">
-                <div className="w-10 h-10 rounded-full bg-[#8B5CF6]/30 flex items-center justify-center text-sm font-bold text-[#8B5CF6]">
+                <div className="w-10 h-10 rounded-full bg-brand/30 flex items-center justify-center text-sm font-bold text-brand">
                   {user?.firstName?.[0]}{user?.lastName?.[0]}
                 </div>
                 <div className="min-w-0">
@@ -135,7 +135,7 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
               {isAdmin && (
                 <Link
                   to="/admin/dashboard"
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2 text-[#8B5CF6] border border-[#8B5CF6]/50 rounded-md hover:bg-[#8B5CF6]/10 transition-all"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2 text-brand border border-brand/50 rounded-md hover:bg-brand/10 transition-all"
                   onClick={handleLinkClick}
                 >
                   <Shield size={16} />
@@ -154,14 +154,14 @@ export function NavbarMobileMenu({ isOpen, onClose, onFAQClick }: NavbarMobileMe
             <div className="space-y-3">
               <Link
                 to="/login"
-                className="block w-full px-4 py-2 text-center text-gray-300 hover:text-[#D7FE3B] border border-gray-500 rounded-md transition-all duration-300 hover:border-[#D7FE3B]"
+                className="block w-full px-4 py-2 text-center text-gray-300 hover:text-lime border border-gray-500 rounded-md transition-all duration-300 hover:border-lime"
                 onClick={handleLinkClick}
               >
                 Iniciar Sesión
               </Link>
               <Link
                 to="/register"
-                className="block w-full px-4 py-2 text-center bg-[#D7FE3B] text-gray-900 hover:bg-[#c5ec29] rounded-md font-medium transition-all duration-300 hover:shadow-lg"
+                className="block w-full px-4 py-2 text-center bg-lime text-gray-900 hover:bg-lime rounded-md font-medium transition-all duration-300 hover:shadow-lg"
                 onClick={handleLinkClick}
               >
                 Registrarse

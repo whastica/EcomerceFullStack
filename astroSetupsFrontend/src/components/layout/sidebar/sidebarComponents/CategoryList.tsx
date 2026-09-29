@@ -14,7 +14,7 @@ export default function CategoryList({ categories }: Props) {
           <Link
             key={category.id}
             to={`/products`}
-            className="flex justify-between items-center text-sm text-dark-muted hover:text-[#FB5607] transition-colors py-1"
+            className="flex justify-between items-center text-sm text-dark-muted hover:text-brand transition-colors py-1"
           >
             <span>{category.name}</span>
             {category.productCount && <span className="text-dark-muted text-xs">({category.productCount})</span>}

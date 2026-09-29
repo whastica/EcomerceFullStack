@@ -2,18 +2,18 @@ const PrivacyPolicies = () => {
   return (
     <div className="min-h-screen flex flex-col bg-black">
       <main className="flex-grow flex flex-col items-center py-10">
-        <div className="bg-[#4D4D4D] text-white w-full max-w-4xl p-6 rounded-md text-center">
+        <div className="bg-dark-panel text-white w-full max-w-4xl p-6 rounded-md text-center">
           <h1 className="text-[46px] font-bold font-montserrat">Condiciones de Uso y Garantías</h1>
         </div>
         <a href="/" className="text-white underline text-center block mt-6">Volver al inicio</a>
         <div className="text-white max-w-4xl px-6 mt-6 font-montserrat">
         {/* Horario de Atención */}
-        <div className="bg-[#3a3a3a] p-4 rounded-lg border-l-4 border-[#D7FE3B] mb-6">
+        <div className="bg-dark-fill p-4 rounded-lg border-l-4 border-lime mb-6">
             <h2 className="text-lg font-bold flex items-center">
             <span className="mr-2">📅</span> Horario de Atención para Garantías
             </h2>
             <p className="text-base mt-1 leading-relaxed">
-            Atendemos solicitudes de garantía de lunes a viernes en el horario de <span className="font-bold text-[#D7FE3B]">10:00 a.m. a 4:00 p.m.</span>
+            Atendemos solicitudes de garantía de lunes a viernes en el horario de <span className="font-bold text-lime">10:00 a.m. a 4:00 p.m.</span>
             </p>
         </div>
 
@@ -35,17 +35,17 @@ const PrivacyPolicies = () => {
             <p className="mb-2 italic text-gray-400">Para solicitar una garantía, debes presentar:</p>
             <ul className="space-y-2 ml-2">
             <li className="flex items-start font-medium">
-                <span className="text-[#D7FE3B] mr-2">✅</span> Factura de compra original.
+                <span className="text-lime mr-2">✅</span> Factura de compra original.
             </li>
             <li className="flex items-start font-medium">
-                <span className="text-[#D7FE3B] mr-2">✅</span> Producto con todos sus accesorios, empaques y manuales completos.
+                <span className="text-lime mr-2">✅</span> Producto con todos sus accesorios, empaques y manuales completos.
             </li>
             </ul>
         </section>
 
         {/* Opciones de Garantía */}
-        <section className="mb-6 bg-[#444444] p-5 rounded-xl border border-gray-600">
-            <h3 className="font-bold mb-4 text-[#D7FE3B] uppercase tracking-wider text-sm text-center">Opciones en caso de garantía aprobada</h3>
+        <section className="mb-6 bg-dark-faint p-5 rounded-xl border border-gray-600">
+            <h3 className="font-bold mb-4 text-lime uppercase tracking-wider text-sm text-center">Opciones en caso de garantía aprobada</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-3">
                 <div className="text-2xl mb-1">🔄</div>
@@ -76,7 +76,7 @@ const PrivacyPolicies = () => {
                 "Modificaciones o reparaciones por terceros.",
                 "Software o sistema operativo."
             ].map((item, index) => (
-                <div key={index} className="flex items-center bg-[#333] p-2 rounded border border-red-900/30">
+                <div key={index} className="flex items-center bg-dark-border p-2 rounded border border-red-900/30">
                 <span className="mr-2">❌</span> {item}
                 </div>
             ))}
@@ -84,7 +84,7 @@ const PrivacyPolicies = () => {
         </section>
 
         {/* Envíos */}
-        <section className="mt-8 p-5 bg-gradient-to-br from-[#FF6800] to-[#CC3600] border border-white/20 rounded-lg shadow-lg">
+        <section className="mt-8 p-5 bg-gradient-to-br from-brand-light to-brand-dark border border-white/20 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold flex items-center mb-2 text-white">
             <span className="mr-2">📦</span> Envíos para garantía
         </h2>

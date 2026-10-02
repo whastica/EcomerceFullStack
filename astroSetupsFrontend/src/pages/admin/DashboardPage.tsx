@@ -4,7 +4,6 @@ import {
   ShoppingCart,
   Users,
   TrendingUp,
-  ArrowUpRight,
   Package,
   Truck,
   Star,
@@ -20,7 +19,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { useSalesStats } from '@/hooks/admin/useSalesStats';
+import { useSalesStats, useSalesSeries } from '@/hooks/admin/useSalesStats';
 import { useCustomerStats } from '@/hooks/admin/useCustomerStats';
 import { useAdminOrders } from '@/hooks/admin/useAdminOrders';
 import { useAdminBestSellers } from '@/hooks/admin/useAdminProducts';
@@ -34,24 +33,28 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-const chartData = [
-  { day: 'Lun', ventas: 1200000 },
-  { day: 'Mar', ventas: 1800000 },
-  { day: 'Mié', ventas: 1500000 },
-  { day: 'Jue', ventas: 2200000 },
-  { day: 'Vie', ventas: 1900000 },
-  { day: 'Sáb', ventas: 2800000 },
-  { day: 'Dom', ventas: 1100000 },
-];
-
 export default function DashboardPage() {
-  const [period, setPeriod] = useState('7d');
+  const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('7d');
   const { data: sales, isLoading: loadingSales } = useSalesStats();
+  const { data: series } = useSalesSeries(period);
   const { data: customers, isLoading: loadingCustomers } = useCustomerStats();
   const { data: ordersData, isLoading: loadingOrders } = useAdminOrders({ page: 0, size: 5 });
   const { data: bestSellers, isLoading: loadingBest } = useAdminBestSellers();
 
   const isLoading = loadingSales || loadingCustomers;
+
+  const chartData =
+    series?.points.map((point) => ({
+      day: point.label,
+      ventas: point.revenue,
+    })) ?? [];
+
+  const deliveryRate =
+    (sales?.totalOrders ?? 0) > 0
+      ? Math.round(
+          ((sales?.ordersDelivered ?? 0) / (sales?.totalOrders ?? 1)) * 100
+        )
+      : 0;
 
   return (
     <div className="space-y-7">
@@ -67,7 +70,7 @@ export default function DashboardPage() {
         </div>
         <select
           value={period}
-          onChange={(e) => setPeriod(e.target.value)}
+          onChange={(e) => setPeriod(e.target.value as '7d' | '30d' | '90d')}
           className="admin-select w-auto"
         >
           <option value="7d">Últimos 7 días</option>
@@ -87,11 +90,11 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="admin-kpi">
             <div className="flex items-center justify-between">
-              <div className="admin-kpi-icon bg-[rgba(52,211,153,0.08)]">
-                <DollarSign size={18} className="text-emerald-400" />
+              <div className="admin-kpi-icon bg-[rgba(214,255,60,0.08)]">
+                <DollarSign size={18} className="text-lime" />
               </div>
               <span className="admin-kpi-change positive">
-                <ArrowUpRight size={13} /> 18%
+                {sales?.ordersDelivered ?? 0} entregados
               </span>
             </div>
             <div className="admin-kpi-value">
@@ -105,8 +108,12 @@ export default function DashboardPage() {
               <div className="admin-kpi-icon bg-blue-400/[0.08]">
                 <ShoppingCart size={18} className="text-blue-400" />
               </div>
-              <span className="admin-kpi-change positive">
-                <ArrowUpRight size={13} /> 24%
+              <span
+                className={`admin-kpi-change ${
+                  (sales?.ordersPending ?? 0) > 0 ? 'negative' : ''
+                }`}
+              >
+                {sales?.ordersPending ?? 0} pendientes
               </span>
             </div>
             <div className="admin-kpi-value">{sales?.totalOrders ?? 0}</div>
@@ -119,7 +126,7 @@ export default function DashboardPage() {
                 <Users size={18} className="text-brand" />
               </div>
               <span className="admin-kpi-change positive">
-                <ArrowUpRight size={13} /> 12%
+                +{customers?.newCustomersThisMonth ?? 0} este mes
               </span>
             </div>
             <div className="admin-kpi-value">
@@ -134,7 +141,7 @@ export default function DashboardPage() {
                 <TrendingUp size={18} className="text-brand" />
               </div>
               <span className="admin-kpi-change positive">
-                <ArrowUpRight size={13} /> 10%
+                {deliveryRate}% entregados
               </span>
             </div>
             <div className="admin-kpi-value">
@@ -154,15 +161,18 @@ export default function DashboardPage() {
             <div className="admin-card-header">
               <div>
                 <div className="admin-card-title">Evolución de ventas</div>
-                <div className="admin-card-subtitle">Tendencia de los últimos 7 días</div>
+                <div className="admin-card-subtitle">
+                  Tendencia de los últimos {series?.days ?? 7} días
+                </div>
               </div>
               <select
                 value={period}
-                onChange={(e) => setPeriod(e.target.value)}
+                onChange={(e) => setPeriod(e.target.value as '7d' | '30d' | '90d')}
                 className="admin-select w-auto text-[12px]"
               >
                 <option value="7d">Últimos 7 días</option>
                 <option value="30d">Últimos 30 días</option>
+                <option value="90d">Últimos 90 días</option>
               </select>
             </div>
             <div className="h-[260px]">
@@ -366,7 +376,7 @@ export default function DashboardPage() {
                       cy="28"
                       r="24"
                       fill="none"
-                      stroke="var(--color-emerald-400)"
+                      stroke="var(--color-lime)"
                       strokeWidth="4"
                       strokeLinecap="round"
                       strokeDasharray={`${(sales?.ordersDelivered ?? 0) / Math.max(sales?.totalOrders ?? 1, 1) * 150.8} 150.8`}

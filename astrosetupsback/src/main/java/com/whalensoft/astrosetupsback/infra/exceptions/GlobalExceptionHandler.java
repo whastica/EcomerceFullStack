@@ -38,6 +38,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
+    @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEntityNotFound(
+            jakarta.persistence.EntityNotFoundException ex, HttpServletRequest request) {
+        ErrorResponseDTO error = ErrorResponseDTO.create(
+                ex.getMessage(), "NOT_FOUND", request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDTO> handleIllegalArgument(
+            IllegalArgumentException ex, HttpServletRequest request) {
+        ErrorResponseDTO error = ErrorResponseDTO.create(
+                ex.getMessage(), "BAD_REQUEST", request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponseDTO> handleRuntimeException(
             RuntimeException ex, HttpServletRequest request) {

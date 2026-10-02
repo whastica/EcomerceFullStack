@@ -1,6 +1,5 @@
 package com.whalensoft.astrosetupsback.application.interfaces;
 
-import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationResultDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.*;
@@ -9,6 +8,7 @@ import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ProcessChec
 import com.whalensoft.astrosetupsback.application.dto.sales.orders.*;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesSeriesDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesStatsDTO;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public interface SalesService {
 
     OrderDTO getOrderById(Long id);
 
-    PageResponseDTO<OrderSearchResultDTO> searchOrders(
+    OrderSearchResultDTO searchOrders(
             OrderSearchDTO searchDTO
     );
 
@@ -82,4 +82,6 @@ public interface SalesService {
     // =====================================================
 
     SalesStatsDTO getSalesStats();
+
+    SalesSeriesDTO getSalesSeries(String period);
 }

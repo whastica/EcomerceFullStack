@@ -7,7 +7,6 @@ import {
   Users,
   Tag,
   BarChart3,
-  Settings,
   LifeBuoy,
   X,
 } from 'lucide-react';
@@ -19,7 +18,6 @@ const navItems = [
   { to: '/admin/users', label: 'Clientes', icon: Users },
   { to: '/admin/promotions', label: 'Promociones', icon: Tag },
   { to: '/admin/reports', label: 'Reportes', icon: BarChart3 },
-  { to: '/admin/settings', label: 'Configuración', icon: Settings },
 ];
 
 export default function AdminSidebar({

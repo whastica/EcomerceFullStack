@@ -29,6 +29,19 @@ export interface SalesStats {
   totalCustomers: number;
 }
 
+export interface SalesSeriesPoint {
+  date: string;
+  label: string;
+  orders: number;
+  revenue: number;
+}
+
+export interface SalesSeries {
+  period: string;
+  days: number;
+  points: SalesSeriesPoint[];
+}
+
 export interface CustomerStats {
   totalCustomers: number;
   verifiedCustomers: number;
@@ -51,6 +64,7 @@ export interface ProductSummary {
   brand: string | null;
   imageUrl: string | null;
   stock: number;
+  active: boolean;
   categoryName: string;
 }
 
@@ -169,4 +183,69 @@ export interface UserAdminProfile {
   totalSpent: number;
   lastOrderDate: string | null;
   hasActiveOrders: boolean;
+}
+
+// =====================
+// PROMOCIONES
+// =====================
+
+export type PromoDiscountType = 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_SHIPPING';
+
+export interface PromoCodeSummary {
+  code: string;
+  discountType: PromoDiscountType;
+  discountValue: number;
+  expirationDate: string | null;
+  active: boolean;
+  timesUsed: number;
+  remainingUses: number | null;
+  expired: boolean;
+}
+
+export interface PromoCodeUsageRanking {
+  code: string;
+  type: PromoDiscountType;
+  discountValue: number;
+  timesUsed: number;
+}
+
+export interface PromoCodeStats {
+  totalPromoCodes: number;
+  activePromoCodes: number;
+  expiredPromoCodes: number;
+  disabledPromoCodes: number;
+  totalUniqueCodesUsed: number;
+  totalApplications: number;
+  totalDiscountGiven: number;
+  averageDiscountValue: number;
+  promoCodesByType: Record<string, number>;
+  totalDiscountGivenByType: Record<string, number>;
+  topUsedCodes: PromoCodeUsageRanking[];
+  promoCodesExpiringSoon: number;
+  lastCodeCreated: string | null;
+}
+
+export interface PromoSearchFilters {
+  searchTerm?: string;
+  active?: boolean;
+  expired?: boolean;
+  page?: number;
+  size?: number;
+}
+
+export interface PromoCreateRequest {
+  code: string;
+  discountValue: number;
+  expirationDate?: string | null;
+  remainingUses?: number | null;
+  onlyForDiscountedProducts?: boolean;
+  active?: boolean;
+}
+
+export interface PromoUpdateRequest {
+  discountValue?: number;
+  expirationDate?: string | null;
+  remainingUses?: number | null;
+  forDiscountedProductsOnly?: boolean;
+  active?: boolean;
 }

@@ -66,6 +66,7 @@ public class SecurityConfig {
                         // =============================================
                         .requestMatchers(HttpMethod.POST, "/api/catalog/products").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/catalog/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/catalog/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/catalog/categories").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/catalog/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/catalog/category-types").hasRole("ADMIN")
@@ -74,6 +75,7 @@ public class SecurityConfig {
                         // ADMIN - Clientes
                         // =============================================
                         .requestMatchers(HttpMethod.POST, "/api/customers").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/customers/_search").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/customers/stats").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/customers/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/customers/{id}/profile").hasRole("ADMIN")
@@ -84,6 +86,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/sales/orders/search").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/sales/orders/{id}/status").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/sales/stats").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/sales/stats/series").hasRole("ADMIN")
 
                         // =============================================
                         // ADMIN - Promociones

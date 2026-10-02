@@ -37,5 +37,30 @@ public interface JpaUserRepository extends JpaRepository<User, Long> {
            """)
     Page<User> search(@Param("keyword") String keyword, Pageable pageable);
 
+    /**
+     * Búsqueda administrativa de usuarios con filtros combinables.
+     * Los usuarios eliminados (DELETED) solo aparecen si se filtra por ese estado.
+     */
+    @Query("""
+           SELECT u FROM User u
+           WHERE (:searchTerm IS NULL
+              OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+              OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+              OR LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+              OR LOWER(u.phone) LIKE LOWER(CONCAT('%', :searchTerm, '%')))
+           AND (:role IS NULL OR u.role = :role)
+           AND ((:status IS NOT NULL AND u.status = :status)
+                OR (:status IS NULL AND u.status <> :deletedStatus))
+           AND (:verified IS NULL OR u.verified = :verified)
+           """)
+    Page<User> searchUsers(
+            @Param("searchTerm") String searchTerm,
+            @Param("role") UserRole role,
+            @Param("status") UserStatus status,
+            @Param("verified") Boolean verified,
+            @Param("deletedStatus") UserStatus deletedStatus,
+            Pageable pageable
+    );
+
     long countByRole(UserRole role);
 }

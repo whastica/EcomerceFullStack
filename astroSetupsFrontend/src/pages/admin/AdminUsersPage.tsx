@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Users,
   Search,
   Eye,
+  Power,
   Shield,
   ShieldCheck,
   ChevronLeft,
@@ -10,7 +11,11 @@ import {
 } from 'lucide-react';
 import Modal from '@/components/ui/admin/Modal';
 import StatusBadge from '@/components/ui/admin/StatusBadge';
-import { useAdminUsers, useAdminUserProfile } from '@/hooks/admin/useAdminUsers';
+import {
+  useAdminUsers,
+  useAdminUserProfile,
+  useUpdateUserStatus,
+} from '@/hooks/admin/useAdminUsers';
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('es-CO', {
@@ -23,13 +28,24 @@ function formatCurrency(value: number) {
 export default function AdminUsersPage() {
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [profileModal, setProfileModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPage(0);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
+
   const { data, isLoading } = useAdminUsers({
-    searchTerm: searchTerm || undefined,
+    searchTerm: debouncedSearch || undefined,
     role: roleFilter || undefined,
+    status: statusFilter || undefined,
     page,
     size: 10,
   });
@@ -39,6 +55,8 @@ export default function AdminUsersPage() {
     selectedUserId !== null
   );
 
+  const updateStatus = useUpdateUserStatus();
+
   const users = data?.content ?? [];
   const totalElements = data?.totalElements ?? 0;
   const totalPages = data?.totalPages ?? 0;
@@ -46,6 +64,13 @@ export default function AdminUsersPage() {
   function handleViewProfile(userId: number) {
     setSelectedUserId(userId);
     setProfileModal(true);
+  }
+
+  function handleToggleStatus(userId: number, currentStatus: string) {
+    updateStatus.mutate({
+      id: userId,
+      status: currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
+    });
   }
 
   return (
@@ -81,6 +106,16 @@ export default function AdminUsersPage() {
           <option value="CLIENT">Clientes</option>
           <option value="ADMIN">Administradores</option>
           <option value="SUPER_ADMIN">Super Admin</option>
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => { setStatusFilter(e.target.value); setPage(0); }}
+          className="admin-select w-auto"
+        >
+          <option value="">Todos los estados</option>
+          <option value="ACTIVE">Activos</option>
+          <option value="INACTIVE">Inactivos</option>
+          <option value="SUSPENDED">Suspendidos</option>
         </select>
       </div>
 
@@ -141,7 +176,7 @@ export default function AdminUsersPage() {
                     <span
                       className={
                         user.verified
-                          ? 'text-emerald-400 text-[12px] font-semibold bg-[rgba(52,211,153,0.1)] px-2 py-0.5 rounded-full'
+                          ? 'text-lime text-[12px] font-semibold bg-[rgba(214,255,60,0.1)] px-2 py-0.5 rounded-full'
                           : 'text-dark-dim text-[12px] bg-white/[0.03] px-2 py-0.5 rounded-full'
                       }
                     >
@@ -152,12 +187,28 @@ export default function AdminUsersPage() {
                     {new Date(user.createdAt).toLocaleDateString('es-CO')}
                   </td>
                   <td>
-                    <button
-                      onClick={() => handleViewProfile(user.id)}
-                      className="p-2 rounded-lg text-dark-dim hover:text-blue-400 hover:bg-blue-400/[0.08] transition-all"
-                    >
-                      <Eye size={15} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleViewProfile(user.id)}
+                        title="Ver perfil"
+                        className="p-2 rounded-lg text-dark-dim hover:text-blue-400 hover:bg-blue-400/[0.08] transition-all"
+                      >
+                        <Eye size={15} />
+                      </button>
+                      {user.role === 'CLIENT' && (
+                        <button
+                          onClick={() => handleToggleStatus(user.id, user.status)}
+                          title={
+                            user.status === 'ACTIVE'
+                              ? 'Desactivar cliente'
+                              : 'Activar cliente'
+                          }
+                          className="p-2 rounded-lg text-dark-dim hover:text-lime hover:bg-lime/[0.08] transition-all"
+                        >
+                          <Power size={15} />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

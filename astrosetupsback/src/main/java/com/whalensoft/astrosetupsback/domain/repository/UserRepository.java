@@ -31,5 +31,8 @@ public interface UserRepository {
 
     Page<User> search(String keyword, Pageable pageable);
 
+    Page<User> searchUsers(String searchTerm, UserRole role, UserStatus status,
+                           Boolean verified, Pageable pageable);
+
     long countByRole(UserRole role);
 }

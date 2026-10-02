@@ -60,6 +60,8 @@ public class CatalogServiceImpl implements CatalogService {
                 .brand(createProductDTO.getBrand())
                 .category(category)
                 .imageUrl(createProductDTO.getImageUrl())
+                .stock(createProductDTO.getStock() != null
+                        ? createProductDTO.getStock() : 0)
                 .hasVariations(
                         createProductDTO.getHasVariations()
                 )
@@ -68,7 +70,8 @@ public class CatalogServiceImpl implements CatalogService {
                                 ? createProductDTO.getIsFeatured()
                                 : false
                 )
-                .active(true)
+                .active(createProductDTO.getActive() != null
+                        ? createProductDTO.getActive() : true)
                 .build();
 
         Product savedProduct =
@@ -104,7 +107,9 @@ public class CatalogServiceImpl implements CatalogService {
             product.setPrice(updateProductDTO.getPrice());
         }
 
-        if (updateProductDTO.getDiscountPrice() != null) {
+        if (Boolean.TRUE.equals(updateProductDTO.getClearDiscount())) {
+            product.setDiscountPrice(null);
+        } else if (updateProductDTO.getDiscountPrice() != null) {
             product.setDiscountPrice(
                     updateProductDTO.getDiscountPrice()
             );
@@ -112,6 +117,10 @@ public class CatalogServiceImpl implements CatalogService {
 
         if (updateProductDTO.getBrand() != null) {
             product.setBrand(updateProductDTO.getBrand());
+        }
+
+        if (updateProductDTO.getStock() != null) {
+            product.setStock(updateProductDTO.getStock());
         }
 
         if (updateProductDTO.getCategoryId() != null) {
@@ -234,12 +243,16 @@ public class CatalogServiceImpl implements CatalogService {
         );
 
         Page<Product> productsPage = productRepository.findByFilters(
-                searchDTO.getQuery(),
+                emptyToNull(searchDTO.getQuery()),
                 searchDTO.getCategoryId(),
                 searchDTO.getCategoryTypeId(),
                 searchDTO.getMinPrice(),
                 searchDTO.getMaxPrice(),
-                searchDTO.getBrand(),
+                emptyToNull(searchDTO.getBrand()),
+                searchDTO.getActive(),
+                searchDTO.getMinStock(),
+                searchDTO.getMaxStock(),
+                searchDTO.getHasDiscount(),
                 pageable
         );
 
@@ -628,6 +641,8 @@ public class CatalogServiceImpl implements CatalogService {
                         product.getIsFeatured()
                 )
 
+                .active(product.getActive())
+
                 .category(
                         CategorySummaryDTO.builder()
                                 .id(product.getCategory().getId())
@@ -680,6 +695,8 @@ public class CatalogServiceImpl implements CatalogService {
                         product.getIsFeatured()
                 )
 
+                .active(product.getActive())
+
                 .categoryName(
                         product.getCategory().getName()
                 )
@@ -706,6 +723,7 @@ public class CatalogServiceImpl implements CatalogService {
                 )
                 .hasVariations(product.getHasVariations())
                 .isFeatured(product.getIsFeatured())
+                .active(product.getActive())
                 .category(
                         CategorySummaryDTO.builder()
                                 .id(product.getCategory().getId())
@@ -745,5 +763,9 @@ public class CatalogServiceImpl implements CatalogService {
                 .name(categoryType.getName())
 
                 .build();
+    }
+
+    private String emptyToNull(String value) {
+        return (value == null || value.isBlank()) ? null : value.trim();
     }
 }

@@ -37,4 +37,20 @@ public interface OrderRepository {
     Page<Order> findLatestOrders(Pageable pageable);
 
     Page<Order> findByUserId(Long userId, Pageable pageable);
+
+    // --- Búsqueda admin (filtros server-side) ---
+    Page<Order> searchOrders(
+            OrderStatus status,
+            com.whalensoft.astrosetupsback.domain.model.PaymentMethod paymentMethod,
+            Long userId,
+            Long orderId,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            java.math.BigDecimal minTotal,
+            java.math.BigDecimal maxTotal,
+            String customerEmail,
+            String customerName,
+            String searchTerm,
+            Pageable pageable
+    );
 }

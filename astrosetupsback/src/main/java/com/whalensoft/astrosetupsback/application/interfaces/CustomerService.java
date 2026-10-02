@@ -5,6 +5,7 @@ import com.whalensoft.astrosetupsback.application.dto.customer.Address.UpdateShi
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.UserShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.*;
+import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public interface CustomerService {
     UserAdminProfileDTO getUserProfile(Long id);
     void deleteUser(Long id);
     void changePassword(Long id, ChangePasswordDTO changePasswordDTO);
+
+    // Búsqueda administrativa de usuarios
+    PageResponseDTO<UserAdminDTO> searchUsers(UserSearchDTO searchDTO);
 
     // Gestión de Direcciones
     ShippingAddressDTO createShippingAddress(Long userId, CreateShippingAddressDTO createAddressDTO);

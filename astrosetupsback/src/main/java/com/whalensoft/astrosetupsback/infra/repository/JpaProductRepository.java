@@ -57,7 +57,10 @@ public interface JpaProductRepository extends JpaRepository<Product, Long> {
        AND (:minPrice IS NULL OR p.price >= :minPrice)
        AND (:maxPrice IS NULL OR p.price <= :maxPrice)
        AND (:brand IS NULL OR p.brand = :brand)
-       AND p.active = true
+       AND (:active IS NULL OR p.active = :active)
+       AND (:minStock IS NULL OR p.stock >= :minStock)
+       AND (:maxStock IS NULL OR p.stock <= :maxStock)
+       AND (:hasDiscount IS NULL OR :hasDiscount = false OR p.discountPrice IS NOT NULL)
        """)
     Page<Product> findByFilters(
             @Param("query") String query,
@@ -66,6 +69,10 @@ public interface JpaProductRepository extends JpaRepository<Product, Long> {
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
             @Param("brand") String brand,
+            @Param("active") Boolean active,
+            @Param("minStock") Integer minStock,
+            @Param("maxStock") Integer maxStock,
+            @Param("hasDiscount") Boolean hasDiscount,
             Pageable pageable
     );
 

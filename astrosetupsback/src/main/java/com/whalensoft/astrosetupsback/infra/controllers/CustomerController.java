@@ -3,6 +3,7 @@ package com.whalensoft.astrosetupsback.infra.controllers;
 import java.util.List;
 
 import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
+import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.*;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
 import com.whalensoft.astrosetupsback.infra.exceptions.AccessDeniedException;
@@ -32,9 +33,19 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.createUser(dto));
     }
 
+    @PostMapping("/_search")
+    public ResponseEntity<PageResponseDTO<UserAdminDTO>> searchUsers(@RequestBody UserSearchDTO searchDTO) {
+        return ResponseEntity.ok(customerService.searchUsers(searchDTO));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<UserAdminDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserDTO dto) {
         checkOwnership(id);
+        // Estado y verificación solo los cambia un administrador
+        if (!SecurityUtils.isAdmin()) {
+            dto.setStatus(null);
+            dto.setVerified(null);
+        }
         return ResponseEntity.ok(customerService.updateUser(id, dto));
     }
 

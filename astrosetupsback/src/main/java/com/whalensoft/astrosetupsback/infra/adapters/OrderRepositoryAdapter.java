@@ -84,4 +84,26 @@ public class OrderRepositoryAdapter implements OrderRepository {
     public Page<Order> findByUserId(Long userId, Pageable pageable) {
         return jpaOrderRepository.findByUserId(userId, pageable);
     }
+
+    @Override
+    public Page<Order> searchOrders(
+            OrderStatus status,
+            com.whalensoft.astrosetupsback.domain.model.PaymentMethod paymentMethod,
+            Long userId,
+            Long orderId,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            java.math.BigDecimal minTotal,
+            java.math.BigDecimal maxTotal,
+            String customerEmail,
+            String customerName,
+            String searchTerm,
+            Pageable pageable
+    ) {
+        return jpaOrderRepository.searchOrders(
+                status, paymentMethod, userId, orderId,
+                startDate, endDate, minTotal, maxTotal,
+                customerEmail, customerName, searchTerm, pageable
+        );
+    }
 }

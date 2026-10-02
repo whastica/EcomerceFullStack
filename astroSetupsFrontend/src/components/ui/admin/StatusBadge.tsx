@@ -22,8 +22,8 @@ const statusConfig: Record<
   },
   DELIVERED: {
     label: 'Entregado',
-    className: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    dotColor: 'bg-emerald-400',
+    className: 'bg-lime/10 text-lime border-lime/20',
+    dotColor: 'bg-lime',
   },
   CANCELLED: {
     label: 'Cancelado',
@@ -32,8 +32,8 @@ const statusConfig: Record<
   },
   ACTIVE: {
     label: 'Activo',
-    className: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    dotColor: 'bg-emerald-400',
+    className: 'bg-lime/10 text-lime border-lime/20',
+    dotColor: 'bg-lime',
   },
   INACTIVE: {
     label: 'Inactivo',

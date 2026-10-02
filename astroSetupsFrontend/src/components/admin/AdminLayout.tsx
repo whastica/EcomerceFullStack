@@ -14,6 +14,8 @@ import DashboardPage from '@/pages/admin/DashboardPage';
 import AdminProductsPage from '@/pages/admin/AdminProductsPage';
 import AdminOrdersPage from '@/pages/admin/AdminOrdersPage';
 import AdminUsersPage from '@/pages/admin/AdminUsersPage';
+import AdminPromotionsPage from '@/pages/admin/AdminPromotionsPage';
+import AdminReportsPage from '@/pages/admin/AdminReportsPage';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -119,6 +121,8 @@ export default function AdminLayout() {
             <Route path="/admin/products" element={<AdminProductsPage />} />
             <Route path="/admin/orders" element={<AdminOrdersPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/promotions" element={<AdminPromotionsPage />} />
+            <Route path="/admin/reports" element={<AdminReportsPage />} />
             <Route path="/admin" element={<DashboardPage />} />
           </Routes>
         </main>

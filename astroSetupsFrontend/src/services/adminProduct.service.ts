@@ -48,13 +48,17 @@ export const adminProductService = {
 
   async updateProduct(
     id: number,
-    data: Partial<ProductDetail>
+    data: Record<string, unknown>
   ): Promise<ProductDetail> {
     const response = await apiClient.put<ProductDetail>(
       `/catalog/products/${id}`,
       data
     );
     return response.data;
+  },
+
+  async deleteProduct(id: number): Promise<void> {
+    await apiClient.delete(`/catalog/products/${id}`);
   },
 
   async getCategories(): Promise<CategorySummary[]> {

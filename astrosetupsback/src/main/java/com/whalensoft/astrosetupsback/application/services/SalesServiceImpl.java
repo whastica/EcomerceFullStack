@@ -1,6 +1,5 @@
 package com.whalensoft.astrosetupsback.application.services;
 
-import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationResultDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.AddToCartDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.cart.CartItemDTO;
@@ -14,6 +13,7 @@ import com.whalensoft.astrosetupsback.application.dto.sales.orders.*;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderItemDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.OrderSearchResultDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesSeriesDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesStatsDTO;
 import com.whalensoft.astrosetupsback.application.dto.promotion.validation.PromoCodeValidationDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
@@ -29,7 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -163,24 +165,50 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public PageResponseDTO<OrderSearchResultDTO> searchOrders(OrderSearchDTO searchDTO) {
-        // Se pasan los Enums directamente al nuevo createSort corregido
+    public OrderSearchResultDTO searchOrders(OrderSearchDTO searchDTO) {
         Sort sort = createSort(searchDTO.getSortBy(), searchDTO.getSortDirection());
-        Pageable pageable = PageRequest.of(searchDTO.getPage(), searchDTO.getSize(), sort);
 
-        Page<Order> ordersPage = orderRepository.findAll(pageable);
+        int page = (searchDTO.getPage() == null) ? 0 : Math.max(0, searchDTO.getPage());
+        int size = (searchDTO.getSize() == null) ? 20
+                : Math.min(Math.max(1, searchDTO.getSize()), 100);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        List<OrderSearchResultDTO> results = ordersPage.getContent().stream()
-                .filter(order -> filterOrderByCriteria(order, searchDTO))
-                .map(this::convertToOrderSearchResultDTO)
+        String searchTerm = emptyToNull(searchDTO.getSearchTerm());
+        Long orderId = searchDTO.getOrderId();
+
+        // Un término 100% numérico se interpreta como ID de orden
+        if (searchTerm != null && orderId == null && searchTerm.matches("\\d+")) {
+            orderId = Long.parseLong(searchTerm);
+            searchTerm = null;
+        }
+
+        Page<Order> ordersPage = orderRepository.searchOrders(
+                searchDTO.getStatus(),
+                searchDTO.getPaymentMethod(),
+                searchDTO.getUserId(),
+                orderId,
+                searchDTO.getStartDate(),
+                searchDTO.getEndDate(),
+                searchDTO.getMinTotal(),
+                searchDTO.getMaxTotal(),
+                emptyToNull(searchDTO.getCustomerEmail()),
+                emptyToNull(searchDTO.getCustomerName()),
+                searchTerm,
+                pageable
+        );
+
+        List<OrderSummaryDTO> summaries = ordersPage.getContent().stream()
+                .map(this::convertToOrderSummaryDTO)
                 .collect(Collectors.toList());
 
-        return PageResponseDTO.<OrderSearchResultDTO>builder()
-                .content(results)
+        return OrderSearchResultDTO.builder()
+                .orders(summaries)
                 .totalElements(ordersPage.getTotalElements())
                 .totalPages(ordersPage.getTotalPages())
                 .currentPage(ordersPage.getNumber())
-                .size(ordersPage.getSize())
+                .pageSize(ordersPage.getSize())
+                .hasNext(ordersPage.hasNext())
+                .hasPrevious(ordersPage.hasPrevious())
                 .build();
     }
 
@@ -619,6 +647,59 @@ public class SalesServiceImpl implements SalesService {
                 .build();
     }
 
+    @Override
+    public SalesSeriesDTO getSalesSeries(String period) {
+        String normalizedPeriod = (period == null || period.isBlank())
+                ? "7d" : period.trim().toLowerCase();
+
+        int days = switch (normalizedPeriod) {
+            case "7d" -> 7;
+            case "30d" -> 30;
+            case "90d" -> 90;
+            default -> throw new IllegalArgumentException(
+                    "Periodo inválido: use 7d, 30d o 90d"
+            );
+        };
+
+        LocalDate today = LocalDate.now();
+        LocalDate start = today.minusDays(days - 1L);
+
+        LocalDateTime startDateTime = start.atStartOfDay();
+        LocalDateTime endDateTime = today.plusDays(1).atStartOfDay().minusNanos(1);
+
+        List<Order> orders = orderRepository.findByOrderDateBetween(startDateTime, endDateTime);
+
+        Map<LocalDate, long[]> countsByDay = new LinkedHashMap<>();
+        for (LocalDate day = start; !day.isAfter(today); day = day.plusDays(1)) {
+            countsByDay.put(day, new long[]{0L, 0L});
+        }
+
+        DateTimeFormatter labelFormatter = DateTimeFormatter.ofPattern("dd/MM");
+
+        for (Order order : orders) {
+            if (order.getOrderDate() == null) continue;
+            long[] point = countsByDay.get(order.getOrderDate().toLocalDate());
+            if (point == null) continue;
+            point[0] += 1;
+            point[1] += Math.round(order.getTotal() * 100.0);
+        }
+
+        List<SalesSeriesDTO.SeriesPoint> points = countsByDay.entrySet().stream()
+                .map(entry -> SalesSeriesDTO.SeriesPoint.builder()
+                        .date(entry.getKey())
+                        .label(entry.getKey().format(labelFormatter))
+                        .orders(entry.getValue()[0])
+                        .revenue(entry.getValue()[1] / 100.0)
+                        .build())
+                .collect(Collectors.toList());
+
+        return SalesSeriesDTO.builder()
+                .period(normalizedPeriod)
+                .days(days)
+                .points(points)
+                .build();
+    }
+
     // =========================================================
     // MÉTODOS AUXILIARES PRIVADOS
     // =========================================================
@@ -768,69 +849,14 @@ public class SalesServiceImpl implements SalesService {
             case null -> "orderDate";
         };
 
-        Sort.Direction direction = (sortDirection == OrderSearchDTO.SortDirection.DESC)
-                ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction direction = (sortDirection == OrderSearchDTO.SortDirection.ASC)
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
 
         return Sort.by(direction, field);
     }
 
-    private boolean filterOrderByCriteria(Order order, OrderSearchDTO searchDTO) {
-        // Filter by search term (match order ID, user name, or user email)
-        if (searchDTO.getSearchTerm() != null && !searchDTO.getSearchTerm().isEmpty()) {
-            String term = searchDTO.getSearchTerm().toLowerCase();
-            boolean matchesId = order.getId().toString().contains(term);
-            boolean matchesUser = order.getUser() != null && (
-                    (order.getUser().getFirstName() != null && order.getUser().getFirstName().toLowerCase().contains(term)) ||
-                    (order.getUser().getLastName() != null && order.getUser().getLastName().toLowerCase().contains(term)) ||
-                    (order.getUser().getEmail() != null && order.getUser().getEmail().toLowerCase().contains(term))
-            );
-            if (!matchesId && !matchesUser) return false;
-        }
-
-        // Filter by status
-        if (searchDTO.getStatus() != null && order.getStatus() != searchDTO.getStatus()) {
-            return false;
-        }
-
-        // Filter by start date
-        if (searchDTO.getStartDate() != null && order.getOrderDate() != null) {
-            if (order.getOrderDate().isBefore(searchDTO.getStartDate())) {
-                return false;
-            }
-        }
-
-        // Filter by end date
-        if (searchDTO.getEndDate() != null && order.getOrderDate() != null) {
-            if (order.getOrderDate().isAfter(searchDTO.getEndDate())) {
-                return false;
-            }
-        }
-
-        // Filter by min total
-        if (searchDTO.getMinTotal() != null &&
-                BigDecimal.valueOf(order.getTotal()).compareTo(searchDTO.getMinTotal()) < 0) {
-            return false;
-        }
-
-        // Filter by max total
-        if (searchDTO.getMaxTotal() != null &&
-                BigDecimal.valueOf(order.getTotal()).compareTo(searchDTO.getMaxTotal()) > 0) {
-            return false;
-        }
-
-        // Filter by payment method
-        if (searchDTO.getPaymentMethod() != null && order.getPaymentMethod() != searchDTO.getPaymentMethod()) {
-            return false;
-        }
-
-        // Filter by user ID
-        if (searchDTO.getUserId() != null) {
-            if (order.getUser() == null || !order.getUser().getId().equals(searchDTO.getUserId())) {
-                return false;
-            }
-        }
-
-        return true;
+    private String emptyToNull(String value) {
+        return (value == null || value.isBlank()) ? null : value.trim();
     }
 
     private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
@@ -913,25 +939,36 @@ public class SalesServiceImpl implements SalesService {
                 .build();
     }
 
-    private OrderSearchResultDTO convertToOrderSearchResultDTO(Order order) {
-        return OrderSearchResultDTO.builder()
-                .orders(List.of(convertToOrderSummaryDTO(order)))
-                .totalElements(1L)
-                .totalPages(1)
-                .currentPage(0)
-                .pageSize(1)
-                .hasNext(false)
-                .hasPrevious(false)
-                .build();
-    }
-
     private OrderSummaryDTO convertToOrderSummaryDTO(Order order) {
+        String userFullName = order.getUser() != null
+                ? order.getUser().getFullName()
+                : "Invitado";
+
+        List<OrderItem> items = order.getOrderItems();
+        String firstProductName = items.isEmpty()
+                ? "Sin productos"
+                : items.get(0).getProductName();
+
+        String summaryDescription;
+        if (items.isEmpty()) {
+            summaryDescription = "Sin productos";
+        } else if (items.size() == 1) {
+            summaryDescription = items.get(0).getProductName();
+        } else {
+            summaryDescription = items.get(0).getProductName()
+                    + " +" + (items.size() - 1) + " más";
+        }
+
         return OrderSummaryDTO.builder()
                 .id(order.getId())
                 .total(BigDecimal.valueOf(order.getTotal())) // Conversión de Double a BigDecimal
                 .orderDate(order.getOrderDate())
                 .status(order.getStatus())
+                .paymentMethod(order.getPaymentMethod())
+                .userFullName(userFullName)
                 .totalItems(calculateTotalItems(order))
+                .firstProductName(firstProductName)
+                .summaryDescription(summaryDescription)
                 .build();
     }
 

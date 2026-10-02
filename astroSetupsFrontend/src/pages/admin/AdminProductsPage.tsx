@@ -1,19 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Package,
   Plus,
   Search,
   Pencil,
-  MoreHorizontal,
-  Eye,
-  Filter,
+  Power,
+  Trash2,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
 import Modal from '@/components/ui/admin/Modal';
-import { useAdminProducts, useAdminCategories } from '@/hooks/admin/useAdminProducts';
+import {
+  useAdminProductSearch,
+  useAdminCategories,
+  useDeleteProduct,
+  useToggleProductActive,
+} from '@/hooks/admin/useAdminProducts';
 import { adminProductService } from '@/services/adminProduct.service';
 import type { ProductSummary } from '@/interfaces/admin/admin.types';
+import type { ProductSearchRequest } from '@/interfaces/product/product-search-request.interface';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -51,16 +56,47 @@ export default function AdminProductsPage() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [activeFilter, setActiveFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductSummary | null>(null);
   const [form, setForm] = useState<ProductFormData>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<ProductSummary | null>(null);
 
-  const { data, isLoading } = useAdminProducts(page, 10);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(0);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  const searchFilters: ProductSearchRequest = {
+    query: debouncedSearch || undefined,
+    categoryId: categoryFilter ? Number(categoryFilter) : undefined,
+    active: activeFilter === '' ? undefined : activeFilter === 'active',
+    minStock:
+      statusFilter === 'in_stock' || statusFilter === 'low_stock'
+        ? 1
+        : undefined,
+    maxStock:
+      statusFilter === 'low_stock'
+        ? 5
+        : statusFilter === 'out_of_stock'
+        ? 0
+        : undefined,
+    page,
+    size: 10,
+  };
+
+  const { data, isLoading } = useAdminProductSearch(searchFilters);
   const { data: categories } = useAdminCategories();
+  const deleteProduct = useDeleteProduct();
+  const toggleActive = useToggleProductActive();
 
   const products = data?.content ?? [];
   const totalElements = data?.totalElements ?? 0;
@@ -70,30 +106,11 @@ export default function AdminProductsPage() {
   const lowStock = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
   const outOfStock = products.filter((p) => p.stock <= 0).length;
 
-  const filteredProducts = products.filter((p) => {
-    const matchesSearch = search
-      ? p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.brand?.toLowerCase().includes(search.toLowerCase())
-      : true;
-    const matchesCategory = categoryFilter
-      ? p.categoryName === categoryFilter
-      : true;
-    const matchesStatus =
-      statusFilter === 'in_stock'
-        ? p.stock > 5
-        : statusFilter === 'low_stock'
-        ? p.stock > 0 && p.stock <= 5
-        : statusFilter === 'out_of_stock'
-        ? p.stock <= 0
-        : true;
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
-
   function toggleSelectAll() {
-    if (selectedIds.size === filteredProducts.length) {
+    if (selectedIds.size === products.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredProducts.map((p) => p.id)));
+      setSelectedIds(new Set(products.map((p) => p.id)));
     }
   }
 
@@ -114,7 +131,7 @@ export default function AdminProductsPage() {
       brand: product.brand || '',
       categoryId: '',
       imageUrl: product.imageUrl || '',
-      active: true,
+      active: product.active ?? true,
     });
     setModalOpen(true);
   }
@@ -123,6 +140,13 @@ export default function AdminProductsPage() {
     setModalOpen(false);
     setEditingProduct(null);
     setForm(emptyForm);
+  }
+
+  function handleConfirmDelete() {
+    if (!deleteTarget) return;
+    deleteProduct.mutate(deleteTarget.id, {
+      onSuccess: () => setDeleteTarget(null),
+    });
   }
 
   async function handleSave() {
@@ -139,10 +163,10 @@ export default function AdminProductsPage() {
           price: parseFloat(form.price),
           discountPrice: form.discountPrice ? parseFloat(form.discountPrice) : null,
           brand: form.brand || null,
-          categoryId: form.categoryId ? parseInt(form.categoryId) : 0,
+          categoryId: form.categoryId ? parseInt(form.categoryId) : undefined,
           imageUrl: form.imageUrl || null,
           active: form.active,
-        } as never);
+        });
         toast.success('Producto actualizado');
       } else {
         await adminProductService.createProduct({
@@ -202,7 +226,7 @@ export default function AdminProductsPage() {
         </div>
         <div className="admin-kpi">
           <div className="admin-kpi-icon bg-[rgba(52,211,153,0.08)]">
-            <Package size={18} className="text-emerald-400" />
+            <Package size={18} className="text-lime" />
           </div>
           <div className="admin-kpi-value">{totalStock}</div>
           <div className="admin-kpi-label">Productos en stock</div>
@@ -229,7 +253,7 @@ export default function AdminProductsPage() {
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-faint" />
           <input
             type="text"
-            placeholder="Buscar producto por nombre, SKU o categoría..."
+            placeholder="Buscar por nombre o marca..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="admin-input pl-10"
@@ -237,30 +261,35 @@ export default function AdminProductsPage() {
         </div>
         <select
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
+          onChange={(e) => { setCategoryFilter(e.target.value); setPage(0); }}
           className="admin-select w-auto"
         >
           <option value="">Todas las categorías</option>
           {categories?.map((cat) => (
-            <option key={cat.id} value={cat.name}>
+            <option key={cat.id} value={cat.id}>
               {cat.name}
             </option>
           ))}
         </select>
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
+          onChange={(e) => { setStatusFilter(e.target.value); setPage(0); }}
           className="admin-select w-auto"
         >
-          <option value="">Todos los estados</option>
+          <option value="">Todos los stocks</option>
           <option value="in_stock">En stock</option>
-          <option value="low_stock">Stock bajo</option>
+          <option value="low_stock">Stock bajo (1-5)</option>
           <option value="out_of_stock">Sin stock</option>
         </select>
-        <button className="admin-btn-secondary">
-          <Filter size={15} />
-          Más filtros
-        </button>
+        <select
+          value={activeFilter}
+          onChange={(e) => { setActiveFilter(e.target.value); setPage(0); }}
+          className="admin-select w-auto"
+        >
+          <option value="">Activos e inactivos</option>
+          <option value="active">Solo activos</option>
+          <option value="inactive">Solo inactivos</option>
+        </select>
       </div>
 
       {/* Table */}
@@ -270,7 +299,7 @@ export default function AdminProductsPage() {
             <div key={i} className="admin-skeleton h-14" />
           ))}
         </div>
-      ) : filteredProducts.length > 0 ? (
+      ) : products.length > 0 ? (
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
@@ -279,7 +308,7 @@ export default function AdminProductsPage() {
                   <input
                     type="checkbox"
                     className="admin-checkbox"
-                    checked={selectedIds.size === filteredProducts.length && filteredProducts.length > 0}
+                    checked={selectedIds.size === products.length && products.length > 0}
                     onChange={toggleSelectAll}
                   />
                 </th>
@@ -293,7 +322,7 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((product) => (
+              {products.map((product) => (
                 <tr key={product.id}>
                   <td>
                     <input
@@ -356,32 +385,46 @@ export default function AdminProductsPage() {
                   <td>
                     <span
                       className={`admin-badge ${
-                        product.stock > 0
+                        product.active
                           ? 'admin-badge-success'
-                          : 'admin-badge-danger'
+                          : 'admin-badge-neutral'
                       }`}
                     >
                       <span
                         className={`admin-badge-dot ${
-                          product.stock > 0 ? 'bg-emerald-400' : 'bg-red-400'
+                          product.active ? 'bg-lime' : 'bg-dark-dim'
                         }`}
                       />
-                      {product.stock > 0 ? 'Disponible' : 'Agotado'}
+                      {product.active ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   <td>
                     <div className="flex items-center gap-1">
-                      <button className="p-2 rounded-lg text-dark-dim hover:text-blue-400 hover:bg-blue-400/[0.08] transition-all">
-                        <Eye size={15} />
-                      </button>
                       <button
                         onClick={() => handleEdit(product)}
-                        className="p-2 rounded-lg text-dark-dim hover:text-brand hover:bg-brand/[0.08] transition-all"
+                        title="Editar"
+                        className="p-2 rounded-lg text-dark-dim hover:text-blue-400 hover:bg-blue-400/[0.08] transition-all"
                       >
                         <Pencil size={15} />
                       </button>
-                      <button className="p-2 rounded-lg text-dark-dim hover:text-white hover:bg-white/5 transition-all">
-                        <MoreHorizontal size={15} />
+                      <button
+                        onClick={() =>
+                          toggleActive.mutate({
+                            id: product.id,
+                            active: !product.active,
+                          })
+                        }
+                        title={product.active ? 'Desactivar' : 'Activar'}
+                        className="p-2 rounded-lg text-dark-dim hover:text-lime hover:bg-lime/[0.08] transition-all"
+                      >
+                        <Power size={15} />
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(product)}
+                        title="Eliminar"
+                        className="p-2 rounded-lg text-dark-dim hover:text-red-400 hover:bg-red-400/[0.08] transition-all"
+                      >
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>
@@ -561,6 +604,38 @@ export default function AdminProductsPage() {
               className="admin-btn-primary disabled:opacity-50"
             >
               {saving ? 'Guardando...' : editingProduct ? 'Actualizar' : 'Crear'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Delete */}
+      <Modal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title="Desactivar producto"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-[13px] text-dark-soft">
+            ¿Seguro que quieres desactivar{' '}
+            <span className="font-semibold text-white">{deleteTarget?.name}</span>
+            ? Dejará de mostrarse en la tienda.
+          </p>
+          <div className="h-px bg-dark-surface" />
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setDeleteTarget(null)}
+              className="admin-btn-secondary"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              disabled={deleteProduct.isPending}
+              className="admin-btn-primary bg-red-500 hover:bg-red-600 disabled:opacity-50"
+            >
+              {deleteProduct.isPending ? 'Desactivando...' : 'Desactivar'}
             </button>
           </div>
         </div>

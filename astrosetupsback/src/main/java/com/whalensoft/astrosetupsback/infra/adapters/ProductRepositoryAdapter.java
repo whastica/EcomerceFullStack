@@ -94,10 +94,15 @@ public class ProductRepositoryAdapter implements ProductRepository {
             BigDecimal minPrice,
             BigDecimal maxPrice,
             String brand,
+            Boolean active,
+            Integer minStock,
+            Integer maxStock,
+            Boolean hasDiscount,
             Pageable pageable
     ) {
         return jpaProductRepository.findByFilters(
-                query, categoryId, categoryTypeId, minPrice, maxPrice, brand, pageable
+                query, categoryId, categoryTypeId, minPrice, maxPrice, brand,
+                active, minStock, maxStock, hasDiscount, pageable
         );
     }
 

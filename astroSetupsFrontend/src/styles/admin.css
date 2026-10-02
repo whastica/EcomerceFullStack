@@ -4,8 +4,8 @@
 
 /* ---------- Page Shell ---------- */
 .admin-page {
-  background-color: #000000;
-  background-image: linear-gradient(to top right, #000000 0%, #000000 55%, #121214 100%);
+  background-color: var(--color-dark-background);
+  background-image: linear-gradient(to top right, var(--color-dark-background) 0%, var(--color-dark-background) 55%, var(--color-dark-surface) 100%);
   background-attachment: fixed;
   min-height: 100vh;
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -14,7 +14,7 @@
 /* ---------- Sidebar ---------- */
 .admin-sidebar {
   width: 260px;
-  background: #0A0A0A;
+  background: var(--color-dark-background);
   border-right: 1px solid var(--color-dark-surface);
   display: flex;
   flex-direction: column;
@@ -76,7 +76,7 @@
 }
 
 .admin-sidebar-link:hover {
-  color: #CCCCCC;
+  color: var(--color-dark-text);
   background: rgba(255, 255, 255, 0.03);
 }
 
@@ -109,7 +109,7 @@
 /* ---------- Header ---------- */
 .admin-header {
   height: 64px;
-  background: #0A0A0A;
+  background: var(--color-dark-background);
   border-bottom: 1px solid var(--color-dark-surface);
   display: flex;
   align-items: center;
@@ -151,7 +151,7 @@
 }
 
 .admin-card:hover {
-  border-color: #252525;
+  border-color: var(--color-dark-border);
 }
 
 .admin-card-header {
@@ -169,7 +169,7 @@
 
 .admin-card-subtitle {
   font-size: 12px;
-  color: #666666;
+  color: var(--color-dark-dim);
   margin-top: 2px;
 }
 
@@ -186,7 +186,7 @@
 }
 
 .admin-kpi:hover {
-  border-color: #252525;
+  border-color: var(--color-dark-border);
 }
 
 .admin-kpi-icon {
@@ -208,7 +208,7 @@
 
 .admin-kpi-label {
   font-size: 13px;
-  color: #666666;
+  color: var(--color-dark-dim);
   font-weight: 500;
 }
 
@@ -221,7 +221,7 @@
 }
 
 .admin-kpi-change.positive {
-  color: var(--color-emerald-400);
+  color: var(--color-lime);
 }
 
 .admin-kpi-change.negative {
@@ -260,8 +260,8 @@
 .admin-table td {
   padding: 14px 20px;
   font-size: 13px;
-  color: #CCCCCC;
-  border-bottom: 1px solid #141414;
+  color: var(--color-dark-text);
+  border-bottom: 1px solid var(--color-dark-surface);
 }
 
 .admin-table tbody tr {
@@ -282,7 +282,7 @@
   height: 42px;
   padding: 0 14px;
   background: var(--color-dark-sunken);
-  border: 1px solid #222222;
+  border: 1px solid var(--color-dark-border);
   border-radius: 10px;
   color: var(--color-dark-text);
   font-size: 13px;
@@ -302,7 +302,7 @@
   height: 42px;
   padding: 0 32px 0 14px;
   background: var(--color-dark-sunken);
-  border: 1px solid #222222;
+  border: 1px solid var(--color-dark-border);
   border-radius: 10px;
   color: var(--color-dark-text);
   font-size: 13px;
@@ -356,10 +356,10 @@
   padding: 0 20px;
   height: 40px;
   background: transparent;
-  color: #888888;
+  color: var(--color-dark-soft);
   font-size: 13px;
   font-weight: 500;
-  border: 1px solid #222222;
+  border: 1px solid var(--color-dark-border);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -385,8 +385,8 @@
 }
 
 .admin-badge-success {
-  background: rgba(52, 211, 153, 0.1);
-  color: var(--color-emerald-400);
+  background: rgba(214, 255, 60, 0.1);
+  color: var(--color-lime);
 }
 
 .admin-badge-warning {
@@ -513,7 +513,7 @@
   border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
-  color: #666666;
+  color: var(--color-dark-dim);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -525,7 +525,7 @@
 
 .admin-pagination-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.04);
-  color: #CCCCCC;
+  color: var(--color-dark-text);
 }
 
 .admin-pagination-btn.active {
@@ -588,7 +588,7 @@
 }
 
 .admin-stock-ok {
-  color: var(--color-emerald-400);
+  color: var(--color-lime);
   font-weight: 500;
 }
 
@@ -609,13 +609,13 @@
 
 /* ---------- Utility ---------- */
 .admin-text-primary { color: var(--color-brand); }
-.admin-text-success { color: var(--color-emerald-400); }
+.admin-text-success { color: var(--color-lime); }
 .admin-text-warning { color: var(--color-amber-400); }
 .admin-text-danger  { color: var(--color-red-400); }
 .admin-text-muted   { color: var(--color-dark-dim); }
 .admin-text-secondary { color: var(--color-dark-soft); }
 
-.admin-bg-success-subtle { background: rgba(52, 211, 153, 0.08); }
+.admin-bg-success-subtle { background: rgba(214, 255, 60, 0.08); }
 .admin-bg-warning-subtle { background: rgba(251, 191, 36, 0.08); }
 .admin-bg-danger-subtle  { background: rgba(248, 113, 113, 0.08); }
 .admin-bg-info-subtle    { background: rgba(96, 165, 250, 0.08); }

@@ -2,6 +2,7 @@ package com.whalensoft.astrosetupsback.application.dto.catalog.Product;
 
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -38,6 +39,10 @@ public class CreateProductDTO {
     private Long categoryId;
 
     private String imageUrl; // Puede ser opcional
+
+    @Min(value = 0, message = "El stock no puede ser negativo")
+    @Builder.Default
+    private Integer stock = 0;
 
     @Builder.Default
     private Boolean hasVariations = false;

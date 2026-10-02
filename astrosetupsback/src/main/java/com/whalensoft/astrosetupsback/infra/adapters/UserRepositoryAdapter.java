@@ -80,6 +80,18 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
+    public Page<User> searchUsers(String searchTerm, UserRole role, UserStatus status,
+                                  Boolean verified, Pageable pageable) {
+        return jpaUserRepository.searchUsers(
+                emptyToNull(searchTerm), role, status, verified,
+                UserStatus.DELETED, pageable);
+    }
+
+    private String emptyToNull(String value) {
+        return (value == null || value.isBlank()) ? null : value.trim();
+    }
+
+    @Override
     public long countByRole(UserRole role) {
         return jpaUserRepository.countByRole(role);
     }

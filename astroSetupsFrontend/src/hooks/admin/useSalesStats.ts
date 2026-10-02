@@ -7,3 +7,10 @@ export function useSalesStats() {
     queryFn: adminSalesService.getSalesStats,
   });
 }
+
+export function useSalesSeries(period: '7d' | '30d' | '90d') {
+  return useQuery({
+    queryKey: ['admin', 'sales-series', period],
+    queryFn: () => adminSalesService.getSalesSeries(period),
+  });
+}

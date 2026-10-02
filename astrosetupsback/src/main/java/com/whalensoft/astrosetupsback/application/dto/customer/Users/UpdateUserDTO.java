@@ -1,5 +1,6 @@
 package com.whalensoft.astrosetupsback.application.dto.customer.Users;
 
+import com.whalensoft.astrosetupsback.domain.model.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +21,8 @@ public class UpdateUserDTO {
 
     @Size(max = 255)
     private String address; // opcional, futura factura
+
+    // Solo administradores pueden modificarlos (se ignoran para clientes)
+    private UserStatus status;
+    private Boolean verified;
 }

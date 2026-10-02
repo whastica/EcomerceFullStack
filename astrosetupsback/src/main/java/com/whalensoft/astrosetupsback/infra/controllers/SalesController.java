@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.checkout.CheckoutSummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.orders.CreateOrderDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderDTO;
@@ -24,6 +24,7 @@ import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderStatusHi
 import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderSummaryDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.orders.OrderTrackingDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.checkout.ProcessCheckoutDTO;
+import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesSeriesDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.search.SalesStatsDTO;
 import com.whalensoft.astrosetupsback.application.dto.sales.orders.UpdateOrderStatusDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.SalesService;
@@ -52,7 +53,7 @@ public class SalesController {
     }
 
     @PostMapping("/orders/search")
-    public ResponseEntity<PageResponseDTO<OrderSearchResultDTO>> searchOrders(@RequestBody OrderSearchDTO searchDTO) {
+    public ResponseEntity<OrderSearchResultDTO> searchOrders(@RequestBody OrderSearchDTO searchDTO) {
         return ResponseEntity.ok(salesService.searchOrders(searchDTO));
     }
 
@@ -89,6 +90,17 @@ public class SalesController {
     @GetMapping("/stats")
     public ResponseEntity<SalesStatsDTO> getSalesStats() {
         return ResponseEntity.ok(salesService.getSalesStats());
+    }
+
+    /**
+     * Serie de ventas para el gráfico del dashboard.
+     * Parámetro period: 7d | 30d | 90d (default 7d)
+     */
+    @GetMapping("/stats/series")
+    public ResponseEntity<SalesSeriesDTO> getSalesSeries(
+            @RequestParam(name = "period", defaultValue = "7d") String period
+    ) {
+        return ResponseEntity.ok(salesService.getSalesSeries(period));
     }
 
     private void checkOrderOwnership(Long orderId) {

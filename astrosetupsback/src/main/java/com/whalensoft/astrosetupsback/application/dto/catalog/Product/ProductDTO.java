@@ -30,6 +30,7 @@ public class ProductDTO {
     private Boolean hasVariations;
     private Boolean hasDiscount;
     private Boolean isFeatured;
+    private Boolean active;
 
     private CategorySummaryDTO category;
 }

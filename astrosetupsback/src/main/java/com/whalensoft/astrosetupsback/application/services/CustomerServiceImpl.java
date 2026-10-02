@@ -1,25 +1,34 @@
 package com.whalensoft.astrosetupsback.application.services;
 
 import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
+import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.CreateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Address.UpdateShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatsDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Stats.CustomerStatusCountDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.ChangePasswordDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.CreateUserDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.UpdateUserDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserAdminDTO;
 import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserAdminProfileDTO;
+import com.whalensoft.astrosetupsback.application.dto.customer.Users.UserSearchDTO;
 import com.whalensoft.astrosetupsback.application.dto.shipping.address.ShippingAddressDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.CustomerService;
 import com.whalensoft.astrosetupsback.domain.model.*;
 import com.whalensoft.astrosetupsback.domain.repository.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,6 +93,15 @@ public class CustomerServiceImpl implements CustomerService {
         if (updateUserDTO.getAddress() != null) {
             user.setAddress(updateUserDTO.getAddress());
         }
+        if (updateUserDTO.getStatus() != null) {
+            if (updateUserDTO.getStatus() == UserStatus.DELETED && user.getRole() != UserRole.CLIENT) {
+                throw new RuntimeException("Solo se pueden eliminar usuarios con rol CLIENT");
+            }
+            user.setStatus(updateUserDTO.getStatus());
+        }
+        if (updateUserDTO.getVerified() != null) {
+            user.setVerified(updateUserDTO.getVerified());
+        }
 
         User updatedUser = userRepository.save(user);
         return convertToUserAdminDTO(updatedUser);
@@ -94,6 +112,42 @@ public class CustomerServiceImpl implements CustomerService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.USER_NOT_FOUND));
         return convertToUserAdminDTO(user);
+    }
+
+    @Override
+    public PageResponseDTO<UserAdminDTO> searchUsers(UserSearchDTO searchDTO) {
+        int page = searchDTO.getPage() != null ? Math.max(searchDTO.getPage(), 0) : 0;
+        int size = searchDTO.getSize() != null ? Math.min(Math.max(searchDTO.getSize(), 1), 100) : 20;
+
+        String sortField = switch (searchDTO.getSortBy() != null ? searchDTO.getSortBy() : "") {
+            case "firstName", "lastName", "email", "role", "status", "verified", "createdAt" ->
+                    searchDTO.getSortBy();
+            default -> "createdAt";
+        };
+        Sort.Direction direction = "ASC".equalsIgnoreCase(searchDTO.getSortDirection())
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Page<User> result = userRepository.searchUsers(
+                searchDTO.getSearchTerm(),
+                searchDTO.getRole(),
+                searchDTO.getStatus(),
+                searchDTO.getVerified(),
+                PageRequest.of(page, size, Sort.by(direction, sortField))
+        );
+
+        return PageResponseDTO.<UserAdminDTO>builder()
+                .content(result.getContent().stream()
+                        .map(this::convertToUserAdminDTO)
+                        .collect(Collectors.toList()))
+                .currentPage(result.getNumber())
+                .totalPages(result.getTotalPages())
+                .totalElements(result.getTotalElements())
+                .size(result.getSize())
+                .first(result.isFirst())
+                .last(result.isLast())
+                .empty(result.isEmpty())
+                .numberOfElements(result.getNumberOfElements())
+                .build();
     }
 
     @Override
@@ -246,17 +300,47 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerStatsDTO getCustomerStats() {
-        List<User> users = userRepository.findAll(Pageable.unpaged()).getContent();
+        List<User> allUsers = userRepository.findAll(Pageable.unpaged()).getContent();
+        List<User> users = allUsers.stream()
+                .filter(u -> u.getStatus() != UserStatus.DELETED)
+                .toList();
+
+        long active = users.stream().filter(u -> u.getStatus() == UserStatus.ACTIVE).count();
+        long inactive = users.stream().filter(u -> u.getStatus() == UserStatus.INACTIVE).count();
+        long suspended = users.stream().filter(u -> u.getStatus() == UserStatus.SUSPENDED).count();
+        long verified = users.stream().filter(User::getVerified).count();
+
+        LocalDateTime monthStart = LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth())
+                .toLocalDate().atStartOfDay();
+        long newThisMonth = users.stream()
+                .filter(u -> u.getCreatedAt() != null && !u.getCreatedAt().isBefore(monthStart))
+                .count();
+
+        long totalOrders = users.stream().mapToLong(u -> u.getOrders().size()).sum();
+        long totalAddresses = users.stream().mapToLong(u -> u.getShippingAddresses().size()).sum();
+
+        Map<UserStatus, Long> byStatus = new EnumMap<>(UserStatus.class);
+        for (User u : users) {
+            byStatus.merge(u.getStatus(), 1L, Long::sum);
+        }
+        List<CustomerStatusCountDTO> customersByStatus = byStatus.entrySet().stream()
+                .map(e -> CustomerStatusCountDTO.builder()
+                        .status(e.getKey().name())
+                        .count(e.getValue())
+                        .build())
+                .collect(Collectors.toList());
 
         return CustomerStatsDTO.builder()
                 .totalCustomers((long) users.size())
-                .activeCustomers(users.stream()
-                        .filter(user -> user.getStatus() == UserStatus.ACTIVE)
-                        .count())
-                .verifiedCustomers(users.stream()
-                        .filter(User::getVerified)
-                        .count())
-
+                .activeCustomers(active)
+                .inactiveCustomers(inactive + suspended)
+                .verifiedCustomers(verified)
+                .unverifiedCustomers(users.size() - verified)
+                .newCustomersThisMonth(newThisMonth)
+                .customersByStatus(customersByStatus)
+                .avgOrdersPerCustomer(users.isEmpty() ? 0.0
+                        : Math.round((double) totalOrders / users.size() * 10.0) / 10.0)
+                .totalShippingAddresses(totalAddresses)
                 .build();
     }
 

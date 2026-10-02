@@ -19,6 +19,12 @@ public class ProductSearchDTO {
     private BigDecimal maxPrice;
     private Boolean hasDiscount;
     private Boolean hasVariations;
+
+    /** null = todos (solo admin); los clientes siempre ven active=true */
+    private Boolean active;
+    private Integer minStock;
+    private Integer maxStock;
+
     private String sortBy; // "price", "name", "newest", "discount"
     private String sortDirection; // "asc", "desc"
     @Builder.Default

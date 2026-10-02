@@ -21,6 +21,7 @@ import com.whalensoft.astrosetupsback.application.dto.catalog.Product.UpdateProd
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.CatalogService;
 import com.whalensoft.astrosetupsback.application.dto.catalog.Product.ProductDetailDTO;
+import com.whalensoft.astrosetupsback.infra.security.SecurityUtils;
 
 import jakarta.validation.Valid;
 
@@ -80,16 +81,30 @@ public class CatalogController {
 
     /**
      * Búsqueda avanzada
+     * Los usuarios no administradores siempre ven solo productos activos;
+     * el admin puede filtrar por estado (activo/inactivo) o ver todos.
      */
     @PostMapping("/products/_search")
     public ResponseEntity<PageResponseDTO<ProductSummaryDTO>>
     searchProducts(
             @RequestBody ProductSearchDTO searchDTO
     ) {
+        if (!SecurityUtils.isAdmin()) {
+            searchDTO.setActive(true);
+        }
 
         return ResponseEntity.ok(
                 catalogService.searchProducts(searchDTO)
         );
+    }
+
+    /**
+     * Deshabilitar producto (soft delete: active=false)
+     */
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        catalogService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
     /**

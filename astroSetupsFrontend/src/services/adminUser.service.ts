@@ -47,4 +47,15 @@ export const adminUserService = {
     const response = await apiClient.get<CustomerStats>('/customers/stats');
     return response.data;
   },
+
+  async updateUser(
+    id: number,
+    data: { status?: string; verified?: boolean }
+  ): Promise<UserAdmin> {
+    const response = await apiClient.put<UserAdmin>(
+      `/customers/${id}`,
+      data
+    );
+    return response.data;
+  },
 };

@@ -25,6 +25,7 @@ public class ProductSummaryDTO {
     private String imageUrl;
     private Integer stock;
     private Boolean isFeatured;
+    private Boolean active;
 
     private String categoryName;
 }

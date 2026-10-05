@@ -224,8 +224,12 @@ src/main/java/com/whalensoft/astrosetupsback/
 6. **JWT Stateless** - Sin sesiones en servidor, ideal para escalabilidad
 
 ## Credenciales de Prueba
-| Rol | Email | Password |
-|-----|-------|----------|
-| ADMIN | admin@astrosetups.com | Admin123* |
-| SUPER_ADMIN | superadmin@astrosetups.com | SuperAdmin123* |
-| CLIENT | cliente@astrosetups.com | Cliente123* |
+
+| Entorno | Rol | Email | Password |
+|---------|-----|-------|----------|
+| Local (`astrosetupsdb`) | ADMIN | admin@astrosetups.com | `Admin123*` |
+| Local | SUPER_ADMIN | superadmin@astrosetups.com | `SuperAdmin123*` |
+| Local | CLIENT | cliente@astrosetups.com | `Cliente123*` |
+| Staging (Railway) | ADMIN | admin@astrosetups.com | `AdminStg2026!` (rotada en Fase 6.5) |
+| Staging | SUPER_ADMIN | superadmin@astrosetups.com | `SuperStg2026!` (rotada en Fase 6.5) |
+| Staging | CLIENT | cliente@astrosetups.com | `Cliente123*` |

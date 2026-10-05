@@ -24,8 +24,9 @@ RUN groupadd --system app && useradd --system --gid app app
 
 COPY --from=build /app/target/app.jar app.jar
 
-# Puerto por defecto; Railway inyecta PORT y Spring lo respeta (server.port=${PORT:8081})
-EXPOSE 8081
+# NO usar EXPOSE: Railway lo interpreta como target port del dominio publico
+# y genera x-railway-fallback 502/404 si difiere de $PORT (ver DEPLOY-STAGING.md).
+# El puerto lo define Railway via PORT (server.port=${PORT:8081}).
 
 USER app
 

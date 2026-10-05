@@ -101,6 +101,12 @@ Credenciales de staging (rotadas en Fase 6.5 — ver `README.md`):
 
 4. **Settings → Networking → Public Domain** (es **HTTP**, a diferencia del TCP
    Proxy de la DB): genera `https://<svc>.up.railway.app` → anotalo.
+   > ⚠️ **Target Port**: junto al dominio, verifica que el puerto objetivo sea el
+   > de la app (**8080** = `$PORT`, nunca `8081`). Si difiere, el edge responde
+   > `502/404` con header `x-railway-fallback: true`: el healthcheck **pasa igual**
+   > (sondea `$PORT`) pero **ninguna petición externa llega a la app**. Al cambiar
+   > o regenerar el dominio **el hostname puede cambiar** (sufijo nuevo) → repetir
+   > el Paso 3 con el dominio nuevo.
 5. **Healthcheck** (Settings → Deploy/Healthcheck Path): `/api/health`
    → Railway espera a que el backend este realmente levantado.
 6. **Deploy.** Verificar desde PowerShell:
@@ -150,6 +156,10 @@ Credenciales de staging (rotadas en Fase 6.5 — ver `README.md`):
 | Backend no arranca, log: `Could not resolve placeholder 'JWT_SECRET'` o `'CORS_ALLOWED_ORIGINS'` | Falta la variable en Settings → Variables |
 | `UnknownHostException mysql.railway.internal` | Backend en otro proyecto/environment que el MySQL |
 | Navegador: error CORS (`...has been blocked by CORS policy`) | `CORS_ALLOWED_ORIGINS` no coincide exacto con el dominio de Vercel (https, sin `/` final) |
+| **502/404 con header `x-railway-fallback: true`** (la app corre, healthcheck pasa, logs normales, pero todo lo externo falla) | **Target Port del dominio ≠ puerto de la app** (p. ej. heredado de un `EXPOSE` viejo). Settings → Networking → target port = `8080`. Ver Paso 2.4 — *causa real vivida en staging 05/10/2026* |
+| Tras cambiar/regenerar el dominio: 404 o el frontend no conecta | El **hostname cambió** (sufijo nuevo) → actualizar `VITE_API_BASE_URL` en Vercel + Redeploy (Paso 3) — *vivido: `...production` → `...production-7db9`* |
+| `Driver com.mysql.cj.jdbc.Driver claims to not accept jdbcUrl, mysql://...` | `DB_URL` en formato de Railway (`mysql://`); debe ser JDBC: `jdbc:mysql://host:3306/db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC` |
+| `Access denied for user 'root'` pese a password correcta | Los nombres de variable deben ser **exactamente** `DB_USER`/`DB_PASSWORD`/`DB_URL` (Spring no lee `Mysql_user`, `mysql_url`, etc.) y sin espacios ocultos al pegar |
 | Pantalla blanca en Vercel | Falta `VITE_API_BASE_URL` (`apiConfig.ts` lanza error al cargar) |
 | Login falla con credenciales del README | En staging la password de admin roto: usar `AdminStg2026!` |
 | Errores `Public Key Retrieval is not allowed` | Falta `allowPublicKeyRetrieval=true` en `DB_URL` |

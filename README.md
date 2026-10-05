@@ -245,7 +245,7 @@ npm run dev
 | 5 | Frontend: fixes y archivos de despliegue | ✅ COMPLETADA | 05/10/2026 |
 | 6 | Datos: dump completo → Railway MySQL | ✅ COMPLETADA | 05/10/2026 |
 | 7 | Guia de despliegue (documentacion) | ✅ COMPLETADA | 05/10/2026 |
-| 8 | Verificacion final (checklist auditoria) | ⬜ PENDIENTE | |
+| 8 | Verificacion final (checklist auditoria) | ✅ COMPLETADA | 05/10/2026 |
 
 > Leyenda: ⬜ PENDIENTE · 🔄 EN CURSO · ✅ COMPLETADA · ⛔ BLOQUEADA
 
@@ -437,16 +437,23 @@ docker run -p 8081:8081 \
 
 ---
 
-### Fase 8 — Verificacion final (checklist auditoria) ⬜
+### Fase 8 — Verificacion final (checklist auditoria) ✅ COMPLETADA (05/10/2026)
 
 | # | Verificacion | Estado |
 |---|--------------|--------|
-| 8.1 | `mvn clean package` → SUCCESS (tests H2) | ⬜ |
-| 8.2 | `java -jar target/app.jar` con env vars → `curl localhost:8081/api/health` = `{"status":"UP"}` | ⬜ |
-| 8.3 | `npm run lint && npm run build` → 0 errores | ⬜ |
-| 8.4 | Grep: sin `localhost` en runtime del front, sin secrets en el repo | ⬜ |
-| 8.5 | (Opcional) `docker build` local del backend | ⬜ |
-| 8.6 | Smoke test manual con QA: `docs/QA-GUIA-DE-PRUEBAS.md` | ⬜ |
+| 8.1 | `mvn clean package` → SUCCESS (tests H2) | ✅ BUILD SUCCESS, 1 test (H2) OK |
+| 8.2 | `java -jar target/app.jar` con env vars → `curl localhost:8081/api/health` = `{"status":"UP"}` | ✅ UP en 15s con perfil `prod` + `JWT_SECRET` + `CORS_ALLOWED_ORIGINS`; **fail-fast** sin `JWT_SECRET` verificado (`Could not resolve placeholder`) |
+| 8.3 | `npm run lint && npm run build` → 0 errores | ✅ lint **0 errores** (2 warnings preexistentes de `react-refresh`), build OK (25s) |
+| 8.4 | Grep: sin `localhost` en runtime del front, sin secrets en el repo | ✅ `localhost` solo en comentario (`apiConfig.ts:4`); password de Railway **no** en el repo; `.env` y `dumps/` sin trackear; solo `data.sql` (seed dev, intencional) |
+| 8.5 | (Opcional) `docker build` local del backend | ✅ EXIT=0 con el Dockerfile **sin `EXPOSE`** (fix de target port) |
+| 8.6 | Smoke test manual con QA: `docs/QA-GUIA-DE-PRUEBAS.md` | ⬜ manual — pendiente del usuario/grupo |
+
+**Estado del despliegue staging (05/10/2026) — VERIFICADO POR API:**
+- Frontend Vercel: `https://ecomerce-full-stack.vercel.app` (SPA rewrite OK).
+- Backend Railway: `https://ecomercefullstack-production-7db9.up.railway.app` → `GET /api/health` = 200 `{"status":"UP"}`; preflight CORS devuelve `access-control-allow-origin: https://ecomerce-full-stack.vercel.app`; `GET /api/catalog/products` = 200 con datos del dump.
+- MySQL Railway: volume `/var/lib/mysql`, dump importado (21 users / 114 products / 26 orders), passwords de admin rotadas (`AdminStg2026!` / `SuperStg2026!`).
+- **Incidentes resueltos y documentados en `docs/DEPLOY-STAGING.md`:** (1) target port del dominio ≠ 8080 → `x-railway-fallback` 502/404 (fix: quitar `EXPOSE 8081` + target port 8080); (2) al regenerar el dominio cambió el hostname (sufijo `-7db9`) → `VITE_API_BASE_URL` actualizada; (3) `DB_URL` debe ser `jdbc:mysql://` (no `mysql://` de Railway); (4) 401 de admin = password rotada de staging.
+- **Pendiente único:** 8.6 (smoke test manual con `docs/QA-GUIA-DE-PRUEBAS.md`).
 
 ---
 

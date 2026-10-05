@@ -4,11 +4,12 @@ import ProductGrid from '@/components/products/ProductGrid';
 import { useQuery } from '@tanstack/react-query';
 import { productService } from '@/services/product.service';
 import { Package } from 'lucide-react';
+import ErrorState from '@/components/ui/states/ErrorState';
 
 export default function PromotionsPage() {
   const [page, setPage] = useState(0);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['promotions', page],
     queryFn: () =>
       productService.searchProducts({
@@ -43,7 +44,12 @@ export default function PromotionsPage() {
               className="glass-effect rounded-xl p-6 animate-slide-up"
               style={{ animationDelay: '0.3s' }}
             >
-              {isLoading ? (
+              {isError ? (
+                <ErrorState
+                  title="Error cargando promociones"
+                  message="No pudimos cargar las promociones. Intenta nuevamente más tarde."
+                />
+              ) : isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {[...Array(4)].map((_, i) => (
                     <div

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import Modal from '@/components/ui/admin/Modal';
 import StatusBadge from '@/components/ui/admin/StatusBadge';
+import ErrorState from '@/components/ui/states/ErrorState';
 import {
   useAdminUsers,
   useAdminUserProfile,
@@ -42,7 +43,7 @@ export default function AdminUsersPage() {
     return () => clearTimeout(timeout);
   }, [searchTerm]);
 
-  const { data, isLoading } = useAdminUsers({
+  const { data, isLoading, isError } = useAdminUsers({
     searchTerm: debouncedSearch || undefined,
     role: roleFilter || undefined,
     status: statusFilter || undefined,
@@ -120,7 +121,12 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Table */}
-      {isLoading ? (
+      {isError ? (
+        <ErrorState
+          title="Error cargando clientes"
+          message="No pudimos cargar la lista de clientes. Intenta nuevamente más tarde."
+        />
+      ) : isLoading ? (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="admin-skeleton h-14" />

@@ -2,6 +2,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from 'axios';
+import { toast } from 'sonner';
 
 import { API_CONFIG } from './apiConfig';
 
@@ -70,11 +71,15 @@ apiClient.interceptors.response.use(
     }
 
     if (error.response?.status === 403) {
-      console.warn('Forbidden request');
+      toast.error('No tienes permisos para realizar esta acción');
     }
 
     if (error.response?.status === 500) {
-      console.error('Internal server error');
+      toast.error('Error del servidor. Intenta nuevamente más tarde');
+    }
+
+    if (error.code === 'ECONNABORTED' || !error.response) {
+      toast.error('Sin conexión con el servidor. Verifica tu red');
     }
 
     return Promise.reject(error);

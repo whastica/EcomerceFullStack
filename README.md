@@ -243,8 +243,8 @@ npm run dev
 | 3 | Backend: seguridad | ✅ COMPLETADA | 05/10/2026 |
 | 4 | Backend: Docker | ✅ COMPLETADA | 05/10/2026 |
 | 5 | Frontend: fixes y archivos de despliegue | ✅ COMPLETADA | 05/10/2026 |
-| 6 | Datos: dump completo → Railway MySQL | ⬜ PENDIENTE | |
-| 7 | Guia de despliegue (documentacion) | ⬜ PENDIENTE | |
+| 6 | Datos: dump completo → Railway MySQL | ✅ COMPLETADA | 05/10/2026 |
+| 7 | Guia de despliegue (documentacion) | ✅ COMPLETADA | 05/10/2026 |
 | 8 | Verificacion final (checklist auditoria) | ⬜ PENDIENTE | |
 
 > Leyenda: ⬜ PENDIENTE · 🔄 EN CURSO · ✅ COMPLETADA · ⛔ BLOQUEADA
@@ -397,32 +397,43 @@ docker run -p 8081:8081 \
 
 ---
 
-### Fase 6 — Datos: dump completo → Railway MySQL ⬜
+### Fase 6 — Datos: dump completo → Railway MySQL ✅ COMPLETADA (05/10/2026)
 
 | # | Tarea | Responsable | Estado |
 |---|-------|-------------|--------|
-| 6.1 | Extraer dump de la DB local: `mysqldump -u root -p --single-transaction --routines --triggers astrosetupsdb > astrosetups_full_dump.sql` | Agente (ejecucion local) | ⬜ |
-| 6.2 | Verificar contenido del dump (products, categories, users, orders presentes) | Agente | ⬜ |
-| 6.3 | Crear MySQL en Railway con **Volume** persistente + Public Networking (anotar host/puerto/user/password/db) | **Usuario (Railway)** | ⬜ |
-| 6.4 | Importar dump ANTES del primer arranque del backend: `mysql -h <HOST> -P <PORT> -u <USER> -p <DB> < astrosetups_full_dump.sql` | Agente/Usuario | ⬜ |
-| 6.5 | Rotar passwords de admin en la DB de staging (`admin@`, `superadmin@`) | Agente/Usuario | ⬜ |
-| 6.6 | Confirmar que en `prod` NO se ejecuta `data.sql` (`sql.init.mode=never`) | Agente (validacion) | ⬜ |
+| 6.1 | Extraer dump de la DB local: `mysqldump --single-transaction --routines --triggers` → `dumps/astrosetups_full_dump.sql` (carpeta `dumps/` agregada al `.gitignore` raiz — **datos sensibles, nunca commitear**) | Agente (ejecucion local) | ✅ |
+| 6.2 | Verificar contenido del dump | Agente | ✅ |
+| 6.3 | Crear MySQL en Railway con **Volume** persistente + TCP Proxy (Public Networking) | **Usuario (Railway)** | ✅ Volumen con mount path `/var/lib/mysql`; DB `railway`; TCP Proxy `tokaido.proxy.rlwy.net:35307` |
+| 6.4 | Importar dump ANTES del primer arranque del backend | Agente | ✅ Import via `dumps/import-staging.ps1` |
+| 6.5 | Rotar passwords de admin en la DB de staging (`admin@`, `superadmin@`) | Agente | ✅ `dumps/rotate-passwords.sql` + verificacion bcrypt MATCH |
+| 6.6 | Confirmar que en `prod` NO se ejecuta `data.sql` (`sql.init.mode=never`) | Agente (validacion) | ✅ verificado en Fases 1 y 4 |
 
-**Nota:** dump completo incluye datos de clientes reales → aceptado; se mitiga con rotacion de credenciales y URL de Railway privada.
+**Verificaciones del dump (05/10/2026):**
+- Archivo: `dumps/astrosetups_full_dump.sql` (90 KB, 559 lineas) — generado con `mysqldump 8.0.39`.
+- Estructura: **17 `CREATE TABLE` + 17 `DROP TABLE IF EXISTS` + 25 foreign keys**, sin `CREATE DATABASE`/`USE` (importable directo a la DB creada por Railway).
+- Codificacion: `SET NAMES utf8mb4`, **0 caracteres corruptos (U+FFFD)**; acentos verificados OK contra la DB origen.
+
+**Verificaciones del import a staging (05/10/2026):**
+- Conteos **identicos local ↔ staging**: `users 21 · products 114 · categories 24 · orders 26 · order_items 40 · promo_codes 6 · cities 10 · postal_codes 12`.
+- Admins presentes y ACTIVE: `user_id 7 admin@` (ADMIN), `8 superadmin@` (SUPER_ADMIN), `9 cliente@` (CLIENT).
+- Nota: Railway desplego **MySQL 9.7.2** (no 8.0) — el dump de mysqldump 8.0.39 importo sin errores; `utf8mb4_0900_ai_ci` y sintaxis compatibles.
+- 6.5: passwords de staging rotadas → **`admin@astrosetups.com` = `AdminStg2026!`**, **`superadmin@astrosetups.com` = `SuperStg2026!`** (hashes `$2b$10$` verificados con `bcrypt.checkpw` = MATCH).
+- El backend en Railway se conectara por host **interno** `mysql.railway.internal:3306` (no requiere TCP Proxy) — el proxy publico fue solo para el import y **puede desactivarse**.
 
 ---
 
-### Fase 7 — Guia de despliegue (documentacion) ⬜
+### Fase 7 — Guia de despliegue (documentacion) ✅ COMPLETADA (05/10/2026)
 
 | # | Tarea | Archivos | Estado |
 |---|-------|----------|--------|
-| 7.1 | Crear `docs/DEPLOY-STAGING.md`: pasos Railway (MySQL + Backend), pasos Vercel (preset Vite, env vars), checklist post-despliegue | nuevo `docs/DEPLOY-STAGING.md` | ⬜ |
+| 7.1 | Crear `docs/DEPLOY-STAGING.md`: pasos Railway (MySQL + Backend), pasos Vercel (preset Vite, env vars), checklist post-despliegue | `docs/DEPLOY-STAGING.md` | ✅ |
 
-**Contenido minimo de la guia:**
-1. Railway MySQL: servicio + volume + import del dump.
-2. Railway Backend: Root Directory `astrosetupsback`, Dockerfile, env vars (`SPRING_PROFILES_ACTIVE=prod`, `DB_URL` en formato `jdbc:mysql://...`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET` ≥32 chars, `CORS_ALLOWED_ORIGINS=https://<app>.vercel.app`).
-3. Vercel Frontend: Root Directory `astroSetupsFrontend`, preset **Vite**, build `npm run build`, output `dist`, env var `VITE_API_BASE_URL=https://<backend>.up.railway.app/api`.
-4. Checklist post-despliegue: health, login, catalogo, refresh de `/catalog`, 404, 403 con rol cliente en `/admin`.
+**Contenido de la guia (`docs/DEPLOY-STAGING.md`):**
+1. Paso 0 — MySQL en Railway: estado post-Fase 6 (host interno, volumen, credenciales de staging, nota de mismo proyecto/environment).
+2. Paso 1 — Frontend Vercel: Root Directory `astroSetupsFrontend`, preset Vite, build/output default, `VITE_API_BASE_URL` temporal.
+3. Paso 2 — Backend Railway: Root Directory `./astrosetupsback`, Dockerfile auto-deteccion, 6 env vars (`SPRING_PROFILES_ACTIVE=prod`, `DB_URL` jdbc con `allowPublicKeyRetrieval`, `DB_USER`, `DB_PASSWORD`, `CORS_ALLOWED_ORIGINS`, `JWT_SECRET` generado), Public Domain **HTTP** (no TCP Proxy), healthcheck `/api/health`.
+4. Paso 3 — Cierre del circuito: `VITE_API_BASE_URL` real + Redeploy (Vite inyecta vars en build time).
+5. Checklist post-despliegue (7 pruebas: health, login admin, catalogo, refresh SPA, 404, 403 rol cliente, checkout) + tabla de solucion de problemas (8 casos).
 
 ---
 

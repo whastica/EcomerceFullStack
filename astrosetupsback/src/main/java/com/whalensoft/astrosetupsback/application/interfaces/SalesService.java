@@ -55,6 +55,13 @@ public interface SalesService {
 
     void removeFromCart(Long cartItemId);
 
+    /**
+     * Devuelve el id del usuario propietario del carrito que contiene el item.
+     * Retorna null si el item pertenece a un carrito guest (sin usuario).
+     * Util para verificacion de propiedad en la capa de seguridad.
+     */
+    Long getCartItemOwnerUserId(Long cartItemId);
+
     CartSummaryDTO getCartSummary(Long userId);
 
     ShoppingCartDTO getGuestCart(String guestCartId);

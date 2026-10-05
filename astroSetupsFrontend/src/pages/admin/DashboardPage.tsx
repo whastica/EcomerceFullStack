@@ -24,6 +24,7 @@ import { useCustomerStats } from '@/hooks/admin/useCustomerStats';
 import { useAdminOrders } from '@/hooks/admin/useAdminOrders';
 import { useAdminBestSellers } from '@/hooks/admin/useAdminProducts';
 import StatusBadge from '@/components/ui/admin/StatusBadge';
+import ErrorState from '@/components/ui/states/ErrorState';
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('es-CO', {
@@ -35,13 +36,14 @@ function formatCurrency(value: number) {
 
 export default function DashboardPage() {
   const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('7d');
-  const { data: sales, isLoading: loadingSales } = useSalesStats();
+  const { data: sales, isLoading: loadingSales, isError: errorSales } = useSalesStats();
   const { data: series } = useSalesSeries(period);
-  const { data: customers, isLoading: loadingCustomers } = useCustomerStats();
+  const { data: customers, isLoading: loadingCustomers, isError: errorCustomers } = useCustomerStats();
   const { data: ordersData, isLoading: loadingOrders } = useAdminOrders({ page: 0, size: 5 });
   const { data: bestSellers, isLoading: loadingBest } = useAdminBestSellers();
 
   const isLoading = loadingSales || loadingCustomers;
+  const isError = errorSales || errorCustomers;
 
   const chartData =
     series?.points.map((point) => ({
@@ -80,7 +82,12 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      {isLoading ? (
+      {isError ? (
+        <ErrorState
+          title="Error cargando el panel"
+          message="No pudimos cargar las estadísticas. Intenta nuevamente más tarde."
+        />
+      ) : isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="admin-skeleton h-[120px]" />

@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.whalensoft.astrosetupsback.application.common.ErrorMessages;
 import com.whalensoft.astrosetupsback.application.dto.common.PageResponseDTO;
 import com.whalensoft.astrosetupsback.application.interfaces.PromotionService;
+import com.whalensoft.astrosetupsback.infra.exceptions.AccessDeniedException;
+import com.whalensoft.astrosetupsback.infra.security.SecurityUtils;
 
 import jakarta.validation.Valid;
 
@@ -75,6 +78,7 @@ public class PromotionController {
     // --- Historial y Estadísticas ---
     @GetMapping("/codes/history/{userId}")
     public ResponseEntity<List<UserPromoCodeHistoryDTO>> getUserPromoCodeHistory(@PathVariable Long userId) {
+        checkOwnership(userId);
         return ResponseEntity.ok(promotionService.getUserPromoCodeHistory(userId));
     }
 
@@ -92,6 +96,12 @@ public class PromotionController {
     @PostMapping("/codes/bulk-update")
     public ResponseEntity<BulkPromoCodeActionResultDTO> bulkUpdatePromoCodes(@RequestBody BulkPromoCodeActionDTO dto) {
         return ResponseEntity.ok(promotionService.bulkUpdatePromoCodes(dto));
+    }
+
+    private void checkOwnership(Long resourceUserId) {
+        if (!SecurityUtils.isAdmin() && !resourceUserId.equals(SecurityUtils.getCurrentUserId())) {
+            throw new AccessDeniedException(ErrorMessages.FORBIDDEN);
+        }
     }
 
     /*@PostMapping("/codes/bulk-delete")

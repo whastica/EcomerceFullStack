@@ -9,8 +9,10 @@ import {
 } from 'lucide-react';
 import Modal from '@/components/ui/admin/Modal';
 import StatusBadge from '@/components/ui/admin/StatusBadge';
+import ErrorState from '@/components/ui/states/ErrorState';
 import { useAdminOrders, useUpdateOrderStatus } from '@/hooks/admin/useAdminOrders';
 import { adminOrderService } from '@/services/adminOrder.service';
+import { toast } from 'sonner';
 import type { OrderSummary, OrderDetail, OrderStatus } from '@/interfaces/admin/admin.types';
 
 const ORDER_STATUSES: { value: OrderStatus; label: string }[] = [
@@ -39,7 +41,7 @@ export default function AdminOrdersPage() {
   const [newStatus, setNewStatus] = useState<OrderStatus>('PENDING');
   const [observation, setObservation] = useState('');
 
-  const { data, isLoading } = useAdminOrders({
+  const { data, isLoading, isError } = useAdminOrders({
     searchTerm: searchTerm || undefined,
     status: (statusFilter as OrderStatus) || undefined,
     page,
@@ -58,7 +60,7 @@ export default function AdminOrdersPage() {
       setSelectedOrder(detail);
       setDetailModal(true);
     } catch {
-      // Error silently handled
+      toast.error('No se pudo cargar el detalle de la orden');
     }
   }
 
@@ -118,7 +120,12 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Table */}
-      {isLoading ? (
+      {isError ? (
+        <ErrorState
+          title="Error cargando pedidos"
+          message="No pudimos cargar los pedidos. Intenta nuevamente más tarde."
+        />
+      ) : isLoading ? (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="admin-skeleton h-14" />

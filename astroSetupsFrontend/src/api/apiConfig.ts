@@ -1,19 +1,19 @@
-export const API_CONFIG = {
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081/api',
-  
-  APP_NAME:
-    import.meta.env.VITE_APP_NAME ||
-    'ASTROSETUPSFRONTEND',
+// En produccion (Vercel) VITE_API_BASE_URL es obligatoria.
+// Sin fallback a localhost: si falta, fallamos en visible en vez de
+// apuntar silenciosamente a un entorno que no existe.
+if (!rawBaseUrl) {
+  const message =
+    'VITE_API_BASE_URL no está definida. Configurala en las variables de entorno (Vercel > Settings > Environment Variables).';
+  console.error(message);
+  throw new Error(message);
+}
+
+export const API_CONFIG = {
+  BASE_URL: rawBaseUrl,
+
+  APP_NAME: import.meta.env.VITE_APP_NAME || 'ASTROSETUPSFRONTEND',
 
   TIMEOUT: 10000,
 };
-
-if (!import.meta.env.VITE_API_BASE_URL) {
-  console.warn(
-    'VITE_API_BASE_URL no está definida. Usando URL por defecto:',
-    API_CONFIG.BASE_URL
-  );
-}
-
-console.log('API CONFIG:', API_CONFIG);

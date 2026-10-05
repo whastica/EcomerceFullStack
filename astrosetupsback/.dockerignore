@@ -1,0 +1,13 @@
+# Artefactos y herramientas que no deben entrar al build context
+target/
+.idea/
+*.iml
+.git/
+.github/
+.mvn/
+mvnw
+mvnw.cmd
+CONTEXT.md
+*.md
+Dockerfile
+.dockerignore

@@ -16,6 +16,7 @@ import PrivacyPolicies from './pages/privacyPolicies';
 import Conditions from './pages/conditions';
 import CustomPCPage from './pages/products/CustomPCPage';
 import TrackingPage from './pages/tracking/TrackingPage';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
 
@@ -64,6 +65,7 @@ export default function App() {
           <Route path="/privacy-policies" element={<PrivacyPolicies />} />
           <Route path="/conditions" element={<Conditions />} />
           <Route path="/tracking" element={<TrackingPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
       <Footer />

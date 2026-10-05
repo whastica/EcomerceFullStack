@@ -166,8 +166,7 @@ VITE_APP_NAME=ASTROSETUPSFRONTEND
 
 ## Credenciales de Prueba
 
-| Rol | Email | Password |
-|-----|-------|----------|
-| ADMIN | admin@astrosetups.com | Admin123* |
-| SUPER_ADMIN | superadmin@astrosetups.com | SuperAdmin123* |
-| CLIENT | cliente@astrosetups.com | Cliente123* |
+> **[REDACTADO por seguridad — 05/10/2026]** Las credenciales de prueba ya no se
+> documentan en repositorios. Para desarrollo local, consultar
+> `astrosetupsback/src/main/resources/data.sql`. En staging/produccion se
+> gestionan como secreto en Railway y se rotan tras cada import del dump.

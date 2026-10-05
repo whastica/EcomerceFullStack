@@ -391,6 +391,14 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
+    public Long getCartItemOwnerUserId(Long cartItemId) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new EntityNotFoundException("Item del carrito no encontrado"));
+        ShoppingCart cart = cartItem.getShoppingCart();
+        return (cart != null && cart.getUser() != null) ? cart.getUser().getId() : null;
+    }
+
+    @Override
     public CartSummaryDTO getCartSummary(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));

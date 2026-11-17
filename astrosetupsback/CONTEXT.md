@@ -1,235 +1,220 @@
 # Astro Setups Backend - Contexto del Proyecto
 
-## Descripcion del Negocio
-Astro Setups es una tienda en linea de productos de hardware que opera bajo un modelo de intermediacion, sin stock propio. La plataforma conecta clientes con proveedores, facilitando la compra de productos sin necesidad de manejar inventario directamente.
+> **Documento de contexto y trazabilidad del backend.** Actualizado: **17/11/2026**.
+> Público: el agente de IA (contexto de trabajo) y el dueño del proyecto (historial).
+> El registro maestro de las fases de despliegue está en `README.md` de la raíz.
 
-### Funcionalidades Principales
-- Exploracion de catalogo con filtros
-- Consulta de especificaciones tecnicas y comparacion de productos
-- Compra rapida sin registro o con cuenta
-- Aplicacion de codigos promocionales
-- Seguimiento de pedidos
-- Gestion administrativa del catalogo, clientes, pedidos y promociones
+## 1. Descripción del Negocio
 
-## Arquitectura Tecnica
+Astro Setups es una tienda en línea de hardware/componentes de PC bajo modelo de
+intermediación (sin stock propio): conecta clientes con proveedores. La plataforma
+soporta catálogo con filtros y specs, compra rápida con o sin cuenta, códigos
+promocionales, seguimiento de pedidos y gestión administrativa (catálogo, clientes,
+pedidos, promociones, envíos).
 
-### Stack
-- **Framework:** Spring Boot 3.4.5
-- **Lenguaje:** Java 21
-- **Base de Datos:** MySQL 8.0
-- **ORM:** Spring Data JPA
-- **Seguridad:** Spring Security + JWT (jjwt 0.12.6)
-- **Build:** Maven
-- **Lombok:** Para reduccion de boilerplate
+## 2. Stack Técnico
 
-### Estructura del Proyecto (Arquitectura Hexagonal)
+| Capa | Tecnología | Detalle |
+|------|-----------|---------|
+| Framework | Spring Boot 3.4.5 | Java 21, Maven |
+| ORM | Spring Data JPA | Hibernate, `ddl-auto=update` |
+| Base de datos (desarrollo) | MySQL 8.0 local | `astrosetupsdb` (localhost:3306) |
+| Base de datos (beta) | **TiDB Cloud Starter** | MySQL-compatible (puerto 4000, TLS); ver §6 |
+| Seguridad | Spring Security + JWT | jjwt 0.12.6, sesiones stateless |
+| Build/Deploy | Maven + Docker | `Dockerfile` multi-stage Maven→JRE 21 |
+| Hosting objetivo | **Vercel (contenedores)** | front + back en Vercel, ver §6 y `docs/DEPLOY-VERCEL.md` |
+| Hosting anterior (retirado) | Railway | trial agotado; servicios dados de baja en nov 2026 |
+| Lombok | Reducción de boilerplate | builder/getters en entidades y DTOs |
+
+**Puertos:** backend local **8081** (en despliegue: `PORT` inyectada por la plataforma,
+`server.port=${PORT:8081}`); health check público: `GET /api/health` → `{"status":"UP"}`.
+
+## 3. Estructura del Proyecto (Arquitectura Hexagonal)
+
 ```
 src/main/java/com/whalensoft/astrosetupsback/
 ├── application/
 │   ├── common/              # Mensajes de error, constantes
-│   ├── dto/                 # DTOs organizados por contexto
-│   │   ├── auth/           # Auth, Login, Register
-│   │   ├── catalog/        # Productos y Categorias
-│   │   │   ├── Product/    # CreateProduct, UpdateProduct, ProductDTO, etc.
-│   │   │   └── Category/   # CreateCategory, CategoryDTO, CategoryTypeDTO, etc.
-│   │   ├── customer/       # Clientes y Usuarios
-│   │   │   ├── Users/      # UserAdmin, UserAdminProfile, etc.
-│   │   │   ├── Address/    # ShippingAddress DTOs
-│   │   │   └── Stats/      # CustomerStats
-│   │   ├── promotion/      # Codigos promocionales
-│   │   │   ├── code/       # CRUD de promociones
-│   │   │   ├── validation/ # Validar y aplicar codigos
-│   │   │   └── bullk/      # Operaciones en lote
-│   │   ├── sales/          # Ventas y Pedidos
-│   │   │   ├── cart/       # Carrito de compras
-│   │   │   ├── checkout/   # Procesamiento de checkout
-│   │   │   ├── orders/     # CRUD de ordenes
-│   │   │   └── search/     # Busqueda y estadisticas
-│   │   ├── shipping/       # Envios
-│   │   │   ├── address/    # Direcciones de envio
-│   │   │   ├── cost/       # Calculo de costos
-│   │   │   ├── location/   # Ciudades, codigos postales
-│   │   │   ├── preferences/# Preferencias de usuario
-│   │   │   ├── stats/      # Estadisticas de envios
-│   │   │   └── zone/       # Zonas de envio
-│   │   └── common/         # PageResponseDTO
+│   ├── dto/                 # DTOs por contexto: auth, catalog (Product/Category),
+│   │                        # customer (Users/Address/Stats), promotion (code/validation/bulk),
+│   │                        # sales (cart/checkout/orders/search), shipping (address/cost/
+│   │                        # location/preferences/stats/zone), common (PageResponseDTO)
 │   ├── interfaces/          # Interfaces de servicios
-│   └── services/           # Implementaciones de servicios
+│   └── services/            # Implementaciones (6)
 ├── domain/
-│   ├── model/              # Entidades del dominio (22 entidades)
-│   └── repository/         # Interfaces de repositorios
+│   ├── model/               # 22 entidades + enums (builder Lombok)
+│   └── repository/          # 11 interfaces de repositorio
 └── infra/
-    ├── adapters/           # Adaptadores repository
-    ├── config/             # SecurityConfig, RepositoryAdapterConfig
-    ├── controllers/        # Controladores REST (7)
-    ├── exceptions/         # Manejo global de excepciones
-    ├── repository/         # Implementaciones JPA
-    └── security/           # JWT: JwtProvider, JwtAuthenticationFilter, SecurityUtils
+    ├── adapters/            # Adaptadores repository (11)
+    ├── config/              # SecurityConfig, RepositoryAdapterConfig
+    ├── controllers/         # 8 controladores REST (7 de negocio + HealthController)
+    ├── exceptions/          # GlobalExceptionHandler + excepciones de dominio
+    ├── repository/          # Implementaciones JPA (11) con queries personalizadas
+    └── security/            # JwtProvider, JwtAuthenticationFilter, SecurityUtils
+
+src/main/resources/
+├── application.properties         # Config por defecto (dev) con defaults locales
+├── application-prod.properties    # Perfil prod: fail-fast JWT/CORS, sin data.sql
+├── application-test.properties    # Perfil test: H2 in-memoria (en src/test/resources)
+└── data.sql                       # Seed dev: 3 usuarios + 112 productos (solo perfil dev)
 ```
 
-### Puertos
-- Backend: **8081**
-- Base de datos MySQL: **3306**
+## 4. Estado Actual de Implementación (funcional)
 
----
+### 4.1 Controladores REST (8) y alcance
 
-## Estado Actual de Implementacion
+| Controller | Ruta | Cobertura |
+|---|---|---|
+| AuthController | `/api/auth` | register, login, getCurrentUser (BCrypt + JWT) |
+| CatalogController | `/api/catalog` | CRUD productos/categorías/category-types, `_search` (filtros: query, categoryTypeId, precio, etc.), featured, new-arrivals, best-sellers, `products/{id}/related`, `category-types/with-categories` |
+| CartController | `/api/cart` | getCart, addToCart, update/remove item, summary, **guest cart** (`GET /guest/{id}`), **migrate** (guest→user) |
+| SalesController | `/api/sales` | CRUD órdenes, search, updateStatus (state machine), statusHistory, tracking, customerOrders, checkout (aplica promos), stats + stats/series |
+| CustomerController | `/api/customers` | CRUD usuarios, profile, changePassword, shipping addresses, stats; IDOR protegido con `checkOwnership` |
+| PromotionController | `/api/promotions` | CRUD códigos, validate, apply, history (ownership), stats, bulk-create/update |
+| ShippingController | `/api/shipping` | addresses, cities, postal-codes, cost calc, zones, preferences, stats |
+| HealthController | `/api/health` | `permitAll`, usado por health check de la plataforma |
 
-### Completado
+### 4.2 Seguridad (reglas vigentes)
 
-#### 1. Modelo de Dominio ✅
-- **22 entidades** implementadas: User, Product, Category, CategoryType, Order, OrderItem, ShoppingCart, CartItem, PromoCode, AppliedPromoCode, AppliedPromoCodeId, ShippingAddress, Warranty, City, State, Country, PostalCode, OrderStatus, PaymentMethod, UserRole, UserStatus, WarrantyStatus
-- Relaciones entre entidades definidas
-- Enums y tipos de datos definidos
-- Builder pattern con Lombok
+- **Públicos:** auth register/login, catálogo lectura, `_search`, validate de promos,
+  cities/postal-codes, guest cart, `POST /cart/items`, `/api/health`.
+- **ADMIN/SUPER_ADMIN:** escritura de catálogo, clientes, ventas (search/status/stats),
+  promociones, stats de envíos, `GET /shipping/addresses`.
+- **Autenticados:** todo lo demás; 401/403 con cuerpo JSON (`ErrorResponseDTO`).
+- `isAdmin()` incluye `ROLE_SUPER_ADMIN`; IDOR verificado en Customer/Promotion/Cart (Fase 3).
+- CORS **por variable de entorno** `cors.allowed-origins=${CORS_ALLOWED_ORIGINS:localhost:5173,localhost:3000}` (`allowCredentials=true`, orígenes exactos).
 
-#### 2. Repositorios ✅
-- 11 interfaces de repositorio en el dominio
-- 11 implementaciones JPA en infraestructura
-- 11 adaptadores para conexion entre capas
-- Consultas personalizadas (findByActiveTrue, findByFilters, findFeaturedProducts, findNewArrivals, findBestSellers, countByStatus, findByUser, etc.)
+### 4.3 Configuración por entorno (ya externalizada — Fase 1 del staging)
 
-#### 3. DTOs ✅
-- DTOs de entrada y salida para **todos los contextos**:
-  - auth: AuthResponseDTO, CurrentUserDTO, LoginRequestDTO, RegisterRequestDTO, UserInfoDTO
-  - catalog: ProductDTO, ProductSummaryDTO, ProductDetailDTO, ProductSearchDTO, CreateProductDTO, UpdateProductDTO, CategoryDTO, CategorySummaryDTO, CategoryTypeDTO, CreateCategoryDTO, UpdateCategoryDTO, CreateCategoryTypeDTO, CategoryTypeBasicDTO
-  - customer: UserAdminDTO, UserAdminProfileDTO, CreateUserDTO, UpdateUserDTO, ChangePasswordDTO, CustomerStatsDTO, ShippingAddressDTO
-  - promotion: PromoCodeDTO, PromoCodeSummaryDTO, CreatePromoCodeDTO, UpdatePromoCodeDTO, PromoCodeSearchDTO, PromoCodeValidationDTO, PromoCodeValidationResultDTO, ApplyPromoCodeDTO, PromoCodeApplicationResultDTO, UserPromoCodeHistoryDTO, PromoCodeStatsDTO, BulkCreatePromoCodeDTO, BulkPromoCodeActionDTO, BulkPromoCodeActionResultDTO
-  - sales: ShoppingCartDTO, CartItemDTO, CartSummaryDTO, AddToCartDTO, UpdateCartItemDTO, OrderDTO, OrderSummaryDTO, OrderItemResponseDTO, CreateOrderDTO, CreateOrderItemDTO, UpdateOrderStatusDTO, OrderStatusHistoryDTO, OrderTrackingDTO, CheckoutSummaryDTO, ProcessCheckoutDTO, OrderSearchDTO, OrderSearchResultDTO, SalesStatsDTO, AppliedPromoCodeDTO
-  - shipping: ShippingAddressDTO, ShippingAddressSummaryDTO, CreateShippingAddressDTO, UpdateShippingAddressDTO, ShippingCostCalculationDTO, ShippingCostResponseDTO, ShippingZoneDTO, UserShippingPreferencesDTO, ShippingStatsDTO, CitySummaryDTO, PostalCodeSummaryDTO
-  - common: PageResponseDTO
+| Variable | Uso | Falta si... |
+|---|---|---|
+| `PORT` | puerto HTTP (default 8081) | — |
+| `DB_URL` / `DB_USER` / `DB_PASSWORD` | datasource JDBC | — (default local root/root) |
+| `JWT_SECRET` | firma JWT | **perfil `prod` falla al arrancar (fail-fast)** |
+| `CORS_ALLOWED_ORIGINS` | orígenes permitidos | **perfil `prod` falla al arrancar** |
+| `SPRING_PROFILES_ACTIVE` | `prod` \| `test` | — |
+| `JAVA_OPTS` | heap/JVM en contenedor | — (recomendado `-XX:MaxRAMPercentage=60`) |
 
-#### 4. Servicios ✅ (6 implementaciones)
-- **AuthServiceImpl**: Register (con BCrypt), Login (con JWT), getCurrentUser
-- **CatalogServiceImpl**: CRUD Productos, CRUD Categorias, CRUD CategoryTypes, busqueda con filtros, productos destacados/nuevos/mas vendidos
-- **SalesServiceImpl**: CRUD Ordenes, Carrito de compras (agregar/actualizar/eliminar/summary), Checkout con validacion de promociones, Estadisticas de ventas, Busqueda de ordenes con filtros
-- **CustomerServiceImpl**: CRUD Usuarios, perfil de usuario, cambio de password, direcciones de envio, estadisticas de clientes
-- **PromotionServiceImpl**: CRUD Codigos promocionales, validacion, aplicacion, historial, estadisticas, operaciones en lote
-- **ShippingServiceImpl**: CRUD Direcciones de envio, ciudades, codigos postales, calculo de costos, zonas, preferencias de usuario, estadisticas
+Perfil `prod`: `ddl-auto=update`, `sql.init.mode=never` (NO ejecuta data.sql; los datos
+vienen del dump importado), `show-sql=false`. Perfil `test`: H2 `MODE=MySQL`,
+1 test de contexto (`mvn clean package` pasa sin MySQL ni red).
 
-#### 5. Controladores REST ✅ (7 controladores)
-- **AuthController** (`/api/auth`): register, login, getCurrentUser
-- **CatalogController** (`/api/catalog`): CRUD productos, CRUD categorias, CRUD category-types, busqueda, destacados, nuevos, mas vendidos, por categoria
-- **CartController** (`/api/cart`): getCart, addToCart, updateCartItem, removeFromCart, getCartSummary
-- **SalesController** (`/api/sales`): CRUD ordenes, search, updateStatus, statusHistory, tracking, customerOrders, checkout, stats
-- **CustomerController** (`/api/customers`): CRUD usuarios, profile, password, shipping addresses, stats
-- **PromotionController** (`/api/promotions`): CRUD codigos, validate, apply, history, stats, bulk operations
-- **ShippingController** (`/api/shipping`): CRUD addresses, cities, postal codes, cost calculation, zones, preferences, stats
+### 4.4 Funcionalidades beta (implementadas, sept–oct 2026)
 
-#### 6. Seguridad ✅
-- **SecurityConfig**: CORS configurado, CSRF deshabilitado, sesiones stateless
-- **JWT Authentication Filter**: Filtro antes de UsernamePasswordAuthenticationFilter
-- **JwtProvider**: Generacion y validacion de tokens
-- **SecurityUtils**: Utilidades para obtener usuario actual y verificar roles
-- **Reglas de autorizacion**:
-  - Publicos: Auth (register/login), Catalogo (lectura), Validacion de promociones, Ciudades/codigos postales, Carrito
-  - Admin: Escritura de catalogo, Clientes, Ventas, Promociones, Stats de envios
-  - Autenticados: Todo lo demas
-- **CORS**: Permite localhost:5173 y localhost:3000 (DESARROLLO)
+- Búsqueda por `query` + `categoryTypeId` en `findByFilters` (JPQL).
+- `GET /category-types/with-categories` (sidebar jerárquico).
+- `isFeatured` en Product + query de destacados; productos relacionados por categoría.
+- Transiciones de estado con state machine: PENDING→IN_PREPARATION→SHIPPED→DELIVERED.
+- Historial real de órdenes (`OrderStatusHistory` + `getRealHistory`, `getOrderTracking`).
+- Carrito guest (expiración 24h) + migración guest→user con merge; `CartItem.productName` (snapshot).
+- DTO fix: `ProductDetailDTO.imageUrl` (renombrado desde `mainImageUrl`).
 
-#### 7. Data Seeder ✅
-- `data.sql` con 3 usuarios iniciales:
-  - admin@astrosetups.com / Admin123* (ADMIN)
-  - superadmin@astrosetups.com / SuperAdmin123* (SUPER_ADMIN)
-  - cliente@astrosetups.com / Cliente123* (CLIENT)
-- `spring.sql.init.mode=always` ejecuta al iniciar
+### 4.5 Datos
 
-#### 8. Excepciones ✅
-- GlobalExceptionHandler para manejo centralizado de errores
-- InvalidCredentialsException, AccountDisabledException, AccessDeniedException
-- ErrorMessages con mensajes estandarizados
+- **Desarrollo:** `data.sql` se ejecuta en cada arranque (perfil dev): 3 usuarios
+  (admin/superadmin/cliente@astrosetups.com) + 112 productos + categorías.
+- **Staging/Beta:** dump completo `dumps/astrosetups_full_dump.sql` (schema+datos:
+  21 users, 114 products, 26 orders…; `dumps/` está en `.gitignore`, **nunca commitear**).
+  Import: `dumps/import-staging.ps1` (histórico, Railway) → se creará `dumps/import-tidb.ps1` (TiDB).
+- Passwords de admins rotadas en staging (Fase 6.5): `AdminStg2026!` / `SuperStg2026!`
+  (hashes bcrypt verificados en el dump de staging).
 
-#### 9. Funcionalidades Beta ✅ (Septiembre 2026)
-- **isFeatured en Product**: Campo booleano para productos destacados, 17 productos marcados en data.sql
-- **Productos relacionados**: GET /api/catalog/products/{id}/related (misma categoria)
-- **Transiciones de estado**: validateStatusTransition() con state machine (PENDING→IN_PREPARATION→SHIPPED→DELIVERED)
-- **Historial de ordenes**: OrderStatusHistory entity + getRealHistory() + getOrderTracking() con historial real
-- **Carrito guest**: GET /api/cart/guest/{guestCartId} con expiracion 24h
-- **Migracion carrito**: POST /api/cart/migrate (guest→user) con merge de items
-- **CartItem.productName**: Campo snapshot del nombre del producto
+## 5. Trazabilidad (historial de fases y despliegues)
 
----
+| Fecha | Hito | Estado | Detalle |
+|---|---|---|---|
+| Sept 2026 | Ajustes críticos beta (back+front: búsqueda, sidebar jerárquico, related, comprar ahora, checkout crea orden) | ✅ | `README.md` raíz, sección "Plan de Accion - Ajustes Criticos Beta" |
+| 05/10/2026 | Staging Fases 1–8: config env vars + perfil prod, tests H2, seguridad (IDOR/SUPER_ADMIN/carrito), Docker, front fixes, dump+import+rotación, guía, verificación final | ✅ | `README.md` raíz (registro maestro con verificaciones ejecutadas) |
+| 05/10/2026 | Despliegue staging verificado: front `https://ecomerce-full-stack.vercel.app` + back Railway + MySQL Railway (volumen) | ✅ histórico | Incidentes resueltos documentados en `docs/DEPLOY-STAGING.md` |
+| 05/10/2026 | Commit `1e5283c` "Deploy prebeta grupo cerrado ok" — **beta con grupo cerrado puesto en marcha** | ✅ | corrige Dockerfile (target port) + docs |
+| Oct–Nov 2026 | Beta con grupo cerrado (~10 testers): pruebas de flujo/funcionalidad, feedback recopilado | ✅ | la BD de Railway (datos del beta) ya no es accesible; se usa el dump del repo |
+| Nov 2026 | Trial gratuito de Railway agotado, tráfico del beta escaso → **app bajada**; decisión: no pagar por hosting de pruebas | ✅ | — |
+| **17/11/2026** | **Plan aprobado: front + back en Vercel (Hobby, contenedores) y BD en TiDB Cloud Starter (gratis sin tarjeta)** | 🔄 en curso | Plan completo en `README.md` raíz y `docs/DEPLOY-VERCEL.md` |
+| Post-beta | Corrección del feedback del grupo cerrado (lista por consolidar con el dueño) | ⬜ pendiente | nueva ronda de desarrollo |
+| Post-beta | Migración de BD a **PostgreSQL** (Neon/Supabase/RDS) para la fase pública | ⬜ pendiente | el código lo permite: JPQL puro, sin `nativeQuery` ni `columnDefinition`; solo driver + dialecto + conversión del dump |
 
-## Backlog de Implementacion - Ajustes Criticos Beta
+## 6. Despliegue actual: Vercel + TiDB (plan aprobado 17/11/2026)
 
-### 🔴 Tareas Criticas Backend (En progreso)
+```
+https://<front>.vercel.app  (React/Vite — root astroSetupsFrontend)
+        │ HTTPS
+        ▼
+https://<back>.vercel.app   (Spring Boot vía Dockerfile — root astrosetupsback, preset Container)
+        │ internet (TLS)
+        ▼
+gateway.<region>.prod.aws.tidbcloud.com:4000 / astrosetupsdb  (TiDB Starter, MySQL-compat)
+```
 
-| # | Tarea | Estado | Archivos | Descripcion |
-|---|-------|--------|----------|-------------|
-| 1 | Busqueda por nombre y categoryTypeId | ✅ Completado | `JpaProductRepository.java`, `ProductRepository.java`, `CatalogServiceImpl.java`, `ProductRepositoryAdapter.java` | Habilitar campos `query` y `categoryTypeId` en `findByFilters` JPQL |
-| 2 | Endpoint CategoryTypes con categorías | ✅ Completado | `CatalogController.java`, `CatalogServiceImpl.java`, nuevo DTO | `GET /category-types/with-categories` para sidebar jerárquico |
-| 3 | Corregir imagen ProductDetailDTO | ✅ Completado | `ProductDetailDTO.java`, `CatalogServiceImpl.java` | Renombrar `mainImageUrl` → `imageUrl` |
+**Por qué TiDB y no Postgres ahora:** compatibilidad total con el driver/dialecto/dump
+actuales = cero cambios de código para la beta; gratis sin tarjeta (5 GiB + 50M ops/mes,
+sin caducidad). La migración a Postgres queda para la fase pública (ver §5).
 
-### ✅ Completado (Pre-existente)
+**Variables del proyecto backend en Vercel (Production):**
 
-| # | Tarea | Estado |
-|---|-------|--------|
-| 1 | ~~Seed data de productos/categorias~~ | ✅ 112 productos en data.sql |
-| 2 | ~~Endpoint productos relacionados~~ | ✅ GET /api/catalog/products/{id}/related |
-| 3 | ~~Productos destacados automaticos~~ | ✅ Campo isFeatured + query filtrada |
-| 4 | ~~Validacion de transiciones de estado~~ | ✅ validateStatusTransition() con state machine |
-| 5 | ~~Historial de estado de ordenes~~ | ✅ OrderStatusHistory + getRealHistory |
-| 6 | ~~Carrito guest + migracion~~ | ✅ getGuestCart + migrateGuestCart + endpoints |
-| 7 | ~~CartItem.productName~~ | ✅ Campo snapshot del nombre |
+| Variable | Valor |
+|---|---|
+| `SPRING_PROFILES_ACTIVE` | `prod` |
+| `PORT` | `8081` (Vercel enruta a `$PORT`; la imagen corre como usuario no-root y no puede enlazar el 80) |
+| `DB_URL` | `jdbc:mysql://<host-tidb>:4000/astrosetupsdb?sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3` |
+| `DB_USER` | `<prefijo>.root` (exactamente como lo entrega TiDB, incluye prefijo) |
+| `DB_PASSWORD` | generado por TiDB |
+| `JWT_SECRET` | `[guid]::NewGuid() + [guid]::NewGuid()` |
+| `CORS_ALLOWED_ORIGINS` | `https://<front>.vercel.app` (sin `/` final) |
+| `JAVA_OPTS` | `-XX:MaxRAMPercentage=60` |
 
-### 📋 Pendiente Post-Beta
+Frontend en Vercel: `VITE_API_BASE_URL=https://<back>.vercel.app/api` (se inyecta en
+build time → cambiarla exige Redeploy). Guía paso a paso: `docs/DEPLOY-VERCEL.md`.
+
+**Límites a vigilar (Vercel Hobby, gratis):** 4 CPU-hrs activas, 360 GB-hrs memoria,
+1M peticiones/mes; si se excede, la app se **pausa sin cobro** hasta el reset de 30 días.
+Runtime de contenedores en beta. Plan B documentado: backend en Render free.
+
+## 7. Backlog
+
+### 🔴 En curso
 
 | # | Tarea | Notas |
-|---|-------|-------|
-| 8 | Tests unitarios e integracion | Tests para AuthService, CatalogService, SalesService |
-| 9 | Swagger/OpenAPI | springdoc-openapi |
-| 10 | Refresh Token | Sesiones largas |
-| 11 | Email de verificacion | Email de bienvenida |
-| 12 | Paginacion real searchOrders | Filtrar en query JPA, no en memoria |
-| 13 | Integracion pasarela de pagos | Wompi/PayU |
-| 14 | Variables de entorno produccion | `${DB_URL}`, `${JWT_SECRET}`, etc. |
-| 15 | CORS produccion | Dominio de Vercel en SecurityConfig |
-| 16 | JWT Secret seguro | Sin fallback hardcoded |
+|---|---|---|
+| 1 | Redespliegue Vercel + TiDB | plan aprobado 17/11/2026, ver §6 y `docs/DEPLOY-VERCEL.md` |
+| 2 | Consolidar y corregir feedback del beta cerrado | lista pendiente de definir con el dueño |
 
----
+### ✅ Completado (referencia rápida)
 
-## Contextos Delimitados
+Config externa por env vars + perfil prod fail-fast · tests H2 en build · seguridad
+(IDOR, SUPER_ADMIN, carrito restringido, 401/403 JSON) · Docker multi-stage · health
+endpoint · CORS por variable · búsqueda con filtros · category-types anidados ·
+productos relacionados · destacados · state machine de órdenes · historial/tracking ·
+carrito guest + migración · datos de staging con dump y passwords rotadas.
 
-1. **Catalogo y Productos**
-   - Gestion de productos y categorias
-   - Busqueda y filtrado
-   - Gestion de precios y descuentos
+### 📋 Pendiente post-beta
 
-2. **Ventas y Pedidos**
-   - Procesamiento de ordenes
-   - Gestion del carrito
-   - Seguimiento de pedidos
+| # | Tarea | Notas |
+|---|---|---|
+| 1 | Tests unitarios/integración | 1 test de contexto (H2); faltan tests de servicios |
+| 2 | Swagger/OpenAPI | springdoc-openapi |
+| 3 | Refresh Token | sesiones largas |
+| 4 | Email de verificación/bienvenida | starter-mail ya incluido |
+| 5 | Paginación real en searchOrders | hoy filtra en memoria |
+| 6 | Integración pasarela de pagos | Wompi/PayU/PSE |
+| 7 | Migración a PostgreSQL | post-beta, ver §5; sin bloqueos de código |
+| 8 | Rendimiento/consultas N+1 | revisión con profiling cuando haya datos reales |
 
-3. **Clientes y Autenticacion**
-   - Registro y autenticacion
-   - Gestion de perfiles
-   - Direcciones de envio
+## 8. Decisiones Técnicas
 
-4. **Promociones y Descuentos**
-   - Codigos promocionales
-   - Validacion y aplicacion
-   - Historial de uso
+1. **Arquitectura Hexagonal** — separación de responsabilidades.
+2. **Repository Pattern** — acceso a datos abstraído (dominio → adapter → JPA).
+3. **DTO Pattern** — inmutabilidad y separación entre capas.
+4. **Service Layer** — lógica de negocio centralizada (6 servicios).
+5. **JWT stateless** — sin sesiones servidor.
+6. **Config 100% por variables de entorno** con defaults solo en dev; perfil `prod` fail-fast.
+7. **Vercel Hobby + contenedores** para la beta (gratis, scale-to-zero); TiDB Starter
+   como BD MySQL gratis sin tarjeta; Postgres como destino final post-beta.
 
-5. **Gestion de Envios**
-   - Calculo de costos
-   - Zonas de envio
-   - Preferencias de usuario
+## 9. Credenciales de Prueba
 
-## Decisiones Tecnicas
-1. **Arquitectura Hexagonal** - Separacion clara de responsabilidades
-2. **Repository Pattern** - Acceso a datos abstraido
-3. **DTO Pattern** - Inmutabilidad y separacion entre capas
-4. **Service Layer Pattern** - Logica de negocio centralizada
-5. **Adapter Pattern** - Conexion entre dominio e infraestructura
-6. **JWT Stateless** - Sin sesiones en servidor, ideal para escalabilidad
+> **[REDACTADO por seguridad]** Las credenciales de staging/producción no se documentan
+> en el repositorio.
 
-## Credenciales de Prueba
-
-| Entorno | Rol | Email | Password |
-|---------|-----|-------|----------|
-| Local (`astrosetupsdb`) | ADMIN | admin@astrosetups.com | `Admin123*` |
-| Local | SUPER_ADMIN | superadmin@astrosetups.com | `SuperAdmin123*` |
-| Local | CLIENT | cliente@astrosetups.com | `Cliente123*` |
-| Staging (Railway) | ADMIN | admin@astrosetups.com | `AdminStg2026!` (rotada en Fase 6.5) |
-| Staging | SUPER_ADMIN | superadmin@astrosetups.com | `SuperStg2026!` (rotada en Fase 6.5) |
-| Staging | CLIENT | cliente@astrosetups.com | `Cliente123*` |
+- **Desarrollo local:** usuarios seed en `src/main/resources/data.sql` (admin/superadmin/cliente@astrosetups.com).
+- **Beta (dump del repo, hashes rotados Fase 6.5):** `admin@astrosetups.com` = `AdminStg2026!`, `superadmin@astrosetups.com` = `SuperStg2026!`, `cliente@astrosetups.com` = `Cliente123*` — aplican al importar `dumps/astrosetups_full_dump.sql` en TiDB.
+- **Railway (retirado nov 2026):** servicios y secretos eliminados junto con el trial gratuito.

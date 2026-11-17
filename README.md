@@ -1,6 +1,7 @@
 # Astro Setups - E-commerce Full Stack
 
 > Plataforma e-commerce para tienda de productos de hardware/componentes de PC
+> **Registro maestro del proyecto.** Actualizado: **17/11/2026**.
 
 ## Stack Tecnologico
 
@@ -10,17 +11,22 @@
 | Frontend | React + TypeScript | 19.1 / 5.8 |
 | Build | Vite | 6.3 |
 | Estilos | Tailwind CSS | 4.1 |
-| Base de datos | MySQL | 8.0 |
+| Base de datos | MySQL (dev local) · TiDB Cloud Starter compatible MySQL (beta) | 8.0 / Serverless |
 | Seguridad | Spring Security + JWT | jjwt 0.12.6 |
 | State Mgmt | Zustand + React Query | 5.x |
+| Despliegue (beta 2) | Vercel (front estático + backend en contenedor Docker) | Hobby $0 |
 
 ## Arquitectura
 
 ```
-Frontend (React/Vercel) <--HTTPS/REST--> Backend (Spring Boot/Railway) --> MySQL (Railway)
+Beta 2 (vigente, Nov 2026):
+Frontend (React/Vercel) <--HTTPS/REST--> Backend (Spring Boot contenedor/Vercel) --> TiDB Starter (MySQL-compat, TLS)
+
+Historico (retirado, Oct-Nov 2026):
+Frontend (Vercel) <--HTTPS/REST--> Backend (Spring Boot/Railway) --> MySQL (Railway)
 ```
 
-## Auditoria del Proyecto (Estado: Septiembre 2025)
+## Auditoria del Proyecto (Estado: Noviembre 2026)
 
 ---
 
@@ -41,13 +47,13 @@ Frontend (React/Vercel) <--HTTPS/REST--> Backend (Spring Boot/Railway) --> MySQL
 
 ---
 
-### FUNCIONALIDADES POR AJUSTAR (3)
+### FUNCIONALIDADES POR AJUSTAR (3) — RESUELTAS
 
-| # | Funcionalidad | Problema | Ubicacion | Ajuste |
-|---|--------------|----------|-----------|--------|
-| 1 | Descuento es stub | Solo toast.info, no valida con backend | CartPage.tsx:31-38 | Conectar con POST /api/promotions/codes/validate |
-| 2 | Tipo FormData incompleto | Interfaz tiene 5 campos, form tiene 15+ | Checkoutform.tsx:267-272 | Actualizar interfaz TypeScript |
-| 3 | Promociones sin contenido | Promotions.tsx existe pero no muestra datos | Promotions.tsx | Conectar con backend de promociones |
+| # | Funcionalidad | Problema | Estado hoy |
+|---|--------------|----------|-----------|
+| 1 | Descuento es stub | Solo toast.info, no valida con backend | ✅ CheckoutPage valida con `POST /api/promotions/codes/validate` (promotion.service) |
+| 2 | Tipo FormData incompleto | Interfaz tenia 5 campos, form 15+ | ✅ Interfaz actualizada en Checkoutform.tsx |
+| 3 | Promociones sin contenido | Promotions.tsx no mostraba datos | ✅ `promotion.service.ts` + página y admin de promociones conectados |
 
 ---
 
@@ -72,36 +78,36 @@ Frontend (React/Vercel) <--HTTPS/REST--> Backend (Spring Boot/Railway) --> MySQL
 | 8 | Historial de estado ordenes | ✅ OrderStatusHistory + getRealHistory |
 | 9 | Carrito guest + migracion | ✅ getGuestCart + migrateGuestCart + endpoints |
 
-#### Fase 2: FUNCIONALIDADES PENDIENTES - Frontend (PENDIENTE)
+#### Fase 2: FUNCIONALIDADES PENDIENTES - Frontend
 
-| # | Funcionalidad | Que hacer |
-|---|--------------|-----------|
-| 10 | Crear cart.service.ts | Servicio API para carrito backend |
-| 11 | Crear order.service.ts | Servicio API para ordenes backend |
-| 12 | Integrar carrito con backend | Modificar Cart.tsx para usar backend |
-| 13 | Pagina Promociones | Mostrar promociones activas desde backend |
-| 14 | Admin Promociones | CRUD de codigos promocionales en admin |
-| 15 | Admin Reportes | Pagina de reportes de ventas |
+| # | Funcionalidad | Estado |
+|---|--------------|--------|
+| 10 | Crear cart.service.ts | ⬜ pendiente (carrito aun es Context+localStorage) |
+| 11 | Crear order.service.ts | ✅ order.service.ts (checkout crea orden) |
+| 12 | Integrar carrito con backend | ⬜ pendiente (backend ya tiene guest cart + migrate) |
+| 13 | Pagina Promociones | ✅ Promotions.tsx conectada con promotion.service |
+| 14 | Admin Promociones | ✅ AdminPromotionsPage + hooks useAdminPromotions (CRUD+stats) |
+| 15 | Admin Reportes | ✅ AdminReportsPage (ventas/clientes/promos con Recharts) |
 
 #### Fase 3: MEJORAS - Post-Beta
 
-| # | Funcionalidad | Que hacer |
-|---|--------------|-----------|
-| 16 | Perfil de usuario | Pagina /profile para clientes |
-| 17 | Seguimiento de pedidos | Pagina de tracking para clientes |
-| 18 | Pagina 404 | Pagina de ruta no encontrada |
-| 19 | Tests | Tests unitarios e integracion (backend y frontend) |
-| 20 | Swagger/OpenAPI | Documentacion de API |
-| 21 | Refresh Token | Sesion larga con refresh automatico |
-| 22 | Pasarela de pagos | Wompi/PayU para pagos Colombia |
+| # | Funcionalidad | Estado |
+|---|--------------|--------|
+| 16 | Perfil de usuario | ⬜ pendiente (/profile; backend ya expone profile) |
+| 17 | Seguimiento de pedidos | 🔄 pagina placeholder creada (/tracking); integrar con endpoint de tracking |
+| 18 | Pagina 404 | ✅ NotFound.tsx en ruta `*` |
+| 19 | Tests | 🔄 backend: 1 test contexto H2 en build; faltan tests de servicios y tests front (Vitest) |
+| 20 | Swagger/OpenAPI | ⬜ pendiente (springdoc) |
+| 21 | Refresh Token | ⬜ pendiente |
+| 22 | Pasarela de pagos | ⬜ pendiente (Wompi/PayU/PSE) |
 
-#### Fase 4: DEPLOY - Configuracion Produccion
+#### Fase 4: DEPLOY - Configuracion Produccion — COMPLETADA (Fase 1 staging, 05/10/2026)
 
-| # | Funcionalidad | Que hacer |
-|---|--------------|-----------|
-| 23 | Variables de entorno produccion | Mover config de application.properties a variables de entorno (DB_URL, JWT_SECRET, etc.) |
-| 24 | CORS para produccion | Agregar dominio de Vercel a SecurityConfig.java |
-| 25 | JWT Secret seguro | Eliminar fallback hardcoded, usar solo variable de entorno |
+| # | Funcionalidad | Estado |
+|---|--------------|--------|
+| 23 | Variables de entorno produccion | ✅ DB_URL, DB_USER, DB_PASSWORD, JWT_SECRET, PORT por env var |
+| 24 | CORS para produccion | ✅ CORS_ALLOWED_ORIGINS (env var, orígenes exactos) |
+| 25 | JWT Secret seguro | ✅ perfil prod fail-fast sin default (verifica application-prod.properties) |
 
 ---
 
@@ -110,39 +116,43 @@ Frontend (React/Vercel) <--HTTPS/REST--> Backend (Spring Boot/Railway) --> MySQL
 ```
 EcomerceFullStack/
 +-- astrosetupsback/           # Backend Spring Boot
-�   +-- src/main/java/.../
-�   �   +-- application/       # DTOs, interfaces, services
-�   �   +-- domain/            # Modelos y repositorios
-�   �   +-- infra/             # Controllers, config, security, exceptions
-�   +-- src/main/resources/
-�   �   +-- application.properties
-�   �   +-- data.sql           # Seed de usuarios
-�   +-- CONTEXT.md             # Contexto y backlog del backend
-�   +-- pom.xml
-�
+│   +-- src/main/java/.../
+│   │   +-- application/       # DTOs, interfaces, services
+│   │   +-- domain/            # Modelos y repositorios
+│   │   +-- infra/             # Controllers, config, security, exceptions
+│   +-- src/main/resources/
+│   │   +-- application.properties / application-prod.properties
+│   │   +-- data.sql           # Seed dev (usuarios + productos)
+│   +-- CONTEXT.md             # Contexto, trazabilidad y backlog del backend
+│   +-- README.md              # Guia rapida del backend (run/env/deploy)
+│   +-- pom.xml / Dockerfile
+│
 +-- astroSetupsFrontend/       # Frontend React
-�   +-- src/
-�   �   +-- api/               # API client
-�   �   +-- components/        # Componentes UI
-�   �   +-- hooks/             # Custom hooks
-�   �   +-- interfaces/        # TypeScript types
-�   �   +-- pages/             # Paginas/rutas
-�   �   +-- services/          # Servicios API
-�   �   +-- stores/            # Zustand stores
-�   �   +-- styles/            # CSS
-�   +-- README.md              # Contexto y backlog del frontend
-�   +-- package.json
-�
-+-- README.md                  # Este archivo - Auditoria general
+│   +-- src/
+│   │   +-- api/               # API client
+│   │   +-- components/        # Componentes UI
+│   │   +-- hooks/             # Custom hooks
+│   │   +-- interfaces/        # TypeScript types
+│   │   +-- pages/             # Paginas/rutas
+│   │   +-- services/          # Servicios API
+│   │   +-- stores/            # Zustand stores
+│   │   +-- styles/            # CSS
+│   +-- README.md              # Contexto y backlog del frontend
+│   +-- package.json / vercel.json
+│
++-- docs/                      # DEPLOY-VERCEL.md (guia actual), DEPLOY-STAGING.md (hist.),
+│                              # QA-GUIA-DE-PRUEBAS.md, qa-suite-a.ps1
++-- dumps/                     # Dump SQL (gitignored, datos sensibles)
++-- README.md                  # Este archivo - Registro maestro
 ```
 
 ## Credenciales de Prueba
 
 > **[REDACTADO por seguridad — 05/10/2026]** Las credenciales de prueba ya no se
-> documentan en repositorios publicos. Para entorno de desarrollo, consultar
+> documentan en repositorios. Para entorno de desarrollo, consultar
 > `astrosetupsback/src/main/resources/data.sql` (usuarios seed locales).
-> En staging/produccion las credenciales se gestionan como secreto en Railway
-> y se rotan tras cada import del dump.
+> En staging/produccion se gestionan como secreto en la plataforma de despliegue
+> (Vercel/TiDB; historicamente Railway) y se rotan tras cada import del dump.
 
 ## Como Ejecutar en Desarrollo
 
@@ -171,8 +181,11 @@ npm run dev
 
 ## Documentacion por Componente
 
-- **Backend**: Ver `astrosetupsback/CONTEXT.md` para contexto detallado y backlog de implementacion
-- **Frontend**: Ver `astroSetupsFrontend/README.md` para contexto detallado y backlog de implementacion
+- **Global (este archivo)**: estado del app, auditoria, planes de despliegue y trazabilidad
+- **Backend**: `astrosetupsback/README.md` (guia rapida) y `astrosetupsback/CONTEXT.md` (contexto, trazabilidad y backlog detallado)
+- **Frontend**: `astroSetupsFrontend/README.md` (contexto, trazabilidad y backlog)
+- **Despliegue vigente**: `docs/DEPLOY-VERCEL.md` · **Historico**: `docs/DEPLOY-STAGING.md`
+- **QA**: `docs/QA-GUIA-DE-PRUEBAS.md` + `docs/qa-suite-a.ps1`
 
 ## Plan de Accion - Ajustes Criticos Beta (Septiembre 2026)
 
@@ -213,10 +226,15 @@ npm run dev
 
 ---
 
-## Plan de Despliegue - STAGING (Octubre 2026)
+## Plan de Despliegue - STAGING (Octubre 2026) — HISTORICO
 
-> **Objetivo:** Predespliegue firme para un grupo cerrado de interesados (clientes, desarrolladores).
-> **Arquitectura:** Vercel (React + TS) --HTTPS--> Railway (Docker + Spring Boot) --> Railway MySQL 8 (persistente).
+> **⚠️ Estado:** completado y **retirado en noviembre 2026** (trial gratuito de Railway
+> agotado; servicios y datos de staging dados de baja). Se conserva como referencia e
+> historial de incidentes. **Vigente:** "Plan de Despliegue Beta 2 — Vercel + TiDB"
+> (seccion siguiente) y `docs/DEPLOY-VERCEL.md`.
+>
+> **Objetivo original:** predespliegue para un grupo cerrado de interesados.
+> **Arquitectura usada:** Vercel (React + TS) --HTTPS--> Railway (Docker + Spring Boot) --> Railway MySQL 8 (persistente).
 
 ### Reglas de trazabilidad
 
@@ -472,3 +490,126 @@ Fase 7 (guia) ── al final, refleja el estado real ────────�
 - **Formato de `DB_URL`**: Railway entrega `mysql://...`; se necesita `jdbc:mysql://...?useSSL=false&allowPublicKeyRetrieval=true` (documentado en Fase 7).
 - **CORS + `withCredentials:true`**: exige origenes exactos (env var con lista, no wildcard).
 - **Formulario de contacto** (`Contact.tsx` solo hace `console.log`): fuera de alcance, validar con el grupo.
+
+---
+
+## Plan de Despliegue - BETA 2: Vercel + TiDB (Noviembre 2026) — VIGENTE
+
+> **Objetivo:** reconectar la app para una nueva ronda de pruebas con el grupo cerrado
+> **sin costo de infraestructura y sin límite de tiempo**, tras el cierre del trial de
+> Railway (nov 2026). Aprobado por el dueño del proyecto: **17/11/2026**.
+> Guía operativa paso a paso: **`docs/DEPLOY-VERCEL.md`**.
+
+### Contexto de la decision
+
+- El trial gratuito de Railway se agotó y el tráfico del primer beta (grupo cerrado,
+  ~10 personas, ≤3 simultáneas) no justificaba pagar hosting.
+- La beta sirvió para recopilar feedback de flujo/funcionalidad; ahora toca corregirlo,
+  y eso puede tomar tiempo → se requiere infraestructura **gratis mientras tanto**.
+- Requisitos explícitos del dueño: gratis indefinidamente; puede dormir por inactividad
+  mientras pueda reactivarse; pruebas de flujo (no de concurrencia), 15 días de uso.
+
+### Decisiones aprobadas
+
+| Dimension | Eleccion | Por que |
+|---|---|---|
+| Frontend | **Vercel Hobby ($0)** (proyecto existente) | ya desplegado; SPA estática, sin costos de compute |
+| Backend | **Vercel Hobby ($0) vía `Dockerfile` (Container runtime)** | una sola plataforma; Vercel corre Spring Boot en contenedores desde junio 2026 (beta en todos los planes); scale-to-zero automático (despierta solo con la 1ª petición) |
+| Base de datos | **TiDB Cloud Starter** (MySQL-compatible, gratis sin tarjeta: 5 GiB + 50M ops/mes, sin caducidad) | cero cambios de código (driver/dialecto/dump MySQL actuales); PlanetScale no tiene plan gratis (2024) y Aiven retiró su MySQL gratis (11/2026) |
+| Datos | dump `dumps/astrosetups_full_dump.sql` del repo | los datos del beta en Railway ya no son accesibles |
+| Postgres | **Migración post-beta** (fase pública) | el código lo permite (JPQL puro, sin nativeQuery/columnDefinition); migrar ahora retrasa la beta y los datos del beta son prescindibles |
+
+### Arquitectura objetivo
+
+```
+https://<front>.vercel.app  (React/Vite, root astroSetupsFrontend)
+        │ HTTPS
+        ▼
+https://<back>.vercel.app   (Spring Boot contenedor, root astrosetupsback, preset Container)
+        │ internet (TLS)
+        ▼
+gateway.<region>.prod.aws.tidbcloud.com:4000 / astrosetupsdb  (TiDB Starter)
+```
+
+### Fases del plan
+
+| Fase | Nombre | Responsable | Estado |
+|------|--------|-------------|--------|
+| 1 | Contexto: READMEs + CONTEXT.md actualizados | Agente | ✅ COMPLETADA (17/11/2026) |
+| 2 | Repo: `vercel.json` (container) back, `dumps/import-tidb.ps1`, `.env.example`, `docs/DEPLOY-VERCEL.md` | Agente | ✅ COMPLETADA (17/11/2026) |
+| 3 | Verificación: `mvn clean package` + `npm run lint && npm run build` + `docker build` + arranque de prueba | Agente | ✅ COMPLETADA (17/11/2026): backend BUILD SUCCESS (1 test H2), front lint 0 errores / build OK (21 s), imagen Docker OK, contenedor arranca con env vars `prod` y falla limpio (exit 1) sin DB (esperado) |
+| 4 | TiDB: cuenta + instancia Starter + schema + import dump + conteos | **Usuario + Agente** | ✅ COMPLETADA (17/11/2026): instancia Starter AWS us-east-1, dump importado, conteos exactos (21/114/24/26/40/6/10/12), usuarios admin/superadmin/cliente ACTIVE |
+| 5 | Vercel: proyecto backend (root `astrosetupsback`, Container) + 8 env vars | **Usuario** (guiado) | ⬜ pendiente |
+| 6 | Vercel: actualizar `VITE_API_BASE_URL` + Redeploy del front | **Usuario** (guiado) | ⬜ pendiente |
+| 7 | Smoke test: health, login, catálogo, checkout (checklist QA) | Agente/Usuario | ⬜ pendiente |
+| 8 | Operación beta: monitoreo de Usage en Vercel durante los 15 días | Usuario | ⬜ pendiente |
+
+> Reglas de trazabilidad: este README es el registro maestro (cada fase se marca aquí
+> al cerrarse); solo se avanza de fase con autorización explícita del dueño; al cerrar
+> cada fase se entrega reporte con lo implementado, verificaciones y acciones manuales.
+
+### Variables de entorno
+
+**Frontend (Vercel, build time — cambiarla exige Redeploy):**
+
+| Name | Value |
+|------|-------|
+| `VITE_API_BASE_URL` | `https://<back>.vercel.app/api` |
+| `VITE_APP_NAME` | `ASTRO SETUPS` (opcional) |
+
+**Backend (Vercel → Settings → Environment Variables, entorno Production):**
+
+| Name | Value |
+|------|-------|
+| `SPRING_PROFILES_ACTIVE` | `prod` |
+| `PORT` | `8081` (Vercel enruta a `$PORT`; la imagen corre como usuario no-root y no enlaza el puerto 80) |
+| `DB_URL` | `jdbc:mysql://<host-tidb>:4000/astrosetupsdb?sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3` |
+| `DB_USER` | `<prefijo>.root` (exactamente como lo da TiDB, con prefijo) |
+| `DB_PASSWORD` | generado por TiDB |
+| `JWT_SECRET` | `[guid]::NewGuid().ToString('N') + [guid]::NewGuid().ToString('N')` |
+| `CORS_ALLOWED_ORIGINS` | `https://ecomerce-full-stack.vercel.app` (sin barra final) |
+| `JAVA_OPTS` | `-XX:MaxRAMPercentage=60` (evita heap mínimo por defecto → OOM en arranque) |
+
+### Orden de despliegue (dependencia cruzada front <-> back)
+
+1. TiDB listo + dump importado (Fase 4).
+2. Front en Vercel con `VITE_API_BASE_URL` temporal → obtiene dominio.
+3. Back en Vercel con `CORS_ALLOWED_ORIGINS` = dominio del front (Fase 5).
+4. Front: variable real + **Redeploy** (Fase 6) → app funcional.
+5. `curl https://<back>.vercel.app/api/health` → `{"status":"UP"}`.
+
+### Operación y límites a vigilar (Vercel Hobby, gratis)
+
+- **Nunca hay cobro:** al exceder los límites mensuales (4 CPU-hrs activas,
+  360 GB-hrs de memoria, 1M peticiones) la app se **pausa** (503) hasta el reset de
+  30 días; Hobby no permite comprar usage extra.
+- Monitorear en Vercel → **Usage** durante la beta. Con 10 testers/15 días el margen es amplio.
+- **No usar keep-alive agresivo** (pings frecuentes): cada arranque de JVM consume CPU
+  activa del límite. El wake es automático en la primera petición (~segundos).
+- Sleep automático: ~5 min de inactividad (producción) → ninguna acción manual requerida.
+- Restricción Hobby: "uso personal/no comercial" (beta cerrada sin cobros: riesgo aceptado).
+- Runtime de contenedores de Vercel en **beta**: posible inestabilidad → Plan B abajo.
+
+### Riesgos y mitigaciones
+
+| Riesgo | Mitigación |
+|---|---|
+| Collations `utf8mb4_0900_ai_ci`/`ENGINE=` del dump rechazadas por TiDB | probables de aceptar; fallback: normalizar collation y reimportar |
+| OOM en arranque del contenedor | `JAVA_OPTS=-XX:MaxRAMPercentage=60`; revisar logs del 1er deploy |
+| Pausa por límite Hobby | monitorear Usage; si ocurre: migrar backend a Plan B |
+| Runtime de contenedores beta | Plan B Render (mismo Dockerfile, mismas env vars) |
+| Cold start Java para el grupo | aceptado (segundos, auto-wake) |
+
+### Plan B (respaldo): backend en Render free
+
+Si el runtime de contenedores de Vercel falla o se agotan los límites:
+proyecto Render → Root Directory `astrosetupsback`, Dockerfile detectado,
+mismas variables (`PORT` aquí la inyecta Render), sleep a los 15 min (wake
+automático), 750 hrs/mes gratis. Pasos detallados en `docs/DEPLOY-VERCEL.md` (Anexo A).
+
+### Post-beta (siguiente etapa)
+
+1. Consolidar y corregir el **feedback del grupo cerrado** (lista por definir).
+2. **Migración a PostgreSQL** (Neon/Supabase/RDS) para la fase pública:
+   driver + dialecto + conversión del dump; sin bloqueos de código.
+3. Backlog completo: ver `astrosetupsback/CONTEXT.md` §7 y READMEs por componente.

@@ -1,5 +1,10 @@
 # Guia de Despliegue - Staging (Railway + Vercel)
 
+> **⚠️ HISTORICO — no vigente.** El trial gratuito de Railway se agoto y los servicios
+> fueron dados de baja en noviembre 2026. La guia vigente de despliegue es
+> **`DEPLOY-VERCEL.md`** (Vercel front+back + TiDB). Este documento se conserva por la
+> trazabilidad del staging desplegado en octubre 2026 y sus incidentes resueltos.
+
 > **Audiencia:** despliegue manual para el grupo cerrado.
 > **Fecha:** 05/10/2026 · **Estado previo:** Fases 1-6 completadas (ver `README.md`).
 
